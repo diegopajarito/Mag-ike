@@ -135,6 +135,7 @@ public class StartActivity extends AppCompatActivity {
             mClient = new GoogleApiClient.Builder(this)
                     .addApi(Fitness.SENSORS_API)
                     .addScope(new Scope(Scopes.FITNESS_LOCATION_READ))
+                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
                     .addConnectionCallbacks(
                             new GoogleApiClient.ConnectionCallbacks() {
                                 @Override
@@ -189,7 +190,7 @@ public class StartActivity extends AppCompatActivity {
         // Note: Fitness.SensorsApi.findDataSources() requires the ACCESS_FINE_LOCATION permission.
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 // At least one datatype must be specified.
-                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE)
+                .setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE)
                 // Can specify whether data type is raw or derived.
                 .setDataSourceTypes(DataSource.TYPE_RAW)
                 .build())
@@ -295,7 +296,7 @@ public class StartActivity extends AppCompatActivity {
         MessageOnlyLogFilter msgFilter= new MessageOnlyLogFilter();
         logWrapper.setNext(msgFilter);
         // On screen logging via customized TextView.
-        LogView logView = (LogView) findViewById(R.id.saple_logview);
+        LogView logView = (LogView) findViewById(R.id.sample_logview);
 
         // Fixing this lint errors adds logic without benefit.
         // noinspection AndroidLintDeprecation

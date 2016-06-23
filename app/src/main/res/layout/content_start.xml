@@ -27,8 +27,9 @@
         <geoc.uji.esr7.mag_ike.common.logger.LogView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/saple_logview"
+            android:id="@+id/sample_logview"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:editable="true" />
     </RelativeLayout>
 </RelativeLayout>
