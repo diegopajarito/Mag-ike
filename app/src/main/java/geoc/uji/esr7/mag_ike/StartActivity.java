@@ -38,7 +38,13 @@ import com.google.android.gms.fitness.request.DataSourcesRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -105,6 +111,22 @@ public class StartActivity extends AppCompatActivity {
         if (!checkPermissions()) {
             requestPermissions();
         }
+
+
+
+        // Parse setup
+
+        ParseUser.logInInBackground("test@test.com", "test", new LogInCallback() {
+            public void done(ParseUser user, ParseException e) {
+                if (user != null) {
+                    // Hooray! The user is logged in.
+                    Log.d("Hooray", "Hooray! The user is logged - Mag-ike.");
+                } else {
+                    // Signup failed. Look at the ParseException to see what happened.
+                    Log.d("Signup failed", "Signup failed - Mag-ike");
+                }
+            }
+        });
 
     }
 
@@ -268,13 +290,52 @@ public class StartActivity extends AppCompatActivity {
         mListener = new OnDataPointListener() {
             @Override
             public void onDataPoint(DataPoint dataPoint) {
+                float lat=-999;
+                float lon=-999;
+                float pres=-999;
+                float alt=-999;
                 for (Field field : dataPoint.getDataType().getFields()) {
                     Value val = dataPoint.getValue(field);
+                    String name = field.getName();
                     Log.i(TAG, "Detected DataPoint field: " + field.getName());
                     Log.i(TAG, "Detected DataPoint value: " + val);
+                    if (name.equals("latitude") && val.isSet()){
+                        lat = Float.parseFloat(val.toString());
+                    } else if (name.equals("longitude") && val.isSet()){
+                        lon = Float.parseFloat(val.toString());
+                    } else if (name.equals("accuracy") && val.isSet()){
+                        pres = Float.parseFloat(val.toString());
+                    } else if (name.equals("altitude") && val.isSet()){
+                        alt = Float.parseFloat(val.toString());
+                    }
+
                 }
+
+
+                //log GPS track to Parse
+                ParseObject o = new ParseObject("Magike_GPS");
+                o.put("lat", lat);
+                o.put("lon", lon);
+                o.put("altitude", alt);
+                o.put("precision", pres);
+                o.put("time", new Date());
+                o.put("device", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+                o.saveEventually(new SaveCallback() {
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Log.d("PARSE - SAVE OK", String.valueOf(e));
+                        } else {
+                            Log.d("PARSE - SAVE FAILED", String.valueOf(e));
+                        }
+                    }
+                });
+
+
+
+
+
                 String tv_text = actTracker.getLocationText(getBaseContext(), dataPoint);
-                tv.setText(tv_text);
+                //tv.setText(tv_text);
             }
         };
 
