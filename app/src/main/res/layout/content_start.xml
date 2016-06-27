@@ -14,15 +14,34 @@
     android:id="@+id/start_activity_view">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70dp"
+        style="@android:style/Theme.DeviceDefault.Panel"
+        android:background="@color/colorPrimaryDark"
+        android:height="40dp"
+        android:textAlignment="center"
+        android:textColor="@color/colorBackground"
+        android:textIsSelectable="true"
+        android:textSize="@dimen/margin_medium"
+        android:id="@+id/txv_ShowSpeed"
+        android:text="@string/activity" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:id="@+id/img_status"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="false"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/ic_launcher" />
 
         <geoc.uji.esr7.mag_ike.common.logger.LogView
             android:layout_width="wrap_content"
@@ -30,6 +49,10 @@
             android:id="@+id/sample_logview"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:editable="true" />
+            android:maxLines="20"
+            android:textIsSelectable="true"
+            android:layout_below="@+id/img_status" />
+
     </RelativeLayout>
+
 </RelativeLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mag-ike</string>
+    <string name="action_settings">Configuraciò</string>
+    <string name="permission_denied_explanation">El permís va ser negat peró és necessari per a la funcionalitat de l\'aplicaciò</string>
+    <string name="permission_rationale">Els dades d\'ubicaciò són usats per l\'API de Google Fit</string>
+    <string name="settings">Menú</string>
+    <string name="activity">La teva activitat</string>
+    <string name="speed_label">La teva velocitat:</string>
+    <string name="steps_label">Els teus passos:</string>
+    <string name="coordinates">Coordenades:</string>
+    <string name="speed_nodata">La teva velocitat no està disponible</string>
+</resources>

@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">Mag-ike</string>
     <string name="action_settings">Settings</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="permission_rationale">Location data is used as part of the Google Fit API</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality</string>
     <string name="settings">Settings</string>
+    <string name="activity">Your activity</string>
+    <string name="speed_label">Your speed:</string>
+    <string name="speed_units" translatable="false">Km/h</string>
+    <string name="steps_label">Your steps:</string>
+    <string name="coordinates">Coordinates:</string>
+    <string name="speed_nodata">Speed data not available.</string>
+    <string name="coordinates_notfound" translatable="false">-</string>
 </resources>

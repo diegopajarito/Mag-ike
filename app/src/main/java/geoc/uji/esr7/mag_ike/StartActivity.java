@@ -3,6 +3,7 @@ package geoc.uji.esr7.mag_ike;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,9 +14,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.Scroller;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
@@ -40,6 +45,8 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
 import geoc.uji.esr7.mag_ike.common.logger.LogView;
 import geoc.uji.esr7.mag_ike.common.logger.LogWrapper;
 import geoc.uji.esr7.mag_ike.common.logger.MessageOnlyLogFilter;
+import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
+import geoc.uji.esr7.mag_ike.common.tracker.TrackSpeed;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -48,6 +55,8 @@ public class StartActivity extends AppCompatActivity {
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
 
+    private TextView tv;
+
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     // [START mListener_variable_reference]
@@ -55,6 +64,11 @@ public class StartActivity extends AppCompatActivity {
     // method in order to stop all sensors from sending data to this listener.
     private OnDataPointListener mListener;
     // [END mListener_variable_reference]
+
+    // The activity Tracker
+    private ActivityTracker actTracker = new ActivityTracker();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +88,13 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                ImageView iv = (ImageView) findViewById(R.id.img_status);
+
+                iv.setImageResource(R.mipmap.ic_action_biking_team_a);
             }
         });
+
+        tv = (TextView) findViewById(R.id.txv_ShowSpeed);
 
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
@@ -190,24 +209,49 @@ public class StartActivity extends AppCompatActivity {
         // Note: Fitness.SensorsApi.findDataSources() requires the ACCESS_FINE_LOCATION permission.
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 // At least one datatype must be specified.
-                .setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE)
+                //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE)
+                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE, DataType.AGGREGATE_STEP_COUNT_DELTA,
+                        DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,
+                        DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_SPEED_SUMMARY,
+                        DataType.AGGREGATE_DISTANCE_DELTA, DataType.TYPE_LOCATION_TRACK,
+                        DataType.TYPE_SPEED, DataType.TYPE_WORKOUT_EXERCISE)
                 // Can specify whether data type is raw or derived.
-                .setDataSourceTypes(DataSource.TYPE_RAW)
+                .setDataSourceTypes(DataSource.TYPE_RAW, DataSource.TYPE_DERIVED)
                 .build())
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
                     public void onResult(DataSourcesResult dataSourcesResult) {
                         Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
-                            Log.i(TAG, "Data source found: " + dataSource.toString());
+                            //Log.i(TAG, "Data source found: " + dataSource.toString());
                             Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
 
                             //Let's register a listener to receive Activity data!
-                            if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)
-                                    && mListener == null) {
+                            if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
+                                    //&& mListener == null) {
                                 Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_LOCATION_SAMPLE);
+                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
+                                Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
+                                registerFitnessDataListener(dataSource,
+                                        DataType.TYPE_CYCLING_PEDALING_CADENCE);*/
+                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
+                                Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
+                                registerFitnessDataListener(dataSource,
+                                        DataType.TYPE_SPEED);
+                            } else if (dataSource.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
+                                Log.i(TAG, "Data source for AGGREGATE_SPEED_SUMMARY found!  Registering.");
+                                registerFitnessDataListener(dataSource,
+                                        DataType.AGGREGATE_SPEED_SUMMARY);*/
+                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
+                                Log.i(TAG, "Data source for STEP_COUNT found!  Registering.");
+                                registerFitnessDataListener(dataSource,
+                                        DataType.TYPE_STEP_COUNT_DELTA);
+                            } else if (dataSource.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
+                                Log.i(TAG, "Data source for AGGREGATE_DISTANCE_DELTA found!  Registering.");
+                                registerFitnessDataListener(dataSource,
+                                        DataType.AGGREGATE_DISTANCE_DELTA);*/
                             }
                         }
                     }
@@ -229,6 +273,8 @@ public class StartActivity extends AppCompatActivity {
                     Log.i(TAG, "Detected DataPoint field: " + field.getName());
                     Log.i(TAG, "Detected DataPoint value: " + val);
                 }
+                String tv_text = actTracker.getLocationText(getBaseContext(), dataPoint);
+                tv.setText(tv_text);
             }
         };
 
@@ -237,7 +283,7 @@ public class StartActivity extends AppCompatActivity {
                 new SensorRequest.Builder()
                         .setDataSource(dataSource) // Optional but recommended for custom data sets.
                         .setDataType(dataType) // Can't be omitted.
-                        .setSamplingRate(10, TimeUnit.SECONDS)
+                        .setSamplingRate(1, TimeUnit.SECONDS)
                         .build(),
                 mListener)
                 .setResultCallback(new ResultCallback<Status>() {
@@ -301,6 +347,7 @@ public class StartActivity extends AppCompatActivity {
         // Fixing this lint errors adds logic without benefit.
         // noinspection AndroidLintDeprecation
         logView.setTextAppearance(this, R.style.Log);
+        logView.setMovementMethod(new ScrollingMovementMethod());
 
         logView.setBackgroundColor(Color.WHITE);
         msgFilter.setNext(logView);
