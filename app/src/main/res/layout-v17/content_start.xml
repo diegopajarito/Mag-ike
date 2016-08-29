@@ -45,7 +45,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:columnCount="6"
-                android:rowCount="3">
+                android:rowCount="3"
+                android:id="@+id/grid_status">
 
                 <ImageView
                     android:layout_width="150dp"
@@ -165,6 +166,69 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/scrollview_status" />
 
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/image_credits"
+            android:id="@+id/grid_location"
+            android:columnCount="2"
+            android:rowCount="3"
+            android:layout_margin="20dp"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/latitude"
+                android:id="@+id/label_latitude"
+                android:layout_column="0"
+                android:layout_row="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/nodata"
+                android:id="@+id/value_latitude"
+                android:layout_column="1"
+                android:layout_row="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/longitude"
+                android:id="@+id/label_longitude"
+                android:layout_column="0"
+                android:layout_row="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/nodata"
+                android:id="@+id/value_longitude" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/altitude"
+                android:id="@+id/label_altitude"
+                android:layout_column="0"
+                android:layout_row="2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/nodata"
+                android:id="@+id/value_altitude"
+                android:layout_column="1"
+                android:layout_row="2" />
+        </GridLayout>
+
         <geoc.uji.esr7.mag_ike.common.logger.LogView
             android:layout_width="wrap_content"
             android:layout_height="100dp"
@@ -172,7 +236,7 @@
             android:layout_centerHorizontal="true"
             android:maxLines="20"
             android:textIsSelectable="true"
-            android:layout_below="@+id/image_credits" />
+            android:layout_below="@+id/grid_location" />
 
     </RelativeLayout>
 

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -246,6 +247,7 @@ public class StartActivity extends AppCompatActivity {
                             //Log.i(TAG, "Data source found: " + dataSource.toString());
                             Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
 
+
                             //Let's register a listener to receive Activity data!
                             if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
                                     //&& mListener == null) {
@@ -283,7 +285,7 @@ public class StartActivity extends AppCompatActivity {
      * Register a listener with the Sensors API for the provided {@link DataSource} and
      * {@link DataType} combo.
      */
-    private void registerFitnessDataListener(DataSource dataSource, DataType dataType) {
+    private void registerFitnessDataListener(DataSource dataSource, final DataType dataType) {
         // [START register_data_listener]
         mListener = new OnDataPointListener() {
             @Override
@@ -292,41 +294,36 @@ public class StartActivity extends AppCompatActivity {
                 float lon=-999;
                 float pres=-999;
                 float alt=-999;
-                for (Field field : dataPoint.getDataType().getFields()) {
-                    Value val = dataPoint.getValue(field);
-                    String name = field.getName();
-                    Log.i(TAG, "Detected DataPoint field: " + field.getName());
-                    Log.i(TAG, "Detected DataPoint value: " + val);
-                    if (name.equals("latitude") && val.isSet()){
-                        lat = Float.parseFloat(val.toString());
-                    } else if (name.equals("longitude") && val.isSet()){
-                        lon = Float.parseFloat(val.toString());
-                    } else if (name.equals("accuracy") && val.isSet()){
-                        pres = Float.parseFloat(val.toString());
-                    } else if (name.equals("altitude") && val.isSet()){
-                        alt = Float.parseFloat(val.toString());
+                float speed = -1;
+
+                if (dataType == DataType.TYPE_LOCATION_SAMPLE){
+                    Log.i(TAG, "Location data detected");
+                    for (Field field : dataPoint.getDataType().getFields()){
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        if (name.equals("latitude") && val.isSet()){
+                            lat = Float.parseFloat(val.toString());
+                        } else if (name.equals("longitude") && val.isSet()){
+                            lon = Float.parseFloat(val.toString());
+                        } else if (name.equals("accuracy") && val.isSet()){
+                            pres = Float.parseFloat(val.toString());
+                        } else if (name.equals("altitude") && val.isSet()){
+                            alt = Float.parseFloat(val.toString());
+                        }
+                        parseStoreGPSPoint(lat, lon, pres, alt);
+                        updateCoordinatesOnScreen(lat, lon, alt);
                     }
-
-                }
-
-
-                //log GPS track to Parse
-                ParseObject o = new ParseObject("Magike_GPS");
-                o.put("lat", lat);
-                o.put("lon", lon);
-                o.put("altitude", alt);
-                o.put("precision", pres);
-                o.put("time", new Date());
-                o.put("device", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-                o.saveEventually(new SaveCallback() {
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            Log.d("PARSE - SAVE OK", String.valueOf(e));
-                        } else {
-                            Log.d("PARSE - SAVE FAILED", String.valueOf(e));
+                } else if (dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY){
+                    Log.i(TAG, "Speed data detected");
+                    for (Field field: dataPoint.getDataType().getFields()) {
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        if (name.equals("speed") && val.isSet()){
+                            speed = Float.parseFloat(val.toString());
                         }
                     }
-                });
+                    updateSpeedOnScreen(speed);
+                }
 
 
 
@@ -510,4 +507,54 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+    // Methods related to Parse Options
+    **/
+
+    // Store GPS point
+    public void parseStoreGPSPoint(float lat ,float lon, float alt, float pres){
+        //log GPS track to Parse
+        ParseObject o = new ParseObject("Magike_GPS");
+        o.put("lat", lat);
+        o.put("lon", lon);
+        o.put("altitude", alt);
+        o.put("precision", pres);
+        o.put("time", new Date());
+        o.put("device", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+        o.saveEventually(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("PARSE - SAVE OK", String.valueOf(e));
+                } else {
+                    Log.d("PARSE - SAVE FAILED", String.valueOf(e));
+                }
+            }
+        });
+    }
+
+    // Store speed
+
+
+    /**
+     * Methods related to Interface Update
+     */
+
+    // Update coordinates on Screen
+    public void updateCoordinatesOnScreen(float lat, float lon, float alt){
+        TextView tv;
+        tv = (TextView) findViewById(R.id.value_latitude);
+        tv.setText(String.valueOf(lat));
+        tv = (TextView) findViewById(R.id.value_longitude);
+        tv.setText(String.valueOf(lon));
+        tv = (TextView) findViewById(R.id.value_altitude);
+        tv.setText(String.valueOf(alt));
+    }
+
+    // Update speed on Screen
+    public void updateSpeedOnScreen(float speed){
+        TextView tv;
+        tv = (TextView) findViewById(R.id.value_speed);
+        tv.setText(String.valueOf(speed));
+    }
 }

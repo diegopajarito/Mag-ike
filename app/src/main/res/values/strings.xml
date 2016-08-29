@@ -20,4 +20,8 @@
     <string name="contribution_nodata">Contribution data not available</string>
     <string name="contribution_units">Units</string>
     <string name="test" translatable="false">test</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="altitude">Altitude</string>
+    <string name="nodata" translatable="false">-</string>
 </resources>

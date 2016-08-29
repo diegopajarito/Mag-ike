@@ -16,4 +16,7 @@
     <string name="distance_nodata">Tu distancia no está disponible</string>
     <string name="contribution_nodata">Tu contribución no está disponible</string>
     <string name="contribution_units">Unidades</string>
+    <string name="altitude">Altitud</string>
+    <string name="longitude">Longitud</string>
+    <string name="latitude">Latitud</string>
 </resources>
