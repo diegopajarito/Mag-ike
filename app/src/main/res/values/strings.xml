@@ -19,4 +19,5 @@
     <string name="contribution_label">You\'ve contribuited with:</string>
     <string name="contribution_nodata">Contribution data not available</string>
     <string name="contribution_units">Units</string>
+    <string name="test" translatable="false">test</string>
 </resources>
