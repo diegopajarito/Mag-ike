@@ -10,6 +10,13 @@
     <string name="speed_units" translatable="false">Km/h</string>
     <string name="steps_label">Your steps:</string>
     <string name="coordinates">Coordinates:</string>
-    <string name="speed_nodata">Speed data not available.</string>
+    <string name="speed_nodata">Speed data not available</string>
     <string name="coordinates_notfound" translatable="false">-</string>
+    <string name="credits_tree_img">Icons made by Freepik from www.flaticon.com (CC 3.0)</string>
+    <string name="distance_label">Your distance:</string>
+    <string name="distance_nodata">Distance data not available</string>
+    <string name="distance_units" translatable="false">Km</string>
+    <string name="contribution_label">You\'ve contribuited with:</string>
+    <string name="contribution_nodata">Contribution data not available</string>
+    <string name="contribution_units">Units</string>
 </resources>

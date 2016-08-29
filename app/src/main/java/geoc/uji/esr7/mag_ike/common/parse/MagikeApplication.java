@@ -20,7 +20,7 @@ public class MagikeApplication extends Application{
         // Add your initialization code here
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
                 .applicationId("enableDashboard")
-                .server("Path_to_server")   // '/' important after 'parse'
+                .server("http://150.128.97.150:1337/parse")   // '/' important after 'parse' //Should be changed for a String from XML file
                 .build());
 
 

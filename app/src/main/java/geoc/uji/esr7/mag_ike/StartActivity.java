@@ -94,9 +94,7 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                ImageView iv = (ImageView) findViewById(R.id.img_status);
 
-                iv.setImageResource(R.mipmap.ic_action_biking_team_a);
             }
         });
 

@@ -10,4 +10,10 @@
     <string name="steps_label">Els teus passos:</string>
     <string name="coordinates">Coordenades:</string>
     <string name="speed_nodata">La teva velocitat no està disponible</string>
+    <string name="credits_tree_img">Icones fets per Freepik a www.flaticon.com (CC 3.0)</string>
+    <string name="distance_label">La teva distància</string>
+    <string name="distance_nodata">La teva distància no està disponible</string>
+    <string name="contribution_label">has contribuït amb:</string>
+    <string name="contribution_nodata">La teva contribució no està disponible</string>
+    <string name="contribution_units">Unitats</string>
 </resources>
