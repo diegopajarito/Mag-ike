@@ -256,14 +256,14 @@ public class StartActivity extends AppCompatActivity {
                                 Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_CYCLING_PEDALING_CADENCE);*/
-                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
                                 Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_SPEED);
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                                 Log.i(TAG, "Data source for AGGREGATE_SPEED_SUMMARY found!  Registering.");
                                 registerFitnessDataListener(dataSource,
-                                        DataType.AGGREGATE_SPEED_SUMMARY);*/
+                                        DataType.AGGREGATE_SPEED_SUMMARY);
                             /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
                                 Log.i(TAG, "Data source for STEP_COUNT found!  Registering.");
                                 registerFitnessDataListener(dataSource,
