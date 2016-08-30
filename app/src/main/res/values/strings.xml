@@ -15,13 +15,13 @@
     <string name="credits_tree_img">Icons made by Freepik from www.flaticon.com (CC 3.0)</string>
     <string name="distance_label">Your distance:</string>
     <string name="distance_nodata">Distance data not available</string>
-    <string name="distance_units" translatable="false">Km</string>
+    <string name="distance_units" translatable="false">m</string>
     <string name="contribution_label">You\'ve contribuited with:</string>
     <string name="contribution_nodata">Contribution data not available</string>
     <string name="contribution_units">Units</string>
     <string name="test" translatable="false">test</string>
-    <string name="latitude">Latitude</string>
-    <string name="longitude">Longitude</string>
-    <string name="altitude">Altitude</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="altitude">Altitude:</string>
     <string name="nodata" translatable="false">-</string>
 </resources>

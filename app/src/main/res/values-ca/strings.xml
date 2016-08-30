@@ -16,7 +16,7 @@
     <string name="contribution_label">has contribuït amb:</string>
     <string name="contribution_nodata">La teva contribució no està disponible</string>
     <string name="contribution_units">Unitats</string>
-    <string name="altitude">Altitud</string>
-    <string name="longitude">Longitud</string>
-    <string name="latitude">Latitud</string>
+    <string name="altitude">Altitud:</string>
+    <string name="longitude">Longitud:</string>
+    <string name="latitude">Latitud:</string>
 </resources>

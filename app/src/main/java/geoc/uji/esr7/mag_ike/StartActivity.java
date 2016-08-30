@@ -84,7 +84,7 @@ public class StartActivity extends AppCompatActivity {
 
     // A counter for collected points
     int counter_points = 0;
-
+    float accumulated_distance = 0;
 
 
     @Override
@@ -133,7 +133,7 @@ public class StartActivity extends AppCompatActivity {
                     Log.d("Hooray", "Hooray! The user is logged - Mag-ike.");
                 } else {
                     // Signup failed. Look at the ParseException to see what happened.
-                    Log.d("Signup failed", "Signup failed - Mag-ike");
+                    Log.d("Signup failed", "Signup failed - Mag-ike - " + e.toString());
                 }
             }
         });
@@ -399,7 +399,7 @@ public class StartActivity extends AppCompatActivity {
                         }
                     }
                     // Store Data into server and update interface with new values
-                    //parseStoreSpeedPoint(lat, lon, pres, alt);
+                    parseStoreSpeedPoint(distance);
                     updateDistanceOnScreen(distance);
                 }
             };
@@ -704,6 +704,21 @@ public class StartActivity extends AppCompatActivity {
     }
 
     // Store speed
+    public void parseStoreSpeedPoint(float speed){
+        ParseObject o = new ParseObject("Magike_Speed");
+        o.put("speed", speed);
+        o.put("time", new Date());
+        o.put("device", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+        o.saveEventually(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("PARSE - SAVE OK", String.valueOf(e));
+                } else {
+                    Log.d("PARSE - SAVE FAILED", String.valueOf(e));
+                }
+            }
+        });
+    }
 
 
     /**
@@ -734,9 +749,10 @@ public class StartActivity extends AppCompatActivity {
 
     // Update distance on Screen
     public void updateDistanceOnScreen(float distance){
+        accumulated_distance += distance;
         TextView tv;
         tv = (TextView) findViewById(R.id.value_distance);
-        tv.setText(String.valueOf(distance));
+        tv.setText(String.valueOf(accumulated_distance));
         updateCollectedPoints();
     }
 

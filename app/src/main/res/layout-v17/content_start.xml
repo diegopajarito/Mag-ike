@@ -24,7 +24,6 @@
         android:textAlignment="center"
         android:textColor="@color/colorBackground"
         android:textIsSelectable="true"
-        android:textSize="@dimen/margin_medium"
         android:id="@+id/txv_ShowSpeed"
         android:text="@string/activity" />
 
