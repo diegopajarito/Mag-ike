@@ -310,9 +310,9 @@ public class StartActivity extends AppCompatActivity {
                         } else if (name.equals("altitude") && val.isSet()){
                             alt = Float.parseFloat(val.toString());
                         }
-                        parseStoreGPSPoint(lat, lon, pres, alt);
-                        updateCoordinatesOnScreen(lat, lon, alt);
                     }
+                    parseStoreGPSPoint(lat, lon, pres, alt);
+                    updateCoordinatesOnScreen(lat, lon, alt);
                 } else if (dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY){
                     Log.i(TAG, "Speed data detected");
                     for (Field field: dataPoint.getDataType().getFields()) {
@@ -326,11 +326,6 @@ public class StartActivity extends AppCompatActivity {
                 }
 
 
-
-
-
-                String tv_text = actTracker.getLocationText(getBaseContext(), dataPoint);
-                //tv.setText(tv_text);
             }
         };
 
@@ -544,7 +539,8 @@ public class StartActivity extends AppCompatActivity {
     public void updateCoordinatesOnScreen(float lat, float lon, float alt){
         TextView tv;
         tv = (TextView) findViewById(R.id.value_latitude);
-        tv.setText(String.valueOf(lat));
+        String str = String.valueOf(lat);
+        tv.setText(str);
         tv = (TextView) findViewById(R.id.value_longitude);
         tv.setText(String.valueOf(lon));
         tv = (TextView) findViewById(R.id.value_altitude);
