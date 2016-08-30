@@ -29,6 +29,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSource;
@@ -44,6 +45,8 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.w3c.dom.Text;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -64,16 +67,23 @@ public class StartActivity extends AppCompatActivity {
 
     private TextView tv;
 
+
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     // [START mListener_variable_reference]
     // Need to hold a reference to this listener, as it's passed into the "unregister"
     // method in order to stop all sensors from sending data to this listener.
-    private OnDataPointListener mListener;
+    // Added multiple listeners, one for each variable to measure
+    private OnDataPointListener locationListener;
+    private OnDataPointListener speedListener;
+    private OnDataPointListener distanceListener;
     // [END mListener_variable_reference]
 
     // The activity Tracker
     private ActivityTracker actTracker = new ActivityTracker();
+
+    // A counter for collected points
+    int counter_points = 0;
 
 
 
@@ -98,6 +108,7 @@ public class StartActivity extends AppCompatActivity {
 
             }
         });
+
 
         tv = (TextView) findViewById(R.id.txv_ShowSpeed);
 
@@ -248,7 +259,8 @@ public class StartActivity extends AppCompatActivity {
                             Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
 
 
-                            //Let's register a listener to receive Activity data!
+                            //every type of data will register a listener
+                                // Listener for Location Data
                             if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
                                     //&& mListener == null) {
                                 Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
@@ -258,6 +270,7 @@ public class StartActivity extends AppCompatActivity {
                                 Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_CYCLING_PEDALING_CADENCE);*/
+                                // Listener for Speed Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
                                 Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
                                 registerFitnessDataListener(dataSource,
@@ -269,11 +282,12 @@ public class StartActivity extends AppCompatActivity {
                             /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
                                 Log.i(TAG, "Data source for STEP_COUNT found!  Registering.");
                                 registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_STEP_COUNT_DELTA);
+                                        DataType.TYPE_STEP_COUNT_DELTA);*/
+                                // Listener for Distance Data
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
                                 Log.i(TAG, "Data source for AGGREGATE_DISTANCE_DELTA found!  Registering.");
                                 registerFitnessDataListener(dataSource,
-                                        DataType.AGGREGATE_DISTANCE_DELTA);*/
+                                        DataType.AGGREGATE_DISTANCE_DELTA);
                             }
                         }
                     }
@@ -286,6 +300,142 @@ public class StartActivity extends AppCompatActivity {
      * {@link DataType} combo.
      */
     private void registerFitnessDataListener(DataSource dataSource, final DataType dataType) {
+        // [START register_data_listener]
+        if (dataType == DataType.TYPE_LOCATION_SAMPLE){
+            locationListener = new OnDataPointListener() {
+                @Override
+                public void onDataPoint(DataPoint dataPoint) {
+                    // Location variables no-data vales
+                    float lat=-999;
+                    float lon=-999;
+                    float pres=-999;
+                    float alt=-999;
+                    // Get Location Variables and change no-data values
+                    for (Field field : dataPoint.getDataType().getFields()){
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        if (name.equals("latitude") && val.isSet()){
+                            lat = Float.parseFloat(val.toString());
+                        } else if (name.equals("longitude") && val.isSet()){
+                            lon = Float.parseFloat(val.toString());
+                        } else if (name.equals("accuracy") && val.isSet()){
+                            pres = Float.parseFloat(val.toString());
+                        } else if (name.equals("altitude") && val.isSet()){
+                            alt = Float.parseFloat(val.toString());
+                        }
+                    }
+                    // Store Data into server and update interface with new values
+                    parseStoreGPSPoint(lat, lon, pres, alt);
+                    updateCoordinatesOnScreen(lat, lon, alt);
+                }
+            };
+            // Register listener with the sensor API
+            Fitness.SensorsApi.add(
+                    mClient,
+                    new SensorRequest.Builder()
+                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                            .setDataType(dataType) // Can't be omitted.
+                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .build(),
+                    locationListener)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Location Listener registered!");
+                            } else {
+                                Log.i(TAG, "Location Listener not registered.");
+                            }
+                        }
+                    });
+        } else if (dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY){
+            speedListener = new OnDataPointListener() {
+                @Override
+                public void onDataPoint(DataPoint dataPoint) {
+                    // Speed variables no-data vales
+                    float speed = -999;
+                    for (Field field : dataPoint.getDataType().getFields()) {
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        if (name.equals("speed") && val.isSet()) {
+                            speed = Float.parseFloat(val.toString());
+                        }
+                    }
+                    // Store Data into server and update interface with new values
+                    //parseStoreSpeedPoint(lat, lon, pres, alt);
+                    updateSpeedOnScreen(speed);
+                }
+            };
+            // Register listener with the sensor API
+            Fitness.SensorsApi.add(
+                    mClient,
+                    new SensorRequest.Builder()
+                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                            .setDataType(dataType) // Can't be omitted.
+                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .build(),
+                    speedListener)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Speed Listener registered!");
+                            } else {
+                                Log.i(TAG, "Speed Listener not registered.");
+                            }
+                        }
+                    });
+        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA ){
+            distanceListener= new OnDataPointListener() {
+                @Override
+                public void onDataPoint(DataPoint dataPoint) {
+                    // Distance variables no-data vales
+                    float distance = -999;
+                    for (Field field : dataPoint.getDataType().getFields()) {
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        if (name.equals("distance") && val.isSet()) {
+                            distance = Float.parseFloat(val.toString());
+                        }
+                    }
+                    // Store Data into server and update interface with new values
+                    //parseStoreSpeedPoint(lat, lon, pres, alt);
+                    updateDistanceOnScreen(distance);
+                }
+            };
+            // Register listener with the sensor API
+            Fitness.SensorsApi.add(
+                    mClient,
+                    new SensorRequest.Builder()
+                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                            .setDataType(dataType) // Can't be omitted.
+                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .build(),
+                    distanceListener)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Distance Listener registered!");
+                            } else {
+                                Log.i(TAG, "Distance Listener not registered.");
+                            }
+                        }
+                    });
+        }
+
+    }
+
+
+    /**
+     *
+     * To consider as an intial version of listener
+     */
+    /**
+     * Register a listener with the Sensors API for the provided {@link DataSource} and
+     * {@link DataType} combo.
+     */
+    /*private void registerSpeedDataListener(DataSource dataSource, final DataType dataType) {
         // [START register_data_listener]
         mListener = new OnDataPointListener() {
             @Override
@@ -348,35 +498,59 @@ public class StartActivity extends AppCompatActivity {
                     }
                 });
         // [END register_data_listener]
-    }
+    } */
+
+
+
+
+
+
+
 
     /**
      * Unregister the listener with the Sensors API.
      */
-    private void unregisterFitnessDataListener() {
-        if (mListener == null) {
-            // This code only activates one listener at a time.  If there's no listener, there's
-            // nothing to unregister.
-            return;
-        }
+    private void unregisterFitnessDataListener(final DataType dataType) {
 
         // [START unregister_data_listener]
         // Waiting isn't actually necessary as the unregister call will complete regardless,
         // even if called from within onStop, but a callback can still be added in order to
         // inspect the results.
-        Fitness.SensorsApi.remove(
-                mClient,
-                mListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Listener was removed!");
-                        } else {
-                            Log.i(TAG, "Listener was not removed.");
-                        }
+        if (dataType == DataType.TYPE_LOCATION_SAMPLE && locationListener != null){
+            Fitness.SensorsApi.remove(mClient, locationListener).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i(TAG, "Location Listener was removed!");
+                    } else {
+                        Log.i(TAG, "Location Listener was not removed.");
                     }
-                });
+                }
+            });
+        } else if ((dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY) && speedListener != null){
+            Fitness.SensorsApi.remove(mClient, speedListener).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i(TAG, "Speed Listener was removed!");
+                    } else {
+                        Log.i(TAG, "Speed Listener was not removed.");
+                    }
+                }
+            });
+        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA && distanceListener != null){
+            Fitness.SensorsApi.remove(mClient, distanceListener).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i(TAG, "Distance Listener was removed!");
+                    } else {
+                        Log.i(TAG, "Distance Listener was not removed.");
+                    }
+                }
+            });
+        }
+
         // [END unregister_data_listener]
     }
 
@@ -520,6 +694,7 @@ public class StartActivity extends AppCompatActivity {
         o.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {
+
                     Log.d("PARSE - SAVE OK", String.valueOf(e));
                 } else {
                     Log.d("PARSE - SAVE FAILED", String.valueOf(e));
@@ -537,14 +712,16 @@ public class StartActivity extends AppCompatActivity {
 
     // Update coordinates on Screen
     public void updateCoordinatesOnScreen(float lat, float lon, float alt){
-        TextView tv;
-        tv = (TextView) findViewById(R.id.value_latitude);
-        String str = String.valueOf(lat);
-        tv.setText(str);
-        tv = (TextView) findViewById(R.id.value_longitude);
-        tv.setText(String.valueOf(lon));
-        tv = (TextView) findViewById(R.id.value_altitude);
-        tv.setText(String.valueOf(alt));
+
+        View content_view = findViewById(R.id.start_activity_view);
+        TextView tv_value_latitude = (TextView) content_view.findViewById(R.id.value_latitude);
+        tv_value_latitude.setText(String.valueOf(lat));
+        TextView tv_value_longitude = (TextView) content_view.findViewById(R.id.value_longitude);
+        tv_value_longitude.setText(String.valueOf(lon));
+        TextView tv_value_altitude = (TextView) content_view.findViewById(R.id.value_altitude);
+        tv_value_altitude.setText(String.valueOf(alt));
+
+        updateCollectedPoints();
     }
 
     // Update speed on Screen
@@ -552,5 +729,19 @@ public class StartActivity extends AppCompatActivity {
         TextView tv;
         tv = (TextView) findViewById(R.id.value_speed);
         tv.setText(String.valueOf(speed));
+        updateCollectedPoints();
+    }
+
+    // Update distance on Screen
+    public void updateDistanceOnScreen(float distance){
+        TextView tv;
+        tv = (TextView) findViewById(R.id.value_distance);
+        tv.setText(String.valueOf(distance));
+        updateCollectedPoints();
+    }
+
+    public void updateCollectedPoints(){
+        TextView tv_contribution = (TextView) findViewById(R.id.value_contribution);
+        tv_contribution.setText(String.valueOf(counter_points++));
     }
 }
