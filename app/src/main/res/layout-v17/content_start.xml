@@ -228,6 +228,7 @@
                 android:id="@+id/value_altitude"
                 android:layout_column="1"
                 android:layout_row="2" />
+
         </GridLayout>
 
         <geoc.uji.esr7.mag_ike.common.logger.LogView

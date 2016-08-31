@@ -266,10 +266,11 @@ public class StartActivity extends AppCompatActivity {
                                 Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_LOCATION_SAMPLE);
-                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
+                                // Listener for Cycling activity
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
                                 Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
                                 registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_CYCLING_PEDALING_CADENCE);*/
+                                        DataType.TYPE_CYCLING_PEDALING_CADENCE);
                                 // Listener for Speed Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
                                 Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
@@ -401,6 +402,43 @@ public class StartActivity extends AppCompatActivity {
                     // Store Data into server and update interface with new values
                     parseStoreSpeedPoint(distance);
                     updateDistanceOnScreen(distance);
+                }
+            };
+            // Register listener with the sensor API
+            Fitness.SensorsApi.add(
+                    mClient,
+                    new SensorRequest.Builder()
+                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                            .setDataType(dataType) // Can't be omitted.
+                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .build(),
+                    distanceListener)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Distance Listener registered!");
+                            } else {
+                                Log.i(TAG, "Distance Listener not registered.");
+                            }
+                        }
+                    });
+        } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE ){
+            distanceListener= new OnDataPointListener() {
+                @Override
+                public void onDataPoint(DataPoint dataPoint) {
+                    // Distance variables no-data vales
+                    float pedaling = -999;
+                    for (Field field : dataPoint.getDataType().getFields()) {
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        //if (name.equals("distance") && val.isSet()) {
+                        pedaling = Float.parseFloat(val.toString());
+                        //}
+                    }
+                    // Store Data into server and update interface with new values
+                    //parseStoreSpeedPoint(pedaling);
+                    updateCyclingOnScreen(pedaling);
                 }
             };
             // Register listener with the sensor API
@@ -759,5 +797,11 @@ public class StartActivity extends AppCompatActivity {
     public void updateCollectedPoints(){
         TextView tv_contribution = (TextView) findViewById(R.id.value_contribution);
         tv_contribution.setText(String.valueOf(counter_points++));
+    }
+
+    public void updateCyclingOnScreen(float cycling){
+        TextView tv_contribution = (TextView) findViewById(R.id.value_cycling);
+        tv_contribution.setText(String.valueOf(cycling));
+
     }
 }
