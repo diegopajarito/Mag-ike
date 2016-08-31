@@ -266,10 +266,11 @@ public class StartActivity extends AppCompatActivity {
                                 Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_LOCATION_SAMPLE);
-                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
+                                //  Listener for Cycling Data
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
                                 Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
                                 registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_CYCLING_PEDALING_CADENCE);*/
+                                        DataType.TYPE_CYCLING_PEDALING_CADENCE);
                                 // Listener for Speed Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
                                 Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
@@ -422,6 +423,43 @@ public class StartActivity extends AppCompatActivity {
                             }
                         }
                     });
+        } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE ){
+            distanceListener= new OnDataPointListener() {
+                @Override
+                public void onDataPoint(DataPoint dataPoint) {
+                    // Distance variables no-data vales
+                    float cadence = -999;
+                    for (Field field : dataPoint.getDataType().getFields()) {
+                        Value val = dataPoint.getValue(field);
+                        String name = field.getName();
+                        //if (name.equals("distance") && val.isSet()) {
+                            cadence = Float.parseFloat(val.toString());
+                        //}
+                    }
+                    // Store Data into server and update interface with new values
+                    //parseStoreSpeedPoint(cadence);
+                    updateCyclingOnScreen(cadence);
+                }
+            };
+            // Register listener with the sensor API
+            Fitness.SensorsApi.add(
+                    mClient,
+                    new SensorRequest.Builder()
+                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                            .setDataType(dataType) // Can't be omitted.
+                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .build(),
+                    distanceListener)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Cycling Listener registered!");
+                            } else {
+                                Log.i(TAG, "Cycling Listener not registered.");
+                            }
+                        }
+                    });
         }
 
     }
@@ -429,7 +467,7 @@ public class StartActivity extends AppCompatActivity {
 
     /**
      *
-     * To consider as an intial version of listener
+     * To consider as an initial version of listener
      */
     /**
      * Register a listener with the Sensors API for the provided {@link DataSource} and
@@ -759,5 +797,10 @@ public class StartActivity extends AppCompatActivity {
     public void updateCollectedPoints(){
         TextView tv_contribution = (TextView) findViewById(R.id.value_contribution);
         tv_contribution.setText(String.valueOf(counter_points++));
+    }
+
+    public void updateCyclingOnScreen(float cycling){
+        TextView tv_contribution = (TextView) findViewById(R.id.value_cycling);
+        tv_contribution.setText(String.valueOf(cycling));
     }
 }
