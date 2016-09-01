@@ -77,6 +77,7 @@ public class StartActivity extends AppCompatActivity {
     private OnDataPointListener locationListener;
     private OnDataPointListener speedListener;
     private OnDataPointListener distanceListener;
+    private OnDataPointListener cyclingListener;
     // [END mListener_variable_reference]
 
     // The activity Tracker
@@ -266,7 +267,7 @@ public class StartActivity extends AppCompatActivity {
                                 Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_LOCATION_SAMPLE);
-                                // Listener for Cycling activity
+                                //  Listener for Cycling Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
                                 Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
                                 registerFitnessDataListener(dataSource,
@@ -424,21 +425,21 @@ public class StartActivity extends AppCompatActivity {
                         }
                     });
         } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE ){
-            distanceListener= new OnDataPointListener() {
+            cyclingListener= new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
-                    float pedaling = -999;
+                    float cadence = -999;
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
                         String name = field.getName();
                         //if (name.equals("distance") && val.isSet()) {
-                        pedaling = Float.parseFloat(val.toString());
+                            cadence = Float.parseFloat(val.toString());
                         //}
                     }
                     // Store Data into server and update interface with new values
-                    //parseStoreSpeedPoint(pedaling);
-                    updateCyclingOnScreen(pedaling);
+                    //parseStoreSpeedPoint(cadence);
+                    updateCyclingOnScreen(cadence);
                 }
             };
             // Register listener with the sensor API
@@ -454,9 +455,9 @@ public class StartActivity extends AppCompatActivity {
                         @Override
                         public void onResult(Status status) {
                             if (status.isSuccess()) {
-                                Log.i(TAG, "Distance Listener registered!");
+                                Log.i(TAG, "Cycling Listener registered!");
                             } else {
-                                Log.i(TAG, "Distance Listener not registered.");
+                                Log.i(TAG, "Cycling Listener not registered.");
                             }
                         }
                     });
@@ -467,7 +468,7 @@ public class StartActivity extends AppCompatActivity {
 
     /**
      *
-     * To consider as an intial version of listener
+     * To consider as an initial version of listener
      */
     /**
      * Register a listener with the Sensors API for the provided {@link DataSource} and
@@ -584,6 +585,17 @@ public class StartActivity extends AppCompatActivity {
                         Log.i(TAG, "Distance Listener was removed!");
                     } else {
                         Log.i(TAG, "Distance Listener was not removed.");
+                    }
+                }
+            });
+        } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE){
+            Fitness.SensorsApi.remove(mClient, cyclingListener).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i(TAG, "Cycling Listener was removed!");
+                    } else {
+                        Log.i(TAG, "Cycling Listener was not removed.");
                     }
                 }
             });
@@ -802,6 +814,5 @@ public class StartActivity extends AppCompatActivity {
     public void updateCyclingOnScreen(float cycling){
         TextView tv_contribution = (TextView) findViewById(R.id.value_cycling);
         tv_contribution.setText(String.valueOf(cycling));
-
     }
 }
