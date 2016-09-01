@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Scroller;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
@@ -106,8 +107,15 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                Intent intent = new Intent();
-                startActivity(intent);
+
+                try{
+                    //Intent intent = new Intent();
+                    Intent intent = new Intent(StartActivity.this, SessionActivity.class);
+                    startActivity(intent);
+                } catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "Error: " + e.toString(), Toast.LENGTH_LONG).show();
+                }
+
             }
 
 
