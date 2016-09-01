@@ -77,6 +77,7 @@ public class StartActivity extends AppCompatActivity {
     private OnDataPointListener locationListener;
     private OnDataPointListener speedListener;
     private OnDataPointListener distanceListener;
+    private OnDataPointListener cyclingListener;
     // [END mListener_variable_reference]
 
     // The activity Tracker
@@ -424,7 +425,7 @@ public class StartActivity extends AppCompatActivity {
                         }
                     });
         } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE ){
-            distanceListener= new OnDataPointListener() {
+            cyclingListener= new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
@@ -584,6 +585,17 @@ public class StartActivity extends AppCompatActivity {
                         Log.i(TAG, "Distance Listener was removed!");
                     } else {
                         Log.i(TAG, "Distance Listener was not removed.");
+                    }
+                }
+            });
+        } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE){
+            Fitness.SensorsApi.remove(mClient, cyclingListener).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    if (status.isSuccess()) {
+                        Log.i(TAG, "Cycling Listener was removed!");
+                    } else {
+                        Log.i(TAG, "Cycling Listener was not removed.");
                     }
                 }
             });
