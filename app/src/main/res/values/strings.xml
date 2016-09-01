@@ -25,4 +25,8 @@
     <string name="altitude">Altitude:</string>
     <string name="nodata" translatable="false">-</string>
     <string name="cycling" translatable="false">Cycling:</string>
+    <string name="title_activity_session">SessionActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
