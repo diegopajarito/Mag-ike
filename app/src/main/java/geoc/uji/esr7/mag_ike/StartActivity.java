@@ -96,33 +96,23 @@ public class StartActivity extends AppCompatActivity {
         // Put application specific code here.
 
 
-        setContentView(R.layout.activity_start);
+        setContentView(R.layout.activity_session);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
+        btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
 
-                try{
-                    //Intent intent = new Intent();
-                    Intent intent = new Intent(StartActivity.this, SessionActivity.class);
-                    startActivity(intent);
-                } catch (Exception e){
-                    Toast.makeText(getApplicationContext(), "Error: " + e.toString(), Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
 
             }
 
 
         });
 
-
-        tv = (TextView) findViewById(R.id.txv_ShowSpeed);
 
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.

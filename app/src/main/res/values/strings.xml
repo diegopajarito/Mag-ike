@@ -6,27 +6,38 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality</string>
     <string name="settings">Settings</string>
     <string name="activity">Your activity</string>
-    <string name="speed_label">Your speed:</string>
+    <string name="speed_label">Speed:</string>
     <string name="speed_units" translatable="false">Km/h</string>
     <string name="steps_label">Your steps:</string>
     <string name="coordinates">Coordinates:</string>
     <string name="speed_nodata">Speed data not available</string>
     <string name="coordinates_notfound" translatable="false">-</string>
-    <string name="credits_tree_img">Icons made by Freepik from www.flaticon.com (CC 3.0)</string>
-    <string name="distance_label">Your distance:</string>
+    <string name="credits_icons_autor">Icons made by Vectors Market </string>
+    <string name="distance_label">Distance:</string>
     <string name="distance_nodata">Distance data not available</string>
     <string name="distance_units" translatable="false">m</string>
-    <string name="contribution_label">You\'ve contribuited with:</string>
+    <string name="contribution_label">Contribution:</string>
     <string name="contribution_nodata">Contribution data not available</string>
     <string name="contribution_units">Units</string>
     <string name="test" translatable="false">test</string>
     <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
     <string name="altitude">Altitude:</string>
-    <string name="nodata" translatable="false">-</string>
+    <string name="nodata" translatable="false">~</string>
     <string name="cycling" translatable="false">Cycling:</string>
     <string name="title_activity_session">SessionActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="avatar_label">ESR07 Green Living Actions</string>
+    <string name="avatar_email" translatable="false">esr07@geo-c.eu</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_play">Play</string>
+    <string name="menu_board">Leaderboard</string>
+    <string name="menu_share">Share</string>
+    <string name="credits_icons_licence">Is licensed by CC 3.0 BY</string>
+    <string name="credits_icons_source">From www.flaticon.com</string>
+    <string name="error_function_not_available">Sorry, you can\'t do this yet.</string>
 </resources>
