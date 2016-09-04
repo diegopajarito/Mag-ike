@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -61,7 +62,7 @@ import geoc.uji.esr7.mag_ike.common.tracker.TrackSpeed;
 
 public class StartActivity extends AppCompatActivity {
 
-    public static final String TAG = "BasicSensorsApi";
+    public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
@@ -88,6 +89,9 @@ public class StartActivity extends AppCompatActivity {
     int counter_points = 0;
     float accumulated_distance = 0;
 
+    // A status object
+    geoc.uji.esr7.mag_ike.common.status.Status game_status;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +110,11 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                final MediaPlayer mp = MediaPlayer.create(StartActivity.this, R.raw.sound_bell);
+
                 Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
+
+                mp.start();
 
             }
 
@@ -139,6 +147,7 @@ public class StartActivity extends AppCompatActivity {
                 }
             }
         });
+        game_status = new geoc.uji.esr7.mag_ike.common.status.Status(getResources());
 
     }
 
@@ -193,7 +202,7 @@ public class StartActivity extends AppCompatActivity {
                             new GoogleApiClient.ConnectionCallbacks() {
                                 @Override
                                 public void onConnected(Bundle bundle) {
-                                    Log.i(TAG, "Connected!!!");
+                                    Log.i(TAG, "Connected to Google Fit!!!");
                                     // Now you can make calls to the Fitness APIs.
                                     findFitnessDataSources();
                                 }
@@ -203,11 +212,11 @@ public class StartActivity extends AppCompatActivity {
                                     // If your connection to the sensor gets lost at some point,
                                     // you'll be able to determine the reason and react to it here.
                                     if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-                                        Log.i(TAG, "Connection lost.  Cause: Network Lost.");
+                                        Log.i(TAG, "Connection to Google Fit lost.  Cause: Network Lost.");
                                     } else if (i
                                             == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
                                         Log.i(TAG,
-                                                "Connection lost.  Reason: Service Disconnected");
+                                                "Connection to Google Fit lost.  Reason: Service Disconnected");
                                     }
                                 }
                             }
@@ -255,31 +264,31 @@ public class StartActivity extends AppCompatActivity {
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
                     public void onResult(DataSourcesResult dataSourcesResult) {
-                        Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
+                        //Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
                             //Log.i(TAG, "Data source found: " + dataSource.toString());
-                            Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
+                            //Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
 
 
                             //every type of data will register a listener
                                 // Listener for Location Data
                             if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
                                     //&& mListener == null) {
-                                Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
+                                //Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_LOCATION_SAMPLE);
                                 //  Listener for Cycling Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
-                                Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
+                                //Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_CYCLING_PEDALING_CADENCE);
                                 // Listener for Speed Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
-                                Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
+                                //Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.TYPE_SPEED);
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
-                                Log.i(TAG, "Data source for AGGREGATE_SPEED_SUMMARY found!  Registering.");
+                                //Log.i(TAG, "Data source for AGGREGATE_SPEED_SUMMARY found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.AGGREGATE_SPEED_SUMMARY);
                             /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
@@ -288,7 +297,7 @@ public class StartActivity extends AppCompatActivity {
                                         DataType.TYPE_STEP_COUNT_DELTA);*/
                                 // Listener for Distance Data
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
-                                Log.i(TAG, "Data source for AGGREGATE_DISTANCE_DELTA found!  Registering.");
+                                //Log.i(TAG, "Data source for AGGREGATE_DISTANCE_DELTA found!  Registering.");
                                 registerFitnessDataListener(dataSource,
                                         DataType.AGGREGATE_DISTANCE_DELTA);
                             }
@@ -309,27 +318,30 @@ public class StartActivity extends AppCompatActivity {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Location variables no-data vales
-                    float lat=-999;
-                    float lon=-999;
-                    float pres=-999;
-                    float alt=-999;
+                    float lat, lon, pres, alt=R.string.nodata;
+                    lat = lon = pres = alt = R.string.nodata;
+                    TextView tv;
+                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     // Get Location Variables and change no-data values
                     for (Field field : dataPoint.getDataType().getFields()){
                         Value val = dataPoint.getValue(field);
                         String name = field.getName();
                         if (name.equals("latitude") && val.isSet()){
                             lat = Float.parseFloat(val.toString());
+                            updateTextViewValueOnUiThread(R.id.value_latitude,val.toString());
                         } else if (name.equals("longitude") && val.isSet()){
                             lon = Float.parseFloat(val.toString());
+                            updateTextViewValueOnUiThread(R.id.value_longitude,val.toString());
                         } else if (name.equals("accuracy") && val.isSet()){
                             pres = Float.parseFloat(val.toString());
                         } else if (name.equals("altitude") && val.isSet()){
                             alt = Float.parseFloat(val.toString());
+                            updateTextViewValueOnUiThread(R.id.value_altitude,val.toString());
                         }
                     }
                     // Store Data into server and update interface with new values
-                    parseStoreGPSPoint(lat, lon, pres, alt);
-                    updateCoordinatesOnScreen(lat, lon, alt);
+                    game_status.saveStatus_Eventually(device,lat,lon,alt,pres);
+                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
             // Register listener with the sensor API
@@ -356,17 +368,21 @@ public class StartActivity extends AppCompatActivity {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Speed variables no-data vales
-                    float speed = -999;
+                    float speed = R.string.nodata;
+                    String name = "";
+                    TextView tv;
+                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
-                        String name = field.getName();
+                        name = field.getName();
                         if (name.equals("speed") && val.isSet()) {
                             speed = Float.parseFloat(val.toString());
+                            updateTextViewValueOnUiThread(R.id.value_speed,val.toString());
                         }
                     }
                     // Store Data into server and update interface with new values
-                    //parseStoreSpeedPoint(lat, lon, pres, alt);
-                    updateSpeedOnScreen(speed);
+                    game_status.saveStatus_Eventually(device,name,speed);
+                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
             // Register listener with the sensor API
@@ -393,17 +409,22 @@ public class StartActivity extends AppCompatActivity {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
-                    float distance = -999;
+                    float distance = Float.valueOf(R.string.value_nodata);
+                    String name ="";
+                    TextView tv;
+                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
-                        String name = field.getName();
+                        name = field.getName();
                         if (name.equals("distance") && val.isSet()) {
                             distance = Float.parseFloat(val.toString());
+                            accumulated_distance += distance;
+                            updateTextViewValueOnUiThread(R.id.value_distance,String.valueOf(accumulated_distance));
                         }
                     }
                     // Store Data into server and update interface with new values
-                    parseStoreSpeedPoint(distance);
-                    updateDistanceOnScreen(distance);
+                    game_status.saveStatus_Eventually(device,name,distance);
+                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
             // Register listener with the sensor API
@@ -429,18 +450,21 @@ public class StartActivity extends AppCompatActivity {
             cyclingListener= new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
-                    // Distance variables no-data vales
+                    // Cadence variables no-data vales
                     float cadence = -999;
+                    String name ="";
+                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
-                        String name = field.getName();
-                        //if (name.equals("distance") && val.isSet()) {
+                        name = field.getName();
+                        //if (name.equals("cadence") && val.isSet()) {
                             cadence = Float.parseFloat(val.toString());
+                        updateTextViewValueOnUiThread(R.id.value_cycling,val.toString());
                         //}
                     }
                     // Store Data into server and update interface with new values
-                    //parseStoreSpeedPoint(cadence);
-                    updateCyclingOnScreen(cadence);
+                    game_status.saveStatus_Eventually(device,name,cadence);
+                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
             // Register listener with the sensor API
@@ -451,7 +475,7 @@ public class StartActivity extends AppCompatActivity {
                             .setDataType(dataType) // Can't be omitted.
                             .setSamplingRate(1, TimeUnit.SECONDS)
                             .build(),
-                    distanceListener)
+                    cyclingListener)
                     .setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(Status status) {
@@ -465,86 +489,6 @@ public class StartActivity extends AppCompatActivity {
         }
 
     }
-
-
-    /**
-     *
-     * To consider as an initial version of listener
-     */
-    /**
-     * Register a listener with the Sensors API for the provided {@link DataSource} and
-     * {@link DataType} combo.
-     */
-    /*private void registerSpeedDataListener(DataSource dataSource, final DataType dataType) {
-        // [START register_data_listener]
-        mListener = new OnDataPointListener() {
-            @Override
-            public void onDataPoint(DataPoint dataPoint) {
-                float lat=-999;
-                float lon=-999;
-                float pres=-999;
-                float alt=-999;
-                float speed = -1;
-
-                if (dataType == DataType.TYPE_LOCATION_SAMPLE){
-                    Log.i(TAG, "Location data detected");
-                    for (Field field : dataPoint.getDataType().getFields()){
-                        Value val = dataPoint.getValue(field);
-                        String name = field.getName();
-                        if (name.equals("latitude") && val.isSet()){
-                            lat = Float.parseFloat(val.toString());
-                        } else if (name.equals("longitude") && val.isSet()){
-                            lon = Float.parseFloat(val.toString());
-                        } else if (name.equals("accuracy") && val.isSet()){
-                            pres = Float.parseFloat(val.toString());
-                        } else if (name.equals("altitude") && val.isSet()){
-                            alt = Float.parseFloat(val.toString());
-                        }
-                    }
-                    parseStoreGPSPoint(lat, lon, pres, alt);
-                    updateCoordinatesOnScreen(lat, lon, alt);
-                } else if (dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY){
-                    Log.i(TAG, "Speed data detected");
-                    for (Field field: dataPoint.getDataType().getFields()) {
-                        Value val = dataPoint.getValue(field);
-                        String name = field.getName();
-                        if (name.equals("speed") && val.isSet()){
-                            speed = Float.parseFloat(val.toString());
-                        }
-                    }
-                    updateSpeedOnScreen(speed);
-                }
-
-
-            }
-        };
-
-        Fitness.SensorsApi.add(
-                mClient,
-                new SensorRequest.Builder()
-                        .setDataSource(dataSource) // Optional but recommended for custom data sets.
-                        .setDataType(dataType) // Can't be omitted.
-                        .setSamplingRate(1, TimeUnit.SECONDS)
-                        .build(),
-                mListener)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Listener registered!");
-                        } else {
-                            Log.i(TAG, "Listener not registered.");
-                        }
-                    }
-                });
-        // [END register_data_listener]
-    } */
-
-
-
-
-
-
 
 
     /**
@@ -729,91 +673,16 @@ public class StartActivity extends AppCompatActivity {
 
 
     /**
-    // Methods related to Parse Options
-    **/
-
-    // Store GPS point
-    public void parseStoreGPSPoint(float lat ,float lon, float alt, float pres){
-        //log GPS track to Parse
-        ParseObject o = new ParseObject("Magike_GPS");
-        o.put("lat", lat);
-        o.put("lon", lon);
-        o.put("altitude", alt);
-        o.put("precision", pres);
-        o.put("time", new Date());
-        o.put("device", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-        o.saveEventually(new SaveCallback() {
-            public void done(ParseException e) {
-                if (e == null) {
-
-                    Log.d("PARSE - SAVE OK", String.valueOf(e));
-                } else {
-                    Log.d("PARSE - SAVE FAILED", String.valueOf(e));
-                }
-            }
-        });
-    }
-
-    // Store speed
-    public void parseStoreSpeedPoint(float speed){
-        ParseObject o = new ParseObject("Magike_Speed");
-        o.put("speed", speed);
-        o.put("time", new Date());
-        o.put("device", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-        o.saveEventually(new SaveCallback() {
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("PARSE - SAVE OK", String.valueOf(e));
-                } else {
-                    Log.d("PARSE - SAVE FAILED", String.valueOf(e));
-                }
-            }
-        });
-    }
-
-
-    /**
      * Methods related to Interface Update
      */
 
-    // Update coordinates on Screen
-    public void updateCoordinatesOnScreen(float lat, float lon, float alt){
-
-        View content_view = findViewById(R.id.start_activity_view);
-        TextView tv_value_latitude = (TextView) content_view.findViewById(R.id.value_latitude);
-        tv_value_latitude.setText(String.valueOf(lat));
-        TextView tv_value_longitude = (TextView) content_view.findViewById(R.id.value_longitude);
-        tv_value_longitude.setText(String.valueOf(lon));
-        TextView tv_value_altitude = (TextView) content_view.findViewById(R.id.value_altitude);
-        tv_value_altitude.setText(String.valueOf(alt));
-
-        updateCollectedPoints();
-    }
-
-    // Update speed on Screen
-    public void updateSpeedOnScreen(float speed){
-        TextView tv;
-        tv = (TextView) findViewById(R.id.value_speed);
-        tv.setText(String.valueOf(speed));
-        updateCollectedPoints();
-    }
-
-    // Update distance on Screen
-    public void updateDistanceOnScreen(float distance){
-        accumulated_distance += distance;
-        TextView tv;
-        tv = (TextView) findViewById(R.id.value_distance);
-        tv.setText(String.valueOf(accumulated_distance));
-        updateCollectedPoints();
-    }
-
-    public void updateCollectedPoints(){
-        TextView tv_contribution = (TextView) findViewById(R.id.value_contribution);
-        tv_contribution.setText(String.valueOf(counter_points++));
-    }
-
-    public void updateCyclingOnScreen(float cycling){
-        TextView tv_contribution = (TextView) findViewById(R.id.value_cycling);
-        tv_contribution.setText(String.valueOf(cycling));
+    public void updateTextViewValueOnUiThread(final int id, final String val){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv = (TextView) findViewById(id);
+                tv.setText(val);
+            }
+        });
     }
 }

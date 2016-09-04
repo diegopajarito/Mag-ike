@@ -24,8 +24,9 @@
     <string name="longitude">Longitude:</string>
     <string name="altitude">Altitude:</string>
     <string name="nodata" translatable="false">~</string>
+    <string name="value_nodata" translatable="false">-999</string>
     <string name="cycling" translatable="false">Cycling:</string>
-    <string name="title_activity_session">SessionActivity</string>
+    <string name="title_activity_session" translatable="false">SessionActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
