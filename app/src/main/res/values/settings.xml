@@ -15,4 +15,6 @@
     <string name="time_distance_tag" translatable="false">time_distance</string>
     <string name="speed_tag" translatable="false">speed</string>
     <string name="time_speed_tag" translatable="false">time_speed</string>
+    <string name="cycling_tag" translatable="false">cycling</string>
+    <string name="time_cycling_tag" translatable="false">time_cycling</string>
 </resources>
