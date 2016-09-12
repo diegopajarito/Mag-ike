@@ -170,23 +170,23 @@ public class Status {
 
         parseObject = new ParseObject(this.status_class);
         this.setDevice(dev);
-        parseObject.add(device_tag,this.device);
+        parseObject.put(device_tag,this.getDevice());
         this.setLatitude(lat);
-        parseObject.add(latitude_tag,this.latitude);
+        parseObject.put(latitude_tag,this.getLatitude());
         this.setLongitude(lon);
-        parseObject.add(longitude_tag,this.longitude);
+        parseObject.put(longitude_tag,this.getLongitude());
         this.setAltitude(alt);
-        parseObject.add(altitude_tag,this.altitude);
+        parseObject.put(altitude_tag,this.getAltitude());
         this.setPrecision((int) pre);
-        parseObject.add(precision_tag,this.precision);
+        parseObject.put(precision_tag,this.getPrecision());
         this.setTime_gps(new Date());
-        parseObject.add(time_gps_tag,this.time_gps);
-        parseObject.add(distance_tag,this.distance);
-        parseObject.add(time_distance_tag,this.time_distance);
-        parseObject.add(speed_tag,this.speed);
-        parseObject.add(time_speed_tag,this.time_speed);
-        parseObject.add(cycling_tag,this.cycling);
-        parseObject.add(time_cycling_tag,this.time_cycling);
+        parseObject.put(time_gps_tag,this.getTime_gps());
+        parseObject.put(distance_tag,this.getDistance());
+        parseObject.put(time_distance_tag,this.getTime_distance());
+        parseObject.put(speed_tag,this.getSpeed());
+        parseObject.put(time_speed_tag,this.getTime_speed());
+        parseObject.put(cycling_tag,this.getCycling());
+        parseObject.put(time_cycling_tag,this.getTime_cycling());
 
         parseObject.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
@@ -204,39 +204,39 @@ public class Status {
     public void saveStatus_Eventually(String dev, final String label, float value){
         parseObject = new ParseObject(this.status_class);
         this.setDevice(dev);
-        parseObject.add(device_tag,this.device);
-        parseObject.add(latitude_tag,this.latitude);
-        parseObject.add(longitude_tag,this.longitude);
-        parseObject.add(altitude_tag,this.altitude);
-        parseObject.add(precision_tag,this.precision);
-        parseObject.add(time_gps_tag,this.time_gps);
+        parseObject.put(device_tag,this.getDevice());
+        parseObject.put(latitude_tag,this.getLatitude());
+        parseObject.put(longitude_tag,this.getLongitude());
+        parseObject.put(altitude_tag,this.getAltitude());
+        parseObject.put(precision_tag,this.getPrecision());
+        parseObject.put(time_gps_tag,this.getTime_gps());
         if (label.equals("speed")) {
-            parseObject.add(distance_tag,this.distance);
-            parseObject.add(time_distance_tag, this.time_distance);
+            parseObject.put(distance_tag,this.getDistance());
+            parseObject.put(time_distance_tag, this.getTime_distance());
             this.setSpeed(value);
-            parseObject.add(speed_tag, this.speed);
+            parseObject.put(speed_tag, this.getSpeed());
             this.setTime_speed(new Date());
-            parseObject.add(time_speed_tag, this.time_speed);
-            parseObject.add(cycling_tag,this.cycling);
-            parseObject.add(time_cycling_tag,this.time_cycling);
+            parseObject.put(time_speed_tag, this.getTime_speed());
+            parseObject.put(cycling_tag,this.cycling);
+            parseObject.put(time_cycling_tag,this.getCycling());
         } else if (label.equals("distance")){
             this.setDistance(value);
-            parseObject.add(distance_tag,this.distance);
+            parseObject.put(distance_tag,this.getDistance());
             this.setTime_distance(new Date());
-            parseObject.add(time_distance_tag, this.time_distance);
-            parseObject.add(speed_tag, this.speed);
-            parseObject.add(time_speed_tag, this.time_speed);
-            parseObject.add(cycling_tag,this.cycling);
-            parseObject.add(time_cycling_tag,this.time_cycling);
+            parseObject.put(time_distance_tag, this.getTime_distance());
+            parseObject.put(speed_tag, this.getSpeed());
+            parseObject.put(time_speed_tag, this.getTime_speed());
+            parseObject.put(cycling_tag,this.getCycling());
+            parseObject.put(time_cycling_tag,this.getTime_cycling());
         } else if (label.equals("cycling")){
-            parseObject.add(distance_tag,this.distance);
-            parseObject.add(time_distance_tag, this.time_distance);
-            parseObject.add(speed_tag, this.speed);
-            parseObject.add(time_speed_tag, this.time_speed);
+            parseObject.put(distance_tag,this.getDistance());
+            parseObject.put(time_distance_tag, this.getTime_distance());
+            parseObject.put(speed_tag, this.getSpeed());
+            parseObject.put(time_speed_tag, this.getTime_speed());
             this.setCycling(value);
-            parseObject.add(cycling_tag,this.cycling);
+            parseObject.put(cycling_tag,this.getCycling());
             this.setTime_cycling(new Date());
-            parseObject.add(time_cycling_tag,this.time_cycling);
+            parseObject.put(time_cycling_tag,this.getTime_cycling());
         } else {
             return;
         }
