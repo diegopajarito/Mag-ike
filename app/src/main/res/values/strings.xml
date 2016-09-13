@@ -41,4 +41,10 @@
     <string name="credits_icons_licence">Is licensed by CC 3.0 BY</string>
     <string name="credits_icons_source">From www.flaticon.com</string>
     <string name="error_function_not_available">Sorry, you can\'t do this yet.</string>
+    <string name="action_fitness_text">We are using your fitness data</string>
+    <string name="action_location_text">We are using your location</string>
+    <string name="action_fitness_text_error">Sorry, We cannot access your fitness data</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

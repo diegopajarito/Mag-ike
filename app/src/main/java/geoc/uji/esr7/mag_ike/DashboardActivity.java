@@ -3,12 +3,10 @@ package geoc.uji.esr7.mag_ike;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,8 +18,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +27,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSource;
@@ -44,13 +39,8 @@ import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import org.w3c.dom.Text;
-
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -58,16 +48,14 @@ import geoc.uji.esr7.mag_ike.common.logger.LogView;
 import geoc.uji.esr7.mag_ike.common.logger.LogWrapper;
 import geoc.uji.esr7.mag_ike.common.logger.MessageOnlyLogFilter;
 import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
-import geoc.uji.esr7.mag_ike.common.tracker.TrackSpeed;
 
-public class StartActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity {
 
     public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
 
-    private TextView tv;
 
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -97,9 +85,6 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Put application specific code here.
-
-
         setContentView(R.layout.activity_session);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -110,7 +95,7 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final MediaPlayer mp = MediaPlayer.create(StartActivity.this, R.raw.sound_bell);
+                final MediaPlayer mp = MediaPlayer.create(DashboardActivity.this, R.raw.sound_bell);
 
                 Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
 
@@ -172,15 +157,25 @@ public class StartActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()){
+            case R.id.action_location:
+                Toast.makeText(getApplicationContext(), R.string.action_location_text, Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_cycling:
+                if (mClient.isConnected())
+                    Toast.makeText(getApplicationContext(), R.string.action_fitness_text, Toast.LENGTH_SHORT).show();
+                else
+                        Toast.makeText(getApplicationContext(), R.string.action_fitness_text_error, Toast.LENGTH_SHORT).show();
         }
+
+
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 
 
     // [START auth_build_googleapiclient_beginning]
@@ -205,6 +200,9 @@ public class StartActivity extends AppCompatActivity {
                                     Log.i(TAG, "Connected to Google Fit!!!");
                                     // Now you can make calls to the Fitness APIs.
                                     findFitnessDataSources();
+                                    //((MenuItem)((ActionMenuView)toolbar.getChildAt(1)).getChildAt(0)).setIcon(R.drawable.ic_cycling_enabled);
+                                    //MenuItem mi = (MenuItem) toolbar.getChildAt(1);
+                                    //mi.setIcon(R.drawable.ic_cycling_enabled);
                                 }
 
                                 @Override
@@ -227,7 +225,7 @@ public class StartActivity extends AppCompatActivity {
                             Log.i(TAG, "Google Play services connection failed. Cause: " +
                                     result.toString());
                             Snackbar.make(
-                                    StartActivity.this.findViewById(R.id.start_activity_view),
+                                    DashboardActivity.this.findViewById(R.id.start_activity_view),
                                     "Exception while connecting to Google Play services: " +
                                             result.getErrorMessage(),
                                     Snackbar.LENGTH_INDEFINITE).show();
@@ -602,7 +600,7 @@ public class StartActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             // Request permission
-                            ActivityCompat.requestPermissions(StartActivity.this,
+                            ActivityCompat.requestPermissions(DashboardActivity.this,
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                     REQUEST_PERMISSIONS_REQUEST_CODE);
                         }
@@ -613,7 +611,7 @@ public class StartActivity extends AppCompatActivity {
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
-            ActivityCompat.requestPermissions(StartActivity.this,
+            ActivityCompat.requestPermissions(DashboardActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }

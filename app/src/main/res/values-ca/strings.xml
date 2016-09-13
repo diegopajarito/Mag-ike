@@ -29,4 +29,7 @@
     <string name="credits_icons_licence">Llicenciat per CC 3.0 BY</string>
     <string name="credits_icons_source">De www.flaticon.com</string>
     <string name="error_function_not_available">Oh, encara no pots fer aixó</string>
+    <string name="action_fitness_text">Estem usando les teves dades d\'activitat física</string>
+    <string name="action_location_text">Estem usando la teva ubicació</string>
+    <string name="action_fitness_text_error">Ho sentim, no podem accedir a les teves dades d\'activitat física</string>
 </resources>
