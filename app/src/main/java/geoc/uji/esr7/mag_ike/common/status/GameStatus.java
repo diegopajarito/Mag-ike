@@ -17,7 +17,7 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
 /**
  * Created by diego on 3/09/16.
  */
-public class Status {
+public class GameStatus {
     private ParseObject parseObject;
     private String status_class;
     private String device_tag;
@@ -46,7 +46,7 @@ public class Status {
     private String time_cycling_tag;
     private final float no_data = Float.valueOf(R.string.value_nodata);
 
-    public Status(Resources res) {
+    public GameStatus(Resources res) {
 
 
         //Setting the parse class name from resources

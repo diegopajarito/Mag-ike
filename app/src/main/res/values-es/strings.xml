@@ -32,4 +32,6 @@
     <string name="action_fitness_text">Estamos usando tus datos de actividad física</string>
     <string name="action_location_text">Estamos usando tu ubicación</string>
     <string name="action_fitness_text_error">Lo sentimos, no podemos acceder a tus datos de actividad física</string>
+    <string name="navigation_drawer_close">Cerrar panel de navegación</string>
+    <string name="navigation_drawer_open">Abrir panel de navegación</string>
 </resources>

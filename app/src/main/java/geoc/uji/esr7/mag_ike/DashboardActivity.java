@@ -1,6 +1,7 @@
 package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,14 +11,22 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,14 +58,14 @@ import geoc.uji.esr7.mag_ike.common.logger.LogWrapper;
 import geoc.uji.esr7.mag_ike.common.logger.MessageOnlyLogFilter;
 import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 
-public class DashboardActivity extends AppCompatActivity {
+import geoc.uji.esr7.mag_ike.common.status.GameStatus;
+
+public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
-
-
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -64,6 +73,7 @@ public class DashboardActivity extends AppCompatActivity {
     // Need to hold a reference to this listener, as it's passed into the "unregister"
     // method in order to stop all sensors from sending data to this listener.
     // Added multiple listeners, one for each variable to measure
+    // There are four listeners to be used,
     private OnDataPointListener locationListener;
     private OnDataPointListener speedListener;
     private OnDataPointListener distanceListener;
@@ -73,12 +83,12 @@ public class DashboardActivity extends AppCompatActivity {
     // The activity Tracker
     private ActivityTracker actTracker = new ActivityTracker();
 
-    // A counter for collected points
+    // Global variables to be used during app execution
     int counter_points = 0;
     float accumulated_distance = 0;
 
-    // A status object
-    geoc.uji.esr7.mag_ike.common.status.Status game_status;
+    // A status object for having control of
+    GameStatus gameStatus;
 
 
     @Override
@@ -86,24 +96,32 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_session);
+
+        // Starting and Setting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Setting the drawer layout, a toggle for open/close and a listener for selected items
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
+        // Setting the navigation view with avatar and personal identification
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+        // Adding a floating button and its listener
         FloatingActionButton btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final MediaPlayer mp = MediaPlayer.create(DashboardActivity.this, R.raw.sound_bell);
-
                 Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
-
                 mp.start();
-
             }
-
-
         });
 
 
@@ -119,7 +137,7 @@ public class DashboardActivity extends AppCompatActivity {
 
 
 
-        // Parse setup
+        // Setting Parse Server with username and password
 
         ParseUser.logInInBackground("test@test.com", "test", new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
@@ -132,7 +150,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
         });
-        game_status = new geoc.uji.esr7.mag_ike.common.status.Status(getResources());
+        gameStatus = new GameStatus(getResources());
 
     }
 
@@ -158,23 +176,50 @@ public class DashboardActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        switch (item.getItemId()){
-            case R.id.action_location:
-                Toast.makeText(getApplicationContext(), R.string.action_location_text, Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_cycling:
-                if (mClient.isConnected())
-                    Toast.makeText(getApplicationContext(), R.string.action_fitness_text, Toast.LENGTH_SHORT).show();
-                else
-                        Toast.makeText(getApplicationContext(), R.string.action_fitness_text_error, Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.action_location) {
+            Toast.makeText(getApplicationContext(), R.string.action_location_text, Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId() == R.id.action_cycling) {
+            if (mClient.isConnected())
+                Toast.makeText(getApplicationContext(), R.string.action_fitness_text, Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getApplicationContext(), R.string.action_fitness_text_error, Toast.LENGTH_SHORT).show();
         }
-
-
 
         return super.onOptionsItemSelected(item);
     }
 
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        if ( item.getItemId() == R.id.nav_play) {
+            setContentView(R.layout.activity_session);
+        } else if ( item.getItemId() == R.id.nav_share) {
+            Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
+        } else if ( item.getItemId() == R.id.nav_profile) {
+
+            // Create a new Fragment to be placed in the activity layout
+            ProfileFragment profileFragment = new ProfileFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            profileFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, profileFragment).commit();
+
+
+
+//            Intent myIntent = new Intent(DashboardActivity.this, ProfileActivity.class);
+  //          DashboardActivity.this.startActivity(myIntent);
+        } else if ( item.getItemId() == R.id.nav_about) {
+            Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG).show();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
 
 
@@ -338,7 +383,7 @@ public class DashboardActivity extends AppCompatActivity {
                         }
                     }
                     // Store Data into server and update interface with new values
-                    game_status.saveStatus_Eventually(device,lat,lon,alt,pres);
+                    gameStatus.saveStatus_Eventually(device,lat,lon,alt,pres);
                     updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
@@ -379,7 +424,7 @@ public class DashboardActivity extends AppCompatActivity {
                         }
                     }
                     // Store Data into server and update interface with new values
-                    game_status.saveStatus_Eventually(device,name,speed);
+                    gameStatus.saveStatus_Eventually(device,name,speed);
                     updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
@@ -421,7 +466,7 @@ public class DashboardActivity extends AppCompatActivity {
                         }
                     }
                     // Store Data into server and update interface with new values
-                    game_status.saveStatus_Eventually(device,name,distance);
+                    gameStatus.saveStatus_Eventually(device,name,distance);
                     updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
@@ -461,7 +506,7 @@ public class DashboardActivity extends AppCompatActivity {
                         //}
                     }
                     // Store Data into server and update interface with new values
-                    game_status.saveStatus_Eventually(device,name,cadence);
+                    gameStatus.saveStatus_Eventually(device,name,cadence);
                     updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
@@ -683,4 +728,5 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
     }
+
 }
