@@ -1,7 +1,6 @@
 package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -14,19 +13,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +56,7 @@ import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 
-public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener {
 
     public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
@@ -90,6 +86,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     // A status object for having control of
     GameStatus gameStatus;
 
+    // Fragments for being used on interface development
+    private ProfileFragment profileFragment;
+    private DashboardFragment dashboardFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,16 +118,21 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final MediaPlayer mp = MediaPlayer.create(DashboardActivity.this, R.raw.sound_bell);
+                final MediaPlayer mp = MediaPlayer.create(SessionActivity.this, R.raw.sound_bell);
                 Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
                 mp.start();
             }
         });
 
 
+        dashboardFragment = new DashboardFragment();
+        dashboardFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, dashboardFragment).commit();
+
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
-        initializeLogging();
+        //initializeLogging();
 
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
@@ -198,21 +203,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
         } else if ( item.getItemId() == R.id.nav_profile) {
 
-            // Create a new Fragment to be placed in the activity layout
-            ProfileFragment profileFragment = new ProfileFragment();
+            profileFragment = new ProfileFragment();
+            Bundle args = new Bundle();
+            profileFragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, profileFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            profileFragment.setArguments(getIntent().getExtras());
-
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, profileFragment).commit();
-
-
-
-//            Intent myIntent = new Intent(DashboardActivity.this, ProfileActivity.class);
-  //          DashboardActivity.this.startActivity(myIntent);
         } else if ( item.getItemId() == R.id.nav_about) {
             Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG).show();
         }
@@ -221,7 +219,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         return true;
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
+    }
 
     // [START auth_build_googleapiclient_beginning]
     /**
@@ -270,7 +271,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                             Log.i(TAG, "Google Play services connection failed. Cause: " +
                                     result.toString());
                             Snackbar.make(
-                                    DashboardActivity.this.findViewById(R.id.start_activity_view),
+                                    SessionActivity.this.findViewById(R.id.start_activity_view),
                                     "Exception while connecting to Google Play services: " +
                                             result.getErrorMessage(),
                                     Snackbar.LENGTH_INDEFINITE).show();
@@ -645,7 +646,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         @Override
                         public void onClick(View view) {
                             // Request permission
-                            ActivityCompat.requestPermissions(DashboardActivity.this,
+                            ActivityCompat.requestPermissions(SessionActivity.this,
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                     REQUEST_PERMISSIONS_REQUEST_CODE);
                         }
@@ -656,7 +657,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
-            ActivityCompat.requestPermissions(DashboardActivity.this,
+            ActivityCompat.requestPermissions(SessionActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
@@ -728,5 +729,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             }
         });
     }
+
 
 }
