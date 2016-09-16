@@ -198,7 +198,15 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         if ( item.getItemId() == R.id.nav_play) {
-            setContentView(R.layout.activity_session);
+
+            dashboardFragment = new DashboardFragment();
+            Bundle args = new Bundle();
+            dashboardFragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, dashboardFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
         } else if ( item.getItemId() == R.id.nav_share) {
             Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
         } else if ( item.getItemId() == R.id.nav_profile) {

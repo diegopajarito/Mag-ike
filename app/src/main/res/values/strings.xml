@@ -30,8 +30,8 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="avatar_label">ESR07 Green Living Actions</string>
-    <string name="avatar_email" translatable="false">esr07@geo-c.eu</string>
+    <string name="avatar_label">Cycist</string>
+    <string name="avatar_email" translatable="false">cyclist@geo-c.eu</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
@@ -47,4 +47,14 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_email" translatable="false">name@ma.il</string>
+    <string name="profile_male">Male</string>
+    <string name="profile_female">Female</string>
+    <string name="profile_age">Age (Years)</string>
+    <string name="profile_age_0_20">  Less than 20</string>
+    <string name="profile_age_20_30" translatable="false">20 - 30</string>
+    <string name="profile_age_30_40" translatable="false">30 - 40</string>
+    <string name="profile_age_40_50" translatable="false">40 - 40</string>
+    <string name="profile_age_50_">More than 50</string>
 </resources>

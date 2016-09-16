@@ -19,7 +19,7 @@
     <string name="altitude">Altitud:</string>
     <string name="longitude">Longitud:</string>
     <string name="latitude">Latitud:</string>
-    <string name="avatar_label">ESR07 Accions verds</string>
+    <string name="avatar_label">Ciclista</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_settings">Configuració</string>
     <string name="menu_about">Sobre</string>
@@ -34,4 +34,10 @@
     <string name="action_fitness_text_error">Ho sentim, no podem accedir a les teves dades d\'activitat física</string>
     <string name="navigation_drawer_open">Obrir panell de navegació</string>
     <string name="navigation_drawer_close">Tancar panell de navegació</string>
+    <string name="profile_name">Nom</string>
+    <string name="profile_female">Dona</string>
+    <string name="profile_male">Home</string>
+    <string name="profile_age">Edat (Anys)</string>
+    <string name="profile_age_0_20">   de 20</string>
+    <string name="profile_age_50_">Major de 50</string>
 </resources>

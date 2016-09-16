@@ -9,13 +9,13 @@
         android:layout_height="match_parent">
 
         <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/scrollView" >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/scrollView_profile" >
 
             <GridLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:columnCount="1"
                 android:rowCount="6">
 
@@ -23,105 +23,181 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:text="Name"
                     android:ems="10"
                     android:id="@+id/et_name"
                     android:layout_row="0"
-                    android:layout_column="0" />
+                    android:layout_column="0"
+                    android:hint="@string/profile_name"
+                    android:layout_margin="5dp"
+                    android:layout_marginTop="40dp" />
 
-                <GridLayout
+                <TabHost
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/grid_avatar"
-                    android:columnCount="3"
-                    android:rowCount="2"
-                    android:layout_column="0"
-                    android:layout_row="1">
+                    android:id="@+id/tabHost_sex"
+                    android:layout_row="1"
+                    android:layout_column="0">
 
-                    <RadioGroup
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/rg_avatar"
-                        android:orientation="horizontal" >
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:id="@+id/layout_tab_sex">
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:id="@+id/radioButton3"
-                            android:button="@drawable/sh_radio_button_selector"
-                            android:layout_column="1"
-                            android:layout_row="0"
-                            android:layout_margin="5dp" />
+                        <TabWidget
+                            android:id="@android:id/tabs"
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"></TabWidget>
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:id="@+id/rb_avatar_male_2"
-                            android:button="@drawable/sh_radio_button_selector"
-                            android:background="@drawable/ic_avatar_male_cyclist_2"
-                            android:layout_column="1"
-                            android:layout_row="1"
-                            android:layout_margin="5dp" />
+                        <FrameLayout
+                            android:id="@android:id/tabcontent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:id="@+id/radioButton2"
-                            android:button="@drawable/sh_radio_button_selector"
-                            android:layout_column="2"
-                            android:layout_row="0"
-                            android:layout_margin="5dp" />
+                            <LinearLayout
+                                android:id="@+id/tab_female"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:id="@+id/rb_avatar_male_3"
-                            android:button="@drawable/sh_radio_button_selector"
-                            android:background="@drawable/ic_avatar_male_cyclist_3"
-                            android:layout_column="2"
-                            android:layout_row="1"
-                            android:layout_margin="5dp" />
+                                <RadioGroup
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:id="@+id/rg_avatar_female">
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:text="New RadioButton"
-                            android:id="@+id/rb_avatar_female_1"
-                            android:layout_gravity="right"
-                            android:layout_column="0"
-                            android:layout_row="0"
-                            android:button="@drawable/sh_radio_button_selector"
-                            android:background="@drawable/ic_avatar_female_cyclist_0"
-                            android:layout_margin="5dp" />
+                                    <RadioButton
+                                        android:layout_width="80dp"
+                                        android:layout_height="80dp"
+                                        android:id="@+id/rb_avatar_female_1"
+                                        android:layout_gravity="right"
+                                        android:button="@drawable/sh_radio_button_selector"
+                                        android:background="@drawable/ic_avatar_female_cyclist_0"
+                                        android:layout_margin="5dp" />
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:id="@+id/rb_avatar_male_1"
-                            android:button="@drawable/sh_radio_button_selector"
-                            android:background="@drawable/ic_avatar_male_cyclist_1"
-                            android:layout_column="0"
-                            android:layout_row="1"
-                            android:layout_margin="5dp" />
+                                    <RadioButton
+                                        android:layout_width="80dp"
+                                        android:layout_height="80dp"
+                                        android:id="@+id/radioButton2"
+                                        android:button="@drawable/sh_radio_button_selector"
+                                        android:layout_margin="5dp" />
 
-                    </RadioGroup>
-                </GridLayout>
+                                    <RadioButton
+                                        android:layout_width="80dp"
+                                        android:layout_height="80dp"
+                                        android:id="@+id/radioButton3"
+                                        android:button="@drawable/sh_radio_button_selector"
+                                        android:layout_margin="5dp" />
+                                </RadioGroup>
+                            </LinearLayout>
 
-                <SeekBar
-                    android:layout_width="fill_parent"
+                            <LinearLayout
+                                android:id="@+id/tab_male"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <RadioGroup
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/rg_avatar_male"
+                                    android:orientation="horizontal"
+                                    android:layout_margin="5dp">
+
+                                    <RadioButton
+                                        android:layout_width="80dp"
+                                        android:layout_height="80dp"
+                                        android:id="@+id/rb_avatar_male_1"
+                                        android:button="@drawable/sh_radio_button_selector"
+                                        android:background="@drawable/ic_avatar_male_cyclist_1"
+                                        android:layout_margin="5dp" />
+
+                                    <RadioButton
+                                        android:layout_width="80dp"
+                                        android:layout_height="80dp"
+                                        android:id="@+id/rb_avatar_male_3"
+                                        android:button="@drawable/sh_radio_button_selector"
+                                        android:background="@drawable/ic_avatar_male_cyclist_3"
+                                        android:layout_margin="5dp" />
+
+                                    <RadioButton
+                                        android:layout_width="80dp"
+                                        android:layout_height="80dp"
+                                        android:id="@+id/rb_avatar_male_2"
+                                        android:button="@drawable/sh_radio_button_selector"
+                                        android:background="@drawable/ic_avatar_male_cyclist_2"
+                                        android:layout_margin="5dp" />
+
+                                </RadioGroup>
+                            </LinearLayout>
+
+                        </FrameLayout>
+
+                    </LinearLayout>
+                </TabHost>
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/bar_age"
-                    android:layout_below="@+id/et_email"
-                    android:layout_centerHorizontal="true"
-                    android:layout_column="0"
-                    android:layout_row="2" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/profile_age"
+                    android:id="@+id/tv_age_label"
+                    android:layout_margin="5dp" />
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/rg_age"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_age_0_20"
+                        android:id="@+id/rb_age_0_20"
+                        android:button="@drawable/sh_radio_button_selector"
+                        android:layout_margin="5dp" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rb_age_20_30"
+                        android:button="@drawable/sh_radio_button_selector"
+                        android:text="@string/profile_age_20_30"
+                        android:layout_margin="5dp" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rb_age_30_40"
+                        android:button="@drawable/sh_radio_button_selector"
+                        android:text="@string/profile_age_30_40" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rb_age_40_50"
+                        android:button="@drawable/sh_radio_button_selector"
+                        android:text="@string/profile_age_40_50"
+                        android:layout_margin="5dp" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rb_age_50_"
+                        android:button="@drawable/sh_radio_button_selector"
+                        android:text="@string/profile_age_50_"
+                        android:layout_margin="5dp" />
+                </RadioGroup>
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/horizontalScrollView"
                     android:layout_column="0"
-                    android:layout_row="3">
+                    android:layout_row="4"
+                    android:layout_margin="5dp">
 
                     <RadioGroup
                         android:layout_width="wrap_content"
@@ -203,9 +279,10 @@
                     android:inputType="textEmailAddress"
                     android:ems="10"
                     android:id="@+id/et_email"
-                    android:layout_centerHorizontal="true"
-                    android:layout_row="4"
-                    android:layout_column="0" />
+                    android:layout_row="5"
+                    android:layout_column="0"
+                    android:hint="@string/profile_email"
+                    android:layout_margin="5dp" />
 
             </GridLayout>
         </ScrollView>

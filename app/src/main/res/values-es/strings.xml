@@ -19,7 +19,7 @@
     <string name="altitude">Altitud:</string>
     <string name="longitude">Longitud:</string>
     <string name="latitude">Latitud:</string>
-    <string name="avatar_label">ESR07 Acciones verdes</string>
+    <string name="avatar_label">Ciclista</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_settings">Configuración</string>
     <string name="menu_about">Acerca de</string>
@@ -34,4 +34,10 @@
     <string name="action_fitness_text_error">Lo sentimos, no podemos acceder a tus datos de actividad física</string>
     <string name="navigation_drawer_close">Cerrar panel de navegación</string>
     <string name="navigation_drawer_open">Abrir panel de navegación</string>
+    <string name="profile_name">Nombre</string>
+    <string name="profile_male">Hombre</string>
+    <string name="profile_female">Mujer</string>
+    <string name="profile_age">Edad (Años)</string>
+    <string name="profile_age_0_20">Menor de 20</string>
+    <string name="profile_age_50_">Mayor de 50</string>
 </resources>
