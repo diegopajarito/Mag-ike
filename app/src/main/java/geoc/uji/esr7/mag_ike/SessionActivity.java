@@ -647,7 +647,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
             Snackbar.make(
-                    findViewById(R.id.start_activity_view),
+                    findViewById(android.R.id.content),
                     R.string.permission_rationale,
                     Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.ok, new View.OnClickListener() {
@@ -701,7 +701,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 // when permissions are denied. Otherwise, your app could appear unresponsive to
                 // touches or interactions which have required permissions.
                 Snackbar.make(
-                        SessionActivity.this.findViewById(R.id.start_activity_view),
+                        SessionActivity.this.findViewById(android.R.id.content),
                         R.string.permission_denied_explanation,
                         Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.settings, new View.OnClickListener() {
