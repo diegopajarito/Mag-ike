@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="geoc.uji.esr7.mag_ike.DashboardFragment">
+    tools:context="geoc.uji.esr7.mag_ike.DashboardFragment"
+    android:id="@+id/start_activity_view">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,15 +13,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/scrollView_profile"
-            android:layout_above="@+id/grid_credits">
+            android:layout_marginTop="80dp">
 
             <GridLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="2"
                 android:rowCount="9"
-                android:id="@+id/gridLayout"
-                android:layout_below="@+id/sample_logview">
+                android:id="@+id/gridLayout">
 
                 <ImageView
                     android:layout_width="120dp"

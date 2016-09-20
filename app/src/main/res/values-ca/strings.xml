@@ -38,6 +38,6 @@
     <string name="profile_female">Dona</string>
     <string name="profile_male">Home</string>
     <string name="profile_age">Edat (Anys)</string>
-    <string name="profile_age_0_20">   de 20</string>
+    <string name="profile_age_0_20">Menor de 20</string>
     <string name="profile_age_50_">Major de 50</string>
 </resources>

@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="geoc.uji.esr7.mag_ike.DashboardFragment">
+    tools:context="geoc.uji.esr7.mag_ike.DashboardFragment"
+    android:id="@+id/start_activity_view">
 
     <!-- TODO: Update blank fragment layout -->
 

@@ -701,7 +701,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 // when permissions are denied. Otherwise, your app could appear unresponsive to
                 // touches or interactions which have required permissions.
                 Snackbar.make(
-                        findViewById(R.id.start_activity_view),
+                        SessionActivity.this.findViewById(R.id.start_activity_view),
                         R.string.permission_denied_explanation,
                         Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.settings, new View.OnClickListener() {

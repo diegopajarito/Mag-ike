@@ -27,13 +27,13 @@ public class ProfileFragment extends Fragment {
         //Tab 1 for females
         TabHost.TabSpec spec = host.newTabSpec("Tab_Female");
         spec.setContent(R.id.tab_female);
-        spec.setIndicator("Female");
+        spec.setIndicator(getContext().getText(R.string.profile_female));
         host.addTab(spec);
 
         //Tab 2
         spec = host.newTabSpec("Tab_male");
         spec.setContent(R.id.tab_male);
-        spec.setIndicator("Male");
+        spec.setIndicator(getContext().getText(R.string.profile_male));
         host.addTab(spec);
 
         return rootView;
