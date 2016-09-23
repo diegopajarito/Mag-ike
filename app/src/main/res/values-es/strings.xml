@@ -40,4 +40,5 @@
     <string name="profile_age">Edad (Años)</string>
     <string name="profile_age_0_20">Menor de 20</string>
     <string name="profile_age_50_">Mayor de 50</string>
+    <string name="about_text">Esta aplicación es parte del projecto ESR07 de GEO-C</string>
 </resources>

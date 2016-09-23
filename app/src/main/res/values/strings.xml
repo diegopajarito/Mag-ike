@@ -57,4 +57,5 @@
     <string name="profile_age_30_40" translatable="false">30 - 40</string>
     <string name="profile_age_40_50" translatable="false">40 - 40</string>
     <string name="profile_age_50_">More than 50</string>
+    <string name="about_text">This app is part of GEO-C ESR07 project</string>
 </resources>

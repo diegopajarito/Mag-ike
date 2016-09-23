@@ -19,6 +19,7 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
  */
 public class GameStatus {
     private ParseObject parseObject;
+    private Profile profile;
     private String status_class;
     private String device_tag;
     private String device;
@@ -45,6 +46,8 @@ public class GameStatus {
     private Date time_cycling;
     private String time_cycling_tag;
     private final float no_data = Float.valueOf(R.string.value_nodata);
+
+
 
     public GameStatus(Resources res) {
 
@@ -165,6 +168,14 @@ public class GameStatus {
     public Date getTime_cycling() { return time_cycling; }
 
     public void setTime_cycling(Date time_cycling) { this.setTime_cycling(time_cycling);}
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public boolean updateProfile(Profile p){
+        return this.profile.updateProfile(p);
+    }
 
     public void saveStatus_Eventually(String dev, float lat, float lon, float alt, float pre){
 

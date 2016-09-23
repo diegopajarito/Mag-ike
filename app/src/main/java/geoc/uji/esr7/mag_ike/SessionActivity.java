@@ -52,11 +52,13 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
 import geoc.uji.esr7.mag_ike.common.logger.LogView;
 import geoc.uji.esr7.mag_ike.common.logger.LogWrapper;
 import geoc.uji.esr7.mag_ike.common.logger.MessageOnlyLogFilter;
+import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 
-public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DashboardFragment.OnFragmentInteractionListener {
+public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        DashboardFragment.OnFragmentInteractionListener, ProfileFragment.OnProfileChangeListener {
 
     public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
@@ -84,11 +86,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     float accumulated_distance = 0;
 
     // A status object for having control of
-    GameStatus gameStatus;
+    public GameStatus gameStatus;
 
     // Fragments for being used on interface development
     private ProfileFragment profileFragment;
     private DashboardFragment dashboardFragment;
+    private AboutFragment aboutFragment;
 
 
     @Override
@@ -105,7 +108,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         // Setting the navigation view with avatar and personal identification
@@ -132,7 +134,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
-        //initializeLogging();
+        initializeLogging();
 
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
@@ -140,10 +142,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             requestPermissions();
         }
 
-
-
         // Setting Parse Server with username and password
-
         ParseUser.logInInBackground("test@test.com", "test", new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
@@ -166,6 +165,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // This ensures that if the user deies the permissiones then uses Settings to re-enable
         // them, the app will start working.
         buildFitnessClient();
+
+        //Set Screen based on Status
+
     }
 
     @Override
@@ -220,7 +222,13 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             transaction.commit();
 
         } else if ( item.getItemId() == R.id.nav_about) {
-            Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG).show();
+            aboutFragment = new AboutFragment();
+            Bundle args = new Bundle();
+            aboutFragment.setArguments(args);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, aboutFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -242,6 +250,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
      *  multiple accounts on the device and needing to specify which account to use, etc.
      */
     private void buildFitnessClient() {
+
         if (mClient == null && checkPermissions()) {
             mClient = new GoogleApiClient.Builder(this)
                     .addApi(Fitness.SENSORS_API)
@@ -738,5 +747,21 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         });
     }
 
+
+    /**
+     * Implementing interfaces for Profile Fragment
+     */
+
+    public void onProfileUpdated(Profile p){
+
+        gameStatus.updateProfile(p);
+
+
+    }
+
+    @Override
+    public void updateProfileScreen() {
+
+    }
 
 }
