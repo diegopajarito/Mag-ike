@@ -58,7 +58,7 @@ import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        DashboardFragment.OnFragmentInteractionListener, ProfileFragment.OnProfileChangeListener {
+        DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener {
 
     public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
@@ -91,11 +91,19 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     // Fragments for being used on interface development
     private ProfileFragment profileFragment;
     private DashboardFragment dashboardFragment;
-    private AboutFragment aboutFragment;
+    private AboutFragment aboutFragment = new AboutFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        gameStatus = new GameStatus(getResources());
+        gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+        gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
+        gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
+
+        // Should be instanciated after creating a gameStatus object
+        profileFragment = new ProfileFragment();
 
         setContentView(R.layout.activity_session);
 
@@ -154,7 +162,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 }
             }
         });
-        gameStatus = new GameStatus(getResources());
+
+
 
     }
 
@@ -198,12 +207,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Bundle args = new Bundle();
         // Handle navigation view item clicks here.
-        /*if ( item.getItemId() == R.id.nav_play) {
-
-            dashboardFragment = new DashboardFragment();
-            Bundle args = new Bundle();
-            dashboardFragment.setArguments(args);
+        if ( item.getItemId() == R.id.nav_play) {
+            if (dashboardFragment.getArguments() == null)
+                dashboardFragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, dashboardFragment);
             transaction.addToBackStack(null);
@@ -212,33 +220,25 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         } else if ( item.getItemId() == R.id.nav_share) {
             Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
         } else if ( item.getItemId() == R.id.nav_profile) {
-
-            profileFragment = new ProfileFragment();
-            Bundle args = new Bundle();
-            profileFragment.setArguments(args);
+            if (profileFragment.getArguments()  == null)
+                profileFragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, profileFragment);
-            transaction.addToBackStack(null);
             transaction.commit();
 
         } else if ( item.getItemId() == R.id.nav_about) {
-            aboutFragment = new AboutFragment();
-            Bundle args = new Bundle();
-            aboutFragment.setArguments(args);
+            if (aboutFragment.getArguments() == null)
+                aboutFragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, aboutFragment);
             transaction.addToBackStack(null);
             transaction.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);*/
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     // [START auth_build_googleapiclient_beginning]
     /**
@@ -383,8 +383,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                     // Location variables no-data vales
                     float lat, lon, pres, alt=R.string.nodata;
                     lat = lon = pres = alt = R.string.nodata;
-                    TextView tv;
-                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     // Get Location Variables and change no-data values
                     for (Field field : dataPoint.getDataType().getFields()){
                         Value val = dataPoint.getValue(field);
@@ -400,10 +398,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         }
                     }
                     // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(device,lat,lon,alt,pres);
-                    tv = (TextView) findViewById(R.id.value_distance);
-                    tv.setText(String.valueOf(device));
-                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
+                    gameStatus.saveStatus_Eventually(lat,lon,alt,pres);
+                    updateDashboardFromStatus(gameStatus);
                 }
             };
             // Register listener with the sensor API
@@ -432,21 +428,16 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                     // Speed variables no-data vales
                     float speed = R.string.nodata;
                     String name = "";
-                    TextView tv;
-                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
                         name = field.getName();
                         if (name.equals("speed") && val.isSet()) {
                             speed = Float.parseFloat(val.toString());
-                            tv = (TextView) findViewById(R.id.value_speed);
-                            tv.setText(String.valueOf(speed));
-                            updateTextViewValueOnUiThread(R.id.value_speed,val.toString());
                         }
                     }
                     // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(device,name,speed);
-                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
+                    gameStatus.saveStatus_Eventually(name,speed);
+                    updateDashboardFromStatus(gameStatus);
                 }
             };
             // Register listener with the sensor API
@@ -475,22 +466,17 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                     // Distance variables no-data vales
                     float distance = Float.valueOf(R.string.value_nodata);
                     String name ="";
-                    TextView tv;
-                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
                         name = field.getName();
                         if (name.equals("distance") && val.isSet()) {
                             distance = Float.parseFloat(val.toString());
                             accumulated_distance += distance;
-                            tv = (TextView) findViewById(R.id.value_distance);
-                            tv.setText(String.valueOf(accumulated_distance));
-                            updateTextViewValueOnUiThread(R.id.value_distance,String.valueOf(accumulated_distance));
                         }
                     }
                     // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(device,name,distance);
-                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
+                    gameStatus.saveStatus_Eventually(name,distance);
+                    updateDashboardFromStatus(gameStatus);
                 }
             };
             // Register listener with the sensor API
@@ -519,7 +505,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                     // Cadence variables no-data vales
                     float cadence = -999;
                     String name ="";
-                    String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                     for (Field field : dataPoint.getDataType().getFields()) {
                         Value val = dataPoint.getValue(field);
                         name = field.getName();
@@ -529,8 +514,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         //}
                     }
                     // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(device,name,cadence);
-                    updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
+                    gameStatus.saveStatus_Eventually(name,cadence);
+                    updateDashboardFromStatus(gameStatus);
                 }
             };
             // Register listener with the sensor API
@@ -738,35 +723,22 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
 
-    /**
-     * Methods related to Interface Update
-     */
-
-    public void updateTextViewValueOnUiThread(final int id, final String val){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView tv = (TextView) findViewById(id);
-                tv.setText(val);
-            }
-        });
-    }
-
 
     /**
      * Implementing interfaces for Profile Fragment
      */
 
     public void onProfileUpdated(Profile p){
-
         gameStatus.updateProfile(p);
-
-
     }
 
     @Override
-    public void updateProfileScreen() {
-
+    public Profile getCurrentProfile(){
+        return gameStatus.getProfile();
     }
 
+    @Override
+    public void updateDashboardFromStatus(GameStatus s) {
+        dashboardFragment.updateDashboardFromStatus(s);
+    }
 }

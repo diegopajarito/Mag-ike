@@ -11,7 +11,7 @@ public class Profile {
     private String name;
     private int avatar;
     private int avatar_id;
-    private char sex;
+    private String gender;
     private String ageRange;
     private int bikeType;
     private int bike_type_id;
@@ -21,9 +21,9 @@ public class Profile {
 
     public final String nameDefault = "Cyclist";
 
-    public final char sex_male = 'm';
-    public final char sex_female = 'f';
-    public final char sex_not_set = 'n';
+    public final String gender_male = "Male";
+    public final String gender_female = "Female";
+    public final String gender_not_set = "Not set";
 
     private final int avatar_female_id_1= 100;
     private final int avatar_female_id_2= 101;
@@ -36,6 +36,13 @@ public class Profile {
     private final int avatar_male_id_3= 202;
     private final int avatar_male_id_4= 203;
     private final int avatar_male_id_5= 204;
+
+    private final String age_range_not_set= "Not Set";
+    private final String age_range_0_20= "0-20";
+    private final String age_range_20_30= "20-30";
+    private final String age_range_30_40= "30-40";
+    private final String age_range_40_50= "40-50";
+    private final String age_range_50_0= "50+";
 
     private final int bike_type_id_1 = 1;
     private final int bike_type_id_2 = 2;
@@ -52,17 +59,21 @@ public class Profile {
 
 
     // Default constructor
-    public void Profile(){
+    public Profile(){
         this.name = nameDefault;
-        avatar_id = avatar_female_id_1;
-        sex =sex_not_set;
+        this.avatar_id = avatar_female_id_1;
+        this.gender =gender_not_set;
+        this.ageRange = age_range_not_set;
+        this.bikeType = bike_type_id_1;
+
+
     }
 
     // Constructor for first time definition of profile
-    public void Profile(String name, int avatar, char sex, String age, int bike){
+    public Profile(String name, int avatar, String gender, String age, int bike){
         this.name = name;
         this.avatar = avatar;
-        this.sex = sex;
+        this.gender = gender;
         this.bikeType = bike;
 
     }
@@ -87,8 +98,8 @@ public class Profile {
             setAvatar(p.getAvatar());
             changed = true;
         }
-        if (this.sex == p.sex){
-            setSex(p.getSex());
+        if (this.gender == p.gender){
+            setGender(p.getGender());
             changed = true;
         }
         if (this.ageRange.equals(p.ageRange)){
@@ -119,14 +130,13 @@ public class Profile {
     public void setAvatar(int avatar) {
         // Add id set
         this.avatar = avatar;
+
     }
 
-    public char getSex() {
-        return sex;
-    }
+    public String getGender() { return gender; }
 
-    public void setSex(char sex) {
-        this.sex = sex;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getAgeRange() {

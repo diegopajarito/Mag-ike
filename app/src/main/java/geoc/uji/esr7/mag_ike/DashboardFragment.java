@@ -1,24 +1,30 @@
 package geoc.uji.esr7.mag_ike;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import geoc.uji.esr7.mag_ike.common.status.GameStatus;
+import geoc.uji.esr7.mag_ike.common.status.Profile;
 
 
 public class DashboardFragment extends Fragment {
 
 
-    private OnFragmentInteractionListener mListener;
+    private OnStatusChangeListener mListener;
 
     // Container Activity must implement this interface
     // Check Parent Activity
     public interface OnStatusChangeListener {
-        void onStatusUpdated();
+        void updateDashboardFromStatus(GameStatus s);
     }
 
     public DashboardFragment() {
@@ -44,8 +50,8 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnStatusChangeListener) {
+            mListener = (OnStatusChangeListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -58,18 +64,21 @@ public class DashboardFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+
+    public void updateDashboardFromStatus(final GameStatus s){
+
+        Activity act = getActivity();
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv = (TextView) getView().findViewById(R.id.value_distance);
+                tv.setText(String.valueOf(s.getDistance()));
+                tv = (TextView) getView().findViewById(R.id.value_distance);
+                tv.setText(String.valueOf(s.getSpeed()));
+                tv = (TextView) getView().findViewById(R.id.value_contribution);
+                tv.setText(String.valueOf(1000));
+            }
+        });
+
     }
 }

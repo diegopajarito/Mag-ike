@@ -17,4 +17,14 @@
     <string name="time_speed_tag" translatable="false">time_speed</string>
     <string name="cycling_tag" translatable="false">cycling</string>
     <string name="time_cycling_tag" translatable="false">time_cycling</string>
+    <string name="profile_class_parse" translatable="false">Magike_Status</string>
+    <string name="language_tag" translatable="false">language</string>
+    <string name="country_tag" translatable="false">country</string>
+    <string name="avatar_tag" translatable="false">avatar</string>
+    <string name="avatar_id_tag" translatable="false">avatar_id</string>
+    <string name="gender_tag" translatable="false">gender</string>
+    <string name="age_range_tag" translatable="false">age_range</string>
+    <string name="bike_type_tag" translatable="false">bike_type</string>
+    <string name="bike_type_id_tag" translatable="false">bike_type_id</string>
+    <string name="email_tag" translatable="false">email</string>
 </resources>

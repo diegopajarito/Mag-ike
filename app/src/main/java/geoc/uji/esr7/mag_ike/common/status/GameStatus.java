@@ -20,33 +20,47 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
 public class GameStatus {
     private ParseObject parseObject;
     private Profile profile;
-    private String status_class;
-    private String device_tag;
     private String device;
-    private String latitude_tag;
+    private String language;
+    private String country;
     private float latitude;
-    private String longitude_tag;
     private float longitude;
-    private String altitude_tag;
     private float altitude;
-    private String precision_tag;
     private float precision;
-    private String time_gps_tag;
     private Date time_gps;
-    private String distance_tag;
     private float distance;
-    private String time_distance_tag;
     private Date time_distance;
-    private String speed_tag;
     private float speed;
-    private String time_speed_tag;
     private Date time_speed;
     private float cycling;
-    private String cycling_tag;
     private Date time_cycling;
-    private String time_cycling_tag;
-    private final float no_data = Float.valueOf(R.string.value_nodata);
 
+
+    //Setting Tags and default values
+    private final float no_data = Float.valueOf(R.string.value_nodata);
+    private String status_class;
+    private String profile_class;
+    private String device_tag;
+    private String language_tag;
+    private String country_tag;
+    private String avatar_tag;
+    private String avatar_id_tag;
+    private String gender_tag;
+    private String age_range_tag;
+    private String bike_type_tag;
+    private String bike_type_id_tag;
+    private String email_tag;
+    private String latitude_tag;
+    private String longitude_tag;
+    private String altitude_tag;
+    private String precision_tag;
+    private String time_gps_tag;
+    private String distance_tag;
+    private String time_distance_tag;
+    private String speed_tag;
+    private String time_speed_tag;
+    private String cycling_tag;
+    private String time_cycling_tag;
 
 
     public GameStatus(Resources res) {
@@ -54,10 +68,14 @@ public class GameStatus {
 
         //Setting the parse class name from resources
         this.status_class = res.getString(R.string.status_class_parse);
+        this.profile_class = res.getString(R.string.profile_class_parse);
 
         //Setting all properties to no_data Value
         latitude = longitude = altitude = precision = speed = cycling = no_data;
         time_gps = time_speed = time_distance = time_cycling = new Date();
+
+        //Setting default profile
+        this.profile = new Profile();
 
         //Setting all properties tags from resources
         device_tag = res.getString(R.string.device_tag);
@@ -72,6 +90,15 @@ public class GameStatus {
         time_speed_tag = res.getString(R.string.time_speed_tag);
         cycling_tag = res.getString(R.string.cycling_tag);
         time_cycling_tag = res.getString(R.string.time_cycling_tag);
+        language_tag = res.getString(R.string.language_tag);
+        country_tag = res.getString(R.string.country_tag);
+        avatar_tag = res.getString(R.string.avatar_tag);
+        avatar_id_tag = res.getString(R.string.avatar_id_tag);
+        gender_tag = res.getString(R.string.gender_tag);
+        age_range_tag = res.getString(R.string.age_range_tag);
+        bike_type_tag = res.getString(R.string.bike_type_tag);
+        bike_type_id_tag = res.getString(R.string.bike_type_id_tag);
+        email_tag = res.getString(R.string.email_tag);
 
     }
 
@@ -82,6 +109,14 @@ public class GameStatus {
     public void setDevice(String device) {
         this.device = device;
     }
+
+    public String getLanguage() { return language; }
+
+    public String getCountry() { return country; }
+
+    public void setCountry(String country) { this.country = country; }
+
+    public void setLanguage(String language) { this.language = language; }
 
     public float getLatitude() {
         return latitude;
@@ -174,13 +209,15 @@ public class GameStatus {
     }
 
     public boolean updateProfile(Profile p){
-        return this.profile.updateProfile(p);
+        Boolean updated = this.profile.updateProfile(p);
+        if(updated)
+            saveProfile_Eventually();
+        return updated;
     }
 
-    public void saveStatus_Eventually(String dev, float lat, float lon, float alt, float pre){
+    public void saveStatus_Eventually(float lat, float lon, float alt, float pre){
 
         parseObject = new ParseObject(this.status_class);
-        this.setDevice(dev);
         parseObject.put(device_tag,this.getDevice());
         this.setLatitude(lat);
         parseObject.put(latitude_tag,this.getLatitude());
@@ -212,9 +249,8 @@ public class GameStatus {
         //return answer;
     }
 
-    public void saveStatus_Eventually(String dev, final String label, float value){
+    public void saveStatus_Eventually(final String label, float value){
         parseObject = new ParseObject(this.status_class);
-        this.setDevice(dev);
         parseObject.put(device_tag,this.getDevice());
         parseObject.put(latitude_tag,this.getLatitude());
         parseObject.put(longitude_tag,this.getLongitude());
@@ -264,4 +300,27 @@ public class GameStatus {
 
         //return answer;
     }
+
+
+    private void saveProfile_Eventually(){
+        parseObject = new ParseObject(this.profile_class);
+        parseObject.put(device_tag, this.getDevice());
+        parseObject.put(country_tag, this.getCountry());
+        parseObject.put(language_tag, this.getLanguage());
+        parseObject.put(avatar_tag, this.profile.getAvatar());
+        parseObject.put(gender_tag, this.profile.getGender());
+        parseObject.put(age_range_tag, this.profile.getAgeRange());
+        parseObject.put(bike_type_tag, this.profile.getBikeType());
+        parseObject.put(email_tag, this.profile.getEmail());
+        parseObject.saveEventually(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("PARSE - profile SAVED OK", String.valueOf(e));
+                } else {
+                    Log.d("PARSE - SAVE profile FAILED", String.valueOf(e));
+                }
+            }
+        });
+    }
+
 }

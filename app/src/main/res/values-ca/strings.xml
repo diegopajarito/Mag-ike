@@ -34,7 +34,7 @@
     <string name="action_fitness_text_error">Ho sentim, no podem accedir a les teves dades d\'activitat física</string>
     <string name="navigation_drawer_open">Obrir panell de navegació</string>
     <string name="navigation_drawer_close">Tancar panell de navegació</string>
-    <string name="profile_name">Nom</string>
+    <string name="profile_name">Nom d\'avatar</string>
     <string name="profile_female">Dona</string>
     <string name="profile_male">Home</string>
     <string name="profile_age">Edat (Anys)</string>

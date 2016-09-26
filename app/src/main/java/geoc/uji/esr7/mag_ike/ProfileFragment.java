@@ -1,6 +1,8 @@
 package geoc.uji.esr7.mag_ike;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,8 +16,8 @@ import geoc.uji.esr7.mag_ike.common.status.Profile;
 
 public class ProfileFragment extends Fragment {
 
-    private OnProfileChangeListener mCallback;
-    private Profile profile = new Profile();
+    private OnProfileChangeListener mListener;
+    private Profile profile;
 
     private EditText et_name;
     private EditText et_email;
@@ -24,19 +26,27 @@ public class ProfileFragment extends Fragment {
     // Check Parent Activity
     public interface OnProfileChangeListener {
         void onProfileUpdated(Profile p);
-        void updateProfileScreen();
+        Profile getCurrentProfile();
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        profile = mListener.getCurrentProfile();
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        et_name = (EditText) getView().findViewById(R.id.et_name);
-        et_email = (EditText) getView().findViewById(R.id.et_email);
+        et_name = (EditText) rootView.findViewById(R.id.et_name);
+        et_email = (EditText) rootView.findViewById(R.id.et_email);
 
         // Setting the Tab Host for selecting avatars
         TabHost host = (TabHost)rootView.findViewById(R.id.tabHost_sex);
@@ -60,6 +70,16 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnProfileChangeListener) {
+            mListener = (OnProfileChangeListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onPause() {
@@ -67,7 +87,7 @@ public class ProfileFragment extends Fragment {
 
         updateProfileFromScreen();
 
-        mCallback.onProfileUpdated(profile);
+        mListener.onProfileUpdated(profile);
 
     }
 
@@ -89,14 +109,9 @@ public class ProfileFragment extends Fragment {
 
 
     public void updateScreenFromProfile(){
-
-
-
-        if (et_name.getText().equals(profile.nameDefault) == false)
+        if (profile.getName().equals(profile.nameDefault) == false)
             et_name.setText(profile.getName());
-
-        if (et_email.getText().equals("") == false)
-            et_email.setText(profile.getEmail());
+        et_email.setText(profile.getEmail());
     }
 
 

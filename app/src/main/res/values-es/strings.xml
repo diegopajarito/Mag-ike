@@ -34,7 +34,7 @@
     <string name="action_fitness_text_error">Lo sentimos, no podemos acceder a tus datos de actividad física</string>
     <string name="navigation_drawer_close">Cerrar panel de navegación</string>
     <string name="navigation_drawer_open">Abrir panel de navegación</string>
-    <string name="profile_name">Nombre</string>
+    <string name="profile_name">Nombre de avatar</string>
     <string name="profile_male">Hombre</string>
     <string name="profile_female">Mujer</string>
     <string name="profile_age">Edad (Años)</string>
