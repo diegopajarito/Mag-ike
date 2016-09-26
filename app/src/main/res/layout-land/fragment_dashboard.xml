@@ -11,141 +11,147 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="9"
-            android:id="@+id/gridLayout" >
-    
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:id="@+id/imageView"
-                android:src="@drawable/id_distance"
-                android:layout_margin="20dp"
-                android:layout_column="0"
-                android:layout_row="0"
-                android:layout_rowSpan="3" />
-    
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:id="@+id/imageView2"
-                android:src="@drawable/ic_speed"
-                android:layout_margin="20dp"
-                android:layout_column="0"
-                android:layout_row="3"
-                android:layout_rowSpan="3" />
-    
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:id="@+id/imageView3"
-                android:src="@drawable/ic_tree"
-                android:layout_column="0"
-                android:layout_row="6"
-                android:layout_margin="20dp"
-                android:layout_rowSpan="3" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/distance_label"
-                android:id="@+id/textView2"
-                android:layout_column="1"
-                android:layout_row="0"
-                android:gravity="center_horizontal"
-                android:layout_margin="20dp" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
-                android:id="@+id/textView3"
-                android:layout_column="1"
-                android:layout_row="1"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/distance_units"
-                android:id="@+id/textView4"
-                android:layout_column="1"
-                android:layout_row="2"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/speed_label"
-                android:id="@+id/textView5"
-                android:layout_margin="20dp"
-                android:layout_column="1"
-                android:layout_row="3"
-                android:gravity="center_horizontal" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
-                android:id="@+id/textView6"
-                android:layout_column="1"
-                android:layout_row="4"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/speed_units"
-                android:id="@+id/textView7"
-                android:layout_column="1"
-                android:layout_row="5"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/contribution_label"
-                android:id="@+id/textView8"
-                android:layout_column="1"
-                android:layout_row="6"
-                android:layout_margin="20dp" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
-                android:id="@+id/textView9"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_column="1"
-                android:layout_row="7" />
-    
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/contribution_units"
-                android:id="@+id/textView10"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_column="1"
-                android:layout_row="8" />
-        </GridLayout>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:columnCount="6"
+                android:rowCount="3"
+                android:id="@+id/grid_status" >
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:id="@+id/logo_distance"
+                    android:src="@drawable/id_distance"
+                    android:layout_margin="20dp"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:layout_rowSpan="3" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/distance_label"
+                    android:id="@+id/label_distance"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="20dp" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:text="@string/nodata"
+                    android:id="@+id/value_distance"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/distance_units"
+                    android:id="@+id/distance_units"
+                    android:layout_column="1"
+                    android:layout_row="2"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:id="@+id/logo_speed"
+                    android:src="@drawable/ic_speed"
+                    android:layout_margin="20dp"
+                    android:layout_column="2"
+                    android:layout_row="0"
+                    android:layout_rowSpan="3" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/speed_label"
+                    android:id="@+id/label_speed"
+                    android:layout_margin="20dp"
+                    android:layout_column="3"
+                    android:layout_row="0"
+                    android:gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:text="@string/nodata"
+                    android:id="@+id/value_speed"
+                    android:layout_column="3"
+                    android:layout_row="1"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/speed_units"
+                    android:id="@+id/units_speed"
+                    android:layout_column="3"
+                    android:layout_row="2"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:id="@+id/logo_contribution"
+                    android:src="@drawable/ic_tree"
+                    android:layout_column="4"
+                    android:layout_row="0"
+                    android:layout_margin="20dp"
+                    android:layout_rowSpan="3" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/contribution_label"
+                    android:id="@+id/label_contribution"
+                    android:layout_column="5"
+                    android:layout_row="0"
+                    android:layout_margin="20dp" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:text="@string/nodata"
+                    android:id="@+id/value_contribution"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_column="5"
+                    android:layout_row="1" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/contribution_units"
+                    android:id="@+id/contribution_units"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_column="5"
+                    android:layout_row="2" />
+            </GridLayout>
+        </HorizontalScrollView>
+
     </RelativeLayout>
 
 </FrameLayout>

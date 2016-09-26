@@ -17,8 +17,8 @@ public class ProfileFragment extends Fragment {
     private OnProfileChangeListener mCallback;
     private Profile profile = new Profile();
 
-    EditText et_name = (EditText) getView().findViewById(R.id.et_name);
-    EditText et_email = (EditText) getView().findViewById(R.id.et_email);
+    private EditText et_name;
+    private EditText et_email;
 
     // Container Activity must implement this interface
     // Check Parent Activity
@@ -34,6 +34,9 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        et_name = (EditText) getView().findViewById(R.id.et_name);
+        et_email = (EditText) getView().findViewById(R.id.et_email);
 
         // Setting the Tab Host for selecting avatars
         TabHost host = (TabHost)rootView.findViewById(R.id.tabHost_sex);
@@ -52,7 +55,7 @@ public class ProfileFragment extends Fragment {
         host.addTab(spec);
 
         // Set profileValues on Screen
-        updateScreeenfromProfile();
+        updateScreenFromProfile();
 
         return rootView;
     }
@@ -72,7 +75,7 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        updateScreeenfromProfile();
+        updateScreenFromProfile();
     }
 
     public void updateProfileFromScreen() {
@@ -85,7 +88,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    public void updateScreeenfromProfile(){
+    public void updateScreenFromProfile(){
 
 
 

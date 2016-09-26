@@ -93,7 +93,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private DashboardFragment dashboardFragment;
     private AboutFragment aboutFragment;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +102,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // Starting and Setting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         // Setting the drawer layout, a toggle for open/close and a listener for selected items
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -199,7 +199,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        if ( item.getItemId() == R.id.nav_play) {
+        /*if ( item.getItemId() == R.id.nav_play) {
 
             dashboardFragment = new DashboardFragment();
             Bundle args = new Bundle();
@@ -231,7 +231,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             transaction.commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
 
@@ -261,6 +261,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                                 @Override
                                 public void onConnected(Bundle bundle) {
                                     Log.i(TAG, "Connected to Google Fit!!!");
+
+
                                     // Now you can make calls to the Fitness APIs.
                                     findFitnessDataSources();
                                     //((MenuItem)((ActionMenuView)toolbar.getChildAt(1)).getChildAt(0)).setIcon(R.drawable.ic_cycling_enabled);
@@ -389,19 +391,18 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         String name = field.getName();
                         if (name.equals("latitude") && val.isSet()){
                             lat = Float.parseFloat(val.toString());
-                            updateTextViewValueOnUiThread(R.id.value_latitude,val.toString());
                         } else if (name.equals("longitude") && val.isSet()){
                             lon = Float.parseFloat(val.toString());
-                            updateTextViewValueOnUiThread(R.id.value_longitude,val.toString());
                         } else if (name.equals("accuracy") && val.isSet()){
                             pres = Float.parseFloat(val.toString());
                         } else if (name.equals("altitude") && val.isSet()){
                             alt = Float.parseFloat(val.toString());
-                            updateTextViewValueOnUiThread(R.id.value_altitude,val.toString());
                         }
                     }
                     // Store Data into server and update interface with new values
                     gameStatus.saveStatus_Eventually(device,lat,lon,alt,pres);
+                    tv = (TextView) findViewById(R.id.value_distance);
+                    tv.setText(String.valueOf(device));
                     updateTextViewValueOnUiThread(R.id.value_contribution,String.valueOf(counter_points++));
                 }
             };
@@ -438,6 +439,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         name = field.getName();
                         if (name.equals("speed") && val.isSet()) {
                             speed = Float.parseFloat(val.toString());
+                            tv = (TextView) findViewById(R.id.value_speed);
+                            tv.setText(String.valueOf(speed));
                             updateTextViewValueOnUiThread(R.id.value_speed,val.toString());
                         }
                     }
@@ -480,6 +483,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         if (name.equals("distance") && val.isSet()) {
                             distance = Float.parseFloat(val.toString());
                             accumulated_distance += distance;
+                            tv = (TextView) findViewById(R.id.value_distance);
+                            tv.setText(String.valueOf(accumulated_distance));
                             updateTextViewValueOnUiThread(R.id.value_distance,String.valueOf(accumulated_distance));
                         }
                     }
@@ -520,7 +525,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         name = field.getName();
                         //if (name.equals("cadence") && val.isSet()) {
                             cadence = Float.parseFloat(val.toString());
-                        updateTextViewValueOnUiThread(R.id.value_cycling,val.toString());
+                        //updateTextViewValueOnUiThread(R.id.value_cycling,val.toString());
                         //}
                     }
                     // Store Data into server and update interface with new values

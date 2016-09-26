@@ -36,7 +36,7 @@ dependencies {
 
     compile 'com.parse:parse-android:1.13.0'
     compile 'com.parse.bolts:bolts-android:1.+'
-    compile 'com.google.android.gms:play-services-fitness:9.6.0'
+    compile 'com.google.android.gms:play-services-fitness:9.4.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
