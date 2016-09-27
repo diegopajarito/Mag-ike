@@ -209,24 +209,23 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     public boolean onNavigationItemSelected(MenuItem item) {
         Bundle args = new Bundle();
         // Handle navigation view item clicks here.
-        if ( item.getItemId() == R.id.nav_play) {
-            if (dashboardFragment.getArguments() == null)
-                dashboardFragment.setArguments(args);
+        if ( (item.getItemId() == R.id.nav_play) && !dashboardFragment.isVisible()) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, dashboardFragment);
             transaction.addToBackStack(null);
             transaction.commit();
 
-        } else if ( item.getItemId() == R.id.nav_share) {
+        } else if ( (item.getItemId() == R.id.nav_share) ) {
             Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
-        } else if ( item.getItemId() == R.id.nav_profile) {
+        } else if ( (item.getItemId() == R.id.nav_profile) && !profileFragment.isVisible()) {
             if (profileFragment.getArguments()  == null)
                 profileFragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, profileFragment);
+            transaction.addToBackStack(null);
             transaction.commit();
 
-        } else if ( item.getItemId() == R.id.nav_about) {
+        } else if ( (item.getItemId() == R.id.nav_about) && !aboutFragment.isVisible()) {
             if (aboutFragment.getArguments() == null)
                 aboutFragment.setArguments(args);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -728,8 +727,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
      * Implementing interfaces for Profile Fragment
      */
 
-    public void onProfileUpdated(Profile p){
-        gameStatus.updateProfile(p);
+    public boolean onProfileUpdated(Profile p){
+        return gameStatus.updateProfile(p);
     }
 
     @Override

@@ -8,13 +8,12 @@ public class Profile {
 
     // Profile properties
 
-    private String name;
-    private int avatar;
-    private int avatar_id;
+    private String avatarName;
+    private int avatarId;
     private String gender;
     private String ageRange;
     private int bikeType;
-    private int bike_type_id;
+    private int bikeTypeId;
     private String email;
 
     // Fixed Values for id's and domains
@@ -23,8 +22,9 @@ public class Profile {
 
     public final String gender_male = "Male";
     public final String gender_female = "Female";
-    public final String gender_not_set = "Not set";
+    public final String text_not_set = "Not set";
 
+    private final int id_not_set= -1;
     private final int avatar_female_id_1= 100;
     private final int avatar_female_id_2= 101;
     private final int avatar_female_id_3= 102;
@@ -60,54 +60,52 @@ public class Profile {
 
     // Default constructor
     public Profile(){
-        this.name = nameDefault;
-        this.avatar_id = avatar_female_id_1;
-        this.gender =gender_not_set;
+        this.avatarName = nameDefault;
+        this.avatarId = id_not_set;
+        this.gender =text_not_set;
         this.ageRange = age_range_not_set;
-        this.bikeType = bike_type_id_1;
+        this.bikeType = id_not_set;
+        this.bikeTypeId = id_not_set;
+        this.email = text_not_set;
 
 
     }
 
     // Constructor for first time definition of profile
-    public Profile(String name, int avatar, String gender, String age, int bike){
-        this.name = name;
-        this.avatar = avatar;
+    public Profile(String avatarName, int avatarId, String gender, String age, int bike, String email){
+        this.avatarName = avatarName;
+        this.avatarId = avatarId;
         this.gender = gender;
+        this.ageRange = age;
         this.bikeType = bike;
-
+        this.email = email;
     }
 
-    // Pending to define the way of setting id's based ond internal id from R.id.resource
-    public int getAvatarId(int avatar){
-        /*switch (avatar){
-            case: R.id.ic_avatar_female_cyclist_0{
-
-            }
-        }*/
-        return 0;
-    }
 
     public boolean updateProfile( Profile p){
         boolean changed = false;
-        if ( this.name.equals(p.getName()) == false ){
-            setName(p.getName());
+        if ( this.avatarName.equals(p.getAvatarName()) == false ){
+            setAvatarName(p.getAvatarName());
             changed = true;
         }
-        if (this.avatar == p.avatar){
-            setAvatar(p.getAvatar());
+        if (this.avatarId != p.avatarId){
+            setAvatarId(p.getAvatarId());
             changed = true;
         }
-        if (this.gender == p.gender){
+        if (this.gender.equals(p.gender) == false){
             setGender(p.getGender());
             changed = true;
         }
-        if (this.ageRange.equals(p.ageRange)){
+        if (this.ageRange.equals(p.ageRange) == false){
             setAgeRange(p.getAgeRange());
             changed = true;
         }
-        if (this.bikeType == p.bikeType){
+        if (this.bikeType != p.bikeType){
             setBikeType(p.getBikeType());
+            changed = true;
+        }
+        if (this.email.equals(p.email) == false){
+            setEmail(p.getEmail());
             changed = true;
         }
 
@@ -115,21 +113,21 @@ public class Profile {
     }
 
 
-    public String getName() {
-        return name;
+    public String getAvatarName() {
+        return this.avatarName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAvatarName(String avatarName) {
+        this.avatarName = avatarName;
     }
 
-    public int getAvatar() {
-        return avatar;
+    public int getAvatarId() {
+        return this.avatarId;
     }
 
-    public void setAvatar(int avatar) {
+    public void setAvatarId(int avatarId) {
         // Add id set
-        this.avatar = avatar;
+        this.avatarId = avatarId;
 
     }
 

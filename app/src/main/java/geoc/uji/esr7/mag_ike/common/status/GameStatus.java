@@ -34,6 +34,10 @@ public class GameStatus {
     private Date time_speed;
     private float cycling;
     private Date time_cycling;
+    private int locationContribution =0;
+    private int distanceContribution =0;
+    private int speedContribution =0;
+    private int cyclingContribution=0;
 
 
     //Setting Tags and default values
@@ -208,6 +212,24 @@ public class GameStatus {
         return profile;
     }
 
+    public int getLocationContribution() { return locationContribution; }
+
+    public void addLocationContribution() { this.locationContribution += 1; }
+
+    public int getDistanceContribution() { return distanceContribution; }
+
+    public void addDistanceContribution() { this.distanceContribution += 1; }
+
+    public int getSpeedContribution() { return speedContribution; }
+
+    public void addSpeedContribution() { this.speedContribution += 1; }
+
+    public int getCyclingContribution() { return cyclingContribution; }
+
+    public void addCyclingContribution() { this.cyclingContribution =+ 1; }
+
+    public int getTotalContribution() {return getLocationContribution() + getDistanceContribution() + getSpeedContribution() + getCyclingContribution(); }
+
     public boolean updateProfile(Profile p){
         Boolean updated = this.profile.updateProfile(p);
         if(updated)
@@ -235,6 +257,7 @@ public class GameStatus {
         parseObject.put(time_speed_tag,this.getTime_speed());
         parseObject.put(cycling_tag,this.getCycling());
         parseObject.put(time_cycling_tag,this.getTime_cycling());
+        addLocationContribution();
 
         parseObject.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
@@ -266,6 +289,7 @@ public class GameStatus {
             parseObject.put(time_speed_tag, this.getTime_speed());
             parseObject.put(cycling_tag,this.cycling);
             parseObject.put(time_cycling_tag,this.getCycling());
+            addSpeedContribution();
         } else if (label.equals("distance")){
             this.setDistance(value);
             parseObject.put(distance_tag,this.getDistance());
@@ -275,6 +299,7 @@ public class GameStatus {
             parseObject.put(time_speed_tag, this.getTime_speed());
             parseObject.put(cycling_tag,this.getCycling());
             parseObject.put(time_cycling_tag,this.getTime_cycling());
+            addDistanceContribution();
         } else if (label.equals("cycling")){
             parseObject.put(distance_tag,this.getDistance());
             parseObject.put(time_distance_tag, this.getTime_distance());
@@ -284,6 +309,7 @@ public class GameStatus {
             parseObject.put(cycling_tag,this.getCycling());
             this.setTime_cycling(new Date());
             parseObject.put(time_cycling_tag,this.getTime_cycling());
+            addCyclingContribution();
         } else {
             return;
         }
@@ -307,7 +333,8 @@ public class GameStatus {
         parseObject.put(device_tag, this.getDevice());
         parseObject.put(country_tag, this.getCountry());
         parseObject.put(language_tag, this.getLanguage());
-        parseObject.put(avatar_tag, this.profile.getAvatar());
+        parseObject.put(avatar_tag, this.profile.getAvatarName());
+        parseObject.put(avatar_id_tag, this.profile.getAvatarId());
         parseObject.put(gender_tag, this.profile.getGender());
         parseObject.put(age_range_tag, this.profile.getAgeRange());
         parseObject.put(bike_type_tag, this.profile.getBikeType());

@@ -17,6 +17,7 @@ import geoc.uji.esr7.mag_ike.common.status.Profile;
 public class ProfileFragment extends Fragment {
 
     private OnProfileChangeListener mListener;
+    private Profile temporalProfile;
     private Profile profile;
 
     private EditText et_name;
@@ -25,7 +26,7 @@ public class ProfileFragment extends Fragment {
     // Container Activity must implement this interface
     // Check Parent Activity
     public interface OnProfileChangeListener {
-        void onProfileUpdated(Profile p);
+        boolean onProfileUpdated(Profile p);
         Profile getCurrentProfile();
     }
 
@@ -41,6 +42,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         profile = mListener.getCurrentProfile();
+        temporalProfile = new Profile();
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -87,7 +89,8 @@ public class ProfileFragment extends Fragment {
 
         updateProfileFromScreen();
 
-        mListener.onProfileUpdated(profile);
+        if (mListener.onProfileUpdated(temporalProfile))
+            temporalProfile = profile;
 
     }
 
@@ -100,18 +103,19 @@ public class ProfileFragment extends Fragment {
 
     public void updateProfileFromScreen() {
 
-        if (et_name.getText().equals(profile.nameDefault) == false)
-            profile.setName(et_name.getText().toString());
-        if (et_email.getText().equals("") == false)
-            profile.setEmail(et_email.getText().toString());
+        if ((et_name.getText() == null) || (et_name.getText().equals(profile.nameDefault) == false))
+            temporalProfile.setAvatarName(et_name.getText().toString());
+        if ((et_name.getText() == null) || et_email.getText().equals(profile.text_not_set) == false)
+            temporalProfile.setEmail(et_email.getText().toString());
 
     }
 
 
     public void updateScreenFromProfile(){
-        if (profile.getName().equals(profile.nameDefault) == false)
-            et_name.setText(profile.getName());
-        et_email.setText(profile.getEmail());
+        if (profile.getAvatarName().equals(profile.nameDefault) == false)
+            et_name.setText(profile.getAvatarName());
+        if (profile.getEmail().equals(profile.text_not_set) == false)
+            et_email.setText(profile.getEmail());
     }
 
 
