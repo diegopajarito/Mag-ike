@@ -29,13 +29,13 @@
                     android:layout_column="0"
                     android:hint="@string/profile_name"
                     android:layout_margin="5dp"
-                    android:layout_marginTop="80dp"
+                    android:layout_marginTop="60dp"
                     android:textAlignment="center" />
 
                 <TabHost
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/tabHost_sex"
+                    android:id="@+id/tabHost_gender"
                     android:layout_row="1"
                     android:layout_column="0"
                     android:layout_margin="5dp">
@@ -44,7 +44,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:id="@+id/layout_tab_sex">
+                        android:id="@+id/layout_tab_gender">
 
                         <TabWidget
                             android:id="@android:id/tabs"
@@ -66,7 +66,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="horizontal"
-                                    android:id="@+id/rg_avatar_female">
+                                    android:id="@+id/rg_avatar_female"
+                                    android:gravity="center_horizontal">
 
                                     <RadioButton
                                         android:layout_width="80dp"
@@ -74,8 +75,7 @@
                                         android:id="@+id/rb_avatar_female_1"
                                         android:button="@drawable/sh_radio_button_selector"
                                         android:background="@drawable/ic_avatar_female_cyclist_1"
-                                        android:layout_margin="5dp"
-                                        android:checked="true" />
+                                        android:layout_margin="5dp" />
 
                                     <RadioButton
                                         android:layout_width="80dp"
@@ -96,10 +96,11 @@
                                     <RadioButton
                                         android:layout_width="80dp"
                                         android:layout_height="80dp"
-                                        android:id="@+id/rb_avatar_female_4"
                                         android:button="@drawable/sh_radio_button_selector"
                                         android:layout_margin="5dp"
-                                        android:background="@drawable/ic_avatar_female_cyclist_4" />
+                                        android:background="@drawable/ic_avatar_female_cyclist_4"
+                                        android:id="@+id/rb_avatar_female_4" />
+
                                 </RadioGroup>
                             </LinearLayout>
 
@@ -114,7 +115,8 @@
                                     android:layout_height="wrap_content"
                                     android:id="@+id/rg_avatar_male"
                                     android:orientation="horizontal"
-                                    android:layout_margin="5dp">
+                                    android:layout_margin="5dp"
+                                    android:gravity="center_horizontal">
 
                                     <RadioButton
                                         android:layout_width="80dp"
@@ -170,14 +172,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/sv_age"
-                    android:layout_margin="5dp">
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center_horizontal">
 
                     <RadioGroup
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:id="@+id/rg_age"
                         android:orientation="horizontal"
-                        android:layout_margin="5dp">
+                        android:layout_margin="5dp"
+                        android:gravity="center_horizontal">
 
                         <RadioButton
                             android:layout_width="wrap_content"
@@ -195,7 +199,6 @@
                             android:id="@+id/rb_age_20_30"
                             android:text="@string/profile_age_20_30"
                             android:background="@drawable/btn_app_default"
-                            android:checked="true"
                             android:layout_margin="2dp"
                             android:button="@drawable/sh_radio_button_selector"
                             android:textColor="@color/abc_primary_text_material_dark" />
@@ -250,7 +253,6 @@
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:id="@+id/rb_bicycle_type_1"
-                            android:checked="true"
                             android:layout_margin="5dp"
                             android:button="@drawable/sh_radio_button_selector"
                             android:background="@drawable/ic_bicycle_type_1" />

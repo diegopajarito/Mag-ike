@@ -1,5 +1,7 @@
 package geoc.uji.esr7.mag_ike.common.status;
 
+import android.widget.Switch;
+
 /**
  * Created by pajarito on 22/09/2016.
  */
@@ -24,7 +26,7 @@ public class Profile {
     public final String gender_female = "Female";
     public final String text_not_set = "Not set";
 
-    private final int id_not_set= -1;
+    public final int id_not_set= -1;
     private final int avatar_female_id_1= 100;
     private final int avatar_female_id_2= 101;
     private final int avatar_female_id_3= 102;
@@ -37,7 +39,6 @@ public class Profile {
     private final int avatar_male_id_4= 203;
     private final int avatar_male_id_5= 204;
 
-    private final String age_range_not_set= "Not Set";
     private final String age_range_0_20= "0-20";
     private final String age_range_20_30= "20-30";
     private final String age_range_30_40= "30-40";
@@ -63,7 +64,7 @@ public class Profile {
         this.avatarName = nameDefault;
         this.avatarId = id_not_set;
         this.gender =text_not_set;
-        this.ageRange = age_range_not_set;
+        this.ageRange = text_not_set;
         this.bikeType = id_not_set;
         this.bikeTypeId = id_not_set;
         this.email = text_not_set;
@@ -141,8 +142,40 @@ public class Profile {
         return ageRange;
     }
 
+    public int getAgeRangeId() {
+        switch (this.ageRange){
+            case age_range_0_20:
+                return 0;
+            case age_range_20_30:
+                return 1;
+            case age_range_30_40:
+                return 2;
+            case age_range_40_50:
+                return 3;
+            case age_range_50_0:
+                return 4;
+            default:
+                return 2;
+        }
+    }
+
     public void setAgeRange(String ageRange) {
         this.ageRange = ageRange;
+    }
+
+    public void setAgeRangeById(int id){
+        if (id == 0)
+            this.ageRange = age_range_0_20;
+        else if (id == 1)
+            this.ageRange = age_range_20_30;
+        else if (id == 2)
+            this.ageRange = age_range_30_40;
+        else if (id == 3)
+            this.ageRange = age_range_40_50;
+        else if (id == 4)
+            this.ageRange = age_range_50_0;
+        else
+            this.ageRange = text_not_set;
     }
 
     public int getBikeType() {
@@ -152,6 +185,7 @@ public class Profile {
     public void setBikeType(int bikeType) {
         // Add id set
         this.bikeType = bikeType;
+        this.bikeTypeId = bikeType;
     }
 
     public String getEmail() {

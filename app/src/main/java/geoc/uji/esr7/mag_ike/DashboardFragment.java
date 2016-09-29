@@ -75,6 +75,12 @@ public class DashboardFragment extends Fragment {
                 tv.setText(String.valueOf(s.getDistance()));
                 tv = (TextView) getView().findViewById(R.id.value_speed);
                 tv.setText(String.valueOf(s.getSpeed()));
+                tv = (TextView) getView().findViewById(R.id.value_contribution_location);
+                tv.setText(String.valueOf(s.getLocationContribution()));
+                tv = (TextView) getView().findViewById(R.id.value_contribution_distance);
+                tv.setText(String.valueOf(s.getDistanceContribution()));
+                tv = (TextView) getView().findViewById(R.id.value_contribution_speed);
+                tv.setText(String.valueOf(s.getSpeedContribution()));
                 tv = (TextView) getView().findViewById(R.id.value_contribution);
                 tv.setText(String.valueOf(s.getTotalContribution()));
             }
