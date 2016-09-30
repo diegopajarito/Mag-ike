@@ -4,6 +4,7 @@ package geoc.uji.esr7.mag_ike.common.status;
 import android.content.res.Resources;
 import android.widget.Toast;
 
+import com.google.android.gms.fitness.data.Field;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -29,6 +30,7 @@ public class GameStatus {
     private float precision;
     private Date time_gps;
     private float distance;
+    private float last_distance;
     private Date time_distance;
     private float speed;
     private Date time_speed;
@@ -155,6 +157,7 @@ public class GameStatus {
         if (precision != no_data)
             this.precision = precision;
     }
+
     public float getDistance() {
         return distance;
     }
@@ -162,6 +165,14 @@ public class GameStatus {
     public void setDistance(float distance) {
         if (distance != no_data)
             this.distance = distance;
+    }
+
+    public float getLast_distance() {
+        return last_distance;
+    }
+
+    public void setLast_distance(float last_distance) {
+        this.last_distance = last_distance;
     }
 
     public float getSpeed() {
@@ -280,7 +291,7 @@ public class GameStatus {
         parseObject.put(altitude_tag,this.getAltitude());
         parseObject.put(precision_tag,this.getPrecision());
         parseObject.put(time_gps_tag,this.getTime_gps());
-        if (label.equals("speed")) {
+        if (label.equals(Field.FIELD_SPEED.getName())) {
             parseObject.put(distance_tag,this.getDistance());
             parseObject.put(time_distance_tag, this.getTime_distance());
             this.setSpeed(value);
@@ -290,7 +301,7 @@ public class GameStatus {
             parseObject.put(cycling_tag,this.cycling);
             parseObject.put(time_cycling_tag,this.getCycling());
             addSpeedContribution();
-        } else if (label.equals("distance")){
+        } else if (label.equals(Field.FIELD_DISTANCE.getName())){
             this.setDistance(value);
             parseObject.put(distance_tag,this.getDistance());
             this.setTime_distance(new Date());
@@ -300,7 +311,7 @@ public class GameStatus {
             parseObject.put(cycling_tag,this.getCycling());
             parseObject.put(time_cycling_tag,this.getTime_cycling());
             addDistanceContribution();
-        } else if (label.equals("cycling")){
+        } else if (label.equals(Field.FIELD_RPM.getName())){
             parseObject.put(distance_tag,this.getDistance());
             parseObject.put(time_distance_tag, this.getTime_distance());
             parseObject.put(speed_tag, this.getSpeed());

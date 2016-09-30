@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:columnCount="3"
-                android:rowCount="9"
+                android:rowCount="10"
                 android:id="@+id/grid_status"
                 android:layout_gravity="center_horizontal">
 
@@ -31,7 +31,7 @@
                     android:layout_margin="20dp"
                     android:layout_column="0"
                     android:layout_row="0"
-                    android:layout_rowSpan="2"
+                    android:layout_rowSpan="3"
                     android:layout_gravity="center_vertical|center_horizontal" />
 
                 <TextView
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
                     android:text="@string/nodata"
-                    android:id="@+id/value_distance"
+                    android:id="@+id/value_last_distance"
                     android:layout_column="1"
                     android:layout_row="1"
                     android:gravity="center_horizontal"
@@ -63,9 +63,30 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/distance_units"
-                    android:id="@+id/distance_units"
+                    android:id="@+id/last_distance_units"
                     android:layout_column="2"
                     android:layout_row="1"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                    android:text="@string/nodata"
+                    android:id="@+id/value_distance"
+                    android:layout_column="1"
+                    android:layout_row="2"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/distance_units"
+                    android:id="@+id/distance_units"
+                    android:layout_column="2"
+                    android:layout_row="2"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <ImageView
@@ -75,7 +96,7 @@
                     android:src="@drawable/ic_speed"
                     android:layout_margin="20dp"
                     android:layout_column="0"
-                    android:layout_row="2"
+                    android:layout_row="3"
                     android:layout_rowSpan="2"
                     android:layout_gravity="center_vertical|center_horizontal" />
 
@@ -87,7 +108,7 @@
                     android:id="@+id/speed_label"
                     android:layout_margin="20dp"
                     android:layout_column="1"
-                    android:layout_row="2"
+                    android:layout_row="3"
                     android:layout_columnSpan="2"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal" />
@@ -99,25 +120,15 @@
                     android:text="@string/nodata"
                     android:id="@+id/value_speed"
                     android:layout_column="1"
-                    android:layout_row="3"
+                    android:layout_row="4"
                     android:gravity="center_horizontal"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/speed_units"
-                    android:id="@+id/speed_units"
-                    android:layout_column="2"
-                    android:layout_row="3"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <ImageView
                     android:id="@+id/logo_contribution"
                     android:src="@drawable/ic_tree"
                     android:layout_column="0"
-                    android:layout_row="4"
+                    android:layout_row="5"
                     android:layout_margin="20dp"
                     android:layout_rowSpan="5"
                     android:layout_width="90dp"
@@ -131,7 +142,7 @@
                     android:text="@string/contribution_label"
                     android:id="@+id/contribution_label"
                     android:layout_column="1"
-                    android:layout_row="4"
+                    android:layout_row="5"
                     android:layout_margin="20dp"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center_horizontal"
@@ -146,7 +157,7 @@
                     android:gravity="center_horizontal"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_column="1"
-                    android:layout_row="5" />
+                    android:layout_row="6" />
 
                 <TextView
                     android:layout_width="120dp"
@@ -155,7 +166,7 @@
                     android:text="@string/contribution_units"
                     android:id="@+id/contribution_units_location"
                     android:layout_column="2"
-                    android:layout_row="5"
+                    android:layout_row="6"
                     android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
@@ -167,7 +178,7 @@
                     android:gravity="center_horizontal"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_column="1"
-                    android:layout_row="6" />
+                    android:layout_row="7" />
 
                 <TextView
                     android:layout_width="120dp"
@@ -176,7 +187,7 @@
                     android:text="@string/contribution_units"
                     android:id="@+id/contribution_units_distance"
                     android:layout_column="2"
-                    android:layout_row="6"
+                    android:layout_row="7"
                     android:textColor="@color/colorPrimaryDark" />
                 <TextView
                     android:layout_width="120dp"
@@ -187,7 +198,7 @@
                     android:gravity="center_horizontal"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_column="1"
-                    android:layout_row="7" />
+                    android:layout_row="8" />
 
                 <TextView
                     android:layout_width="120dp"
@@ -196,7 +207,7 @@
                     android:text="@string/contribution_units"
                     android:id="@+id/contribution_units_speed"
                     android:layout_column="2"
-                    android:layout_row="7"
+                    android:layout_row="8"
                     android:textColor="@color/colorPrimaryDark"/>
 
                 <TextView
@@ -208,7 +219,7 @@
                     android:gravity="center_horizontal"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_column="1"
-                    android:layout_row="8" />
+                    android:layout_row="9" />
 
                 <TextView
                     android:layout_width="120dp"
@@ -217,7 +228,17 @@
                     android:text="@string/contribution_units"
                     android:id="@+id/contribution_units"
                     android:layout_column="2"
-                    android:layout_row="8"
+                    android:layout_row="9"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/speed_units"
+                    android:id="@+id/speed_units"
+                    android:layout_column="2"
+                    android:layout_row="4"
                     android:textColor="@color/colorPrimaryDark" />
 
             </GridLayout>

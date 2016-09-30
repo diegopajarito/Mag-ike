@@ -76,6 +76,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private OnDataPointListener speedListener;
     private OnDataPointListener distanceListener;
     private OnDataPointListener cyclingListener;
+    private OnDataPointListener stepCountListener;
     // [END mListener_variable_reference]
 
     // The activity Tracker
@@ -314,59 +315,43 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // Note: Fitness.SensorsApi.findDataSources() requires the ACCESS_FINE_LOCATION permission.
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 // At least one datatype must be specified.
-                //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE)
-                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE, DataType.AGGREGATE_STEP_COUNT_DELTA,
-                        DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,
-                        DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_SPEED_SUMMARY,
-                        DataType.AGGREGATE_DISTANCE_DELTA, DataType.TYPE_LOCATION_TRACK,
-                        DataType.TYPE_SPEED, DataType.TYPE_WORKOUT_EXERCISE)
+                //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE) DataType.TYPE_LOCATION_TRACK, DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_WORKOUT_EXERCISE, DataType.AGGREGATE_STEP_COUNT_DELTA,
+                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE,
+                        DataType.TYPE_STEP_COUNT_CUMULATIVE,
+                        DataType.TYPE_CYCLING_PEDALING_CADENCE,
+                        DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_DISTANCE_DELTA,
+                        DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY )
                 // Can specify whether data type is raw or derived.
                 .setDataSourceTypes(DataSource.TYPE_RAW, DataSource.TYPE_DERIVED)
                 .build())
                 .setResultCallback(new ResultCallback<DataSourcesResult>() {
                     @Override
                     public void onResult(DataSourcesResult dataSourcesResult) {
-                        //Log.i(TAG, "Result: " + dataSourcesResult.getStatus().toString());
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
-                            //Log.i(TAG, "Data source found: " + dataSource.toString());
-                            //Log.i(TAG, "Data Source type: " + dataSource.getDataType().getName());
-
-
                             //every type of data will register a listener
                                 // Listener for Location Data
                             if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
-                                    //&& mListener == null) {
-                                //Log.i(TAG, "Data source for LOCATION_SAMPLE found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_LOCATION_SAMPLE);
+                                registerFitnessDataListener(dataSource, DataType.TYPE_LOCATION_SAMPLE);
                                 //  Listener for Cycling Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_CYCLING_PEDALING_CADENCE)) {
-                                //Log.i(TAG, "Data source for CYCLING_PEDALING found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_CYCLING_PEDALING_CADENCE);
+                                registerFitnessDataListener(dataSource, DataType.TYPE_CYCLING_PEDALING_CADENCE);
                                 // Listener for Speed Data
                             } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
-                                //Log.i(TAG, "Data source for TYPE_SPEED found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_SPEED);
+                                registerFitnessDataListener(dataSource, DataType.TYPE_SPEED);
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
-                                //Log.i(TAG, "Data source for AGGREGATE_SPEED_SUMMARY found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.AGGREGATE_SPEED_SUMMARY);
-                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
-                                Log.i(TAG, "Data source for STEP_COUNT found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.TYPE_STEP_COUNT_DELTA);*/
+                                registerFitnessDataListener(dataSource, DataType.AGGREGATE_SPEED_SUMMARY);
+                                // Listener for Step Count
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE)) {
+                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE);
                                 // Listener for Distance Data
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
-                                //Log.i(TAG, "Data source for AGGREGATE_DISTANCE_DELTA found!  Registering.");
-                                registerFitnessDataListener(dataSource,
-                                        DataType.AGGREGATE_DISTANCE_DELTA);
+                                registerFitnessDataListener(dataSource, DataType.AGGREGATE_DISTANCE_DELTA);
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_CUMULATIVE)) {
+                                registerFitnessDataListener(dataSource, DataType.TYPE_DISTANCE_CUMULATIVE);
                             }
                         }
                     }
                 });
-        // [END find_data_sources]
     }
 
     /**
@@ -380,22 +365,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Location variables no-data vales
-                    float lat, lon, pres, alt=R.string.nodata;
-                    lat = lon = pres = alt = R.string.nodata;
-                    // Get Location Variables and change no-data values
-                    for (Field field : dataPoint.getDataType().getFields()){
-                        Value val = dataPoint.getValue(field);
-                        String name = field.getName();
-                        if (name.equals("latitude") && val.isSet()){
-                            lat = Float.parseFloat(val.toString());
-                        } else if (name.equals("longitude") && val.isSet()){
-                            lon = Float.parseFloat(val.toString());
-                        } else if (name.equals("accuracy") && val.isSet()){
-                            pres = Float.parseFloat(val.toString());
-                        } else if (name.equals("altitude") && val.isSet()){
-                            alt = Float.parseFloat(val.toString());
-                        }
-                    }
+                    float lat, lon, pres, alt;
+                    lat = dataPoint.getValue(Field.FIELD_LATITUDE).asFloat();
+                    lon = dataPoint.getValue(Field.FIELD_LONGITUDE).asFloat();
+                    pres = dataPoint.getValue(Field.FIELD_ACCURACY).asFloat();
+                    alt = dataPoint.getValue(Field.FIELD_ALTITUDE).asFloat();
                     // Store Data into server and update interface with new values
                     gameStatus.saveStatus_Eventually(lat,lon,alt,pres);
                     updateDashboardFromStatus(gameStatus);
@@ -408,6 +382,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
                             .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     locationListener)
                     .setResultCallback(new ResultCallback<Status>() {
@@ -425,15 +400,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Speed variables no-data vales
-                    float speed = R.string.nodata;
-                    String name = "";
-                    for (Field field : dataPoint.getDataType().getFields()) {
-                        Value val = dataPoint.getValue(field);
-                        name = field.getName();
-                        if (name.equals("speed") && val.isSet()) {
-                            speed = Float.parseFloat(val.toString());
-                        }
-                    }
+                    float speed = dataPoint.getValue(Field.FIELD_SPEED).asFloat();
+                    String name = Field.FIELD_SPEED.getName();
                     // Store Data into server and update interface with new values
                     gameStatus.saveStatus_Eventually(name,speed);
                     updateDashboardFromStatus(gameStatus);
@@ -446,6 +414,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
                             .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     speedListener)
                     .setResultCallback(new ResultCallback<Status>() {
@@ -458,21 +427,14 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             }
                         }
                     });
-        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA ){
+        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA || dataType == DataType.TYPE_DISTANCE_CUMULATIVE){
             distanceListener= new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
-                    float distance = Float.valueOf(R.string.value_nodata);
-                    String name ="";
-                    for (Field field : dataPoint.getDataType().getFields()) {
-                        Value val = dataPoint.getValue(field);
-                        name = field.getName();
-                        if (name.equals("distance") && val.isSet()) {
-                            distance = Float.parseFloat(val.toString());
-                            accumulated_distance += distance;
-                        }
-                    }
+                    float distance = dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
+                    String name = Field.FIELD_DISTANCE.getName();
+                    accumulated_distance += distance;
                     // Store Data into server and update interface with new values
                     gameStatus.saveStatus_Eventually(name,distance);
                     updateDashboardFromStatus(gameStatus);
@@ -484,7 +446,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                     new SensorRequest.Builder()
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
-                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setSamplingRate(1, TimeUnit.MINUTES)
+                            .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     distanceListener)
                     .setResultCallback(new ResultCallback<Status>() {
@@ -502,16 +465,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Cadence variables no-data vales
-                    float cadence = -999;
-                    String name ="";
-                    for (Field field : dataPoint.getDataType().getFields()) {
-                        Value val = dataPoint.getValue(field);
-                        name = field.getName();
-                        //if (name.equals("cadence") && val.isSet()) {
-                            cadence = Float.parseFloat(val.toString());
-                        //updateTextViewValueOnUiThread(R.id.value_cycling,val.toString());
-                        //}
-                    }
+                    float cadence = dataPoint.getValue(Field.FIELD_RPM).asFloat();
+                    String name = Field.FIELD_RPM.getName();
                     // Store Data into server and update interface with new values
                     gameStatus.saveStatus_Eventually(name,cadence);
                     updateDashboardFromStatus(gameStatus);
@@ -533,6 +488,37 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                                 Log.i(TAG, "Cycling Listener registered!");
                             } else {
                                 Log.i(TAG, "Cycling Listener not registered.");
+                            }
+                        }
+                    });
+        } else if (dataType == DataType.TYPE_STEP_COUNT_CUMULATIVE ){
+            stepCountListener= new OnDataPointListener() {
+                @Override
+                public void onDataPoint(DataPoint dataPoint) {
+                    // Cadence variables no-data vales
+                    float steps = dataPoint.getValue(Field.FIELD_STEPS).asFloat();
+                    String name =Field.FIELD_STEPS.getName();
+                    // Store Data into server and update interface with new values
+                    gameStatus.saveStatus_Eventually(name,steps);
+                    updateDashboardFromStatus(gameStatus);
+                }
+            };
+            // Register listener with the sensor API
+            Fitness.SensorsApi.add(
+                    mClient,
+                    new SensorRequest.Builder()
+                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
+                            .setDataType(dataType) // Can't be omitted.
+                            .setSamplingRate(1, TimeUnit.MINUTES)
+                            .build(),
+                    stepCountListener)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Step Count Listener registered!");
+                            } else {
+                                Log.i(TAG, "Step Count Listener not registered.");
                             }
                         }
                     });
