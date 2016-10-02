@@ -2,8 +2,8 @@
 <resources>
     <string name="server_parse" translatable="false">http://150.128.97.150:1337/parse/</string>
     <string name="application_id_parse" translatable="false">enableDashboard</string>
-    <string name="username_parse" translatable="false">enableDashboard</string>
-    <string name="password_parse" translatable="false">enableDashboard</string>
+    <string name="username_parse" translatable="false">test@test.com</string>
+    <string name="password_parse" translatable="false">test</string>
     <string name="status_class_parse" translatable="false">Magike_Status</string>
     <string name="device_tag" translatable="false">device</string>
     <string name="latitude_tag" translatable="false">latitude</string>

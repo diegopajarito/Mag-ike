@@ -21,30 +21,14 @@ public class DashboardFragment extends Fragment {
 
     private OnStatusChangeListener mListener;
 
-    // Container Activity must implement this interface
-    // Check Parent Activity
-    public interface OnStatusChangeListener {
-        void updateDashboardFromStatus(GameStatus s);
-    }
-
-    public DashboardFragment() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
+
 
 
     @Override
@@ -64,6 +48,15 @@ public class DashboardFragment extends Fragment {
         mListener = null;
     }
 
+    // Container Activity must implement this interface
+    // Check Parent Activity
+    public interface OnStatusChangeListener {
+        void updateDashboardFromStatus(GameStatus s);
+    }
+
+    public DashboardFragment() {
+        // Required empty public constructor
+    }
 
     public void updateDashboardFromStatus(final GameStatus s){
 
@@ -71,10 +64,15 @@ public class DashboardFragment extends Fragment {
         act.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                TextView tv = (TextView) getView().findViewById(R.id.value_distance);
-                tv.setText(String.valueOf(s.getDistance()));
-                tv = (TextView) getView().findViewById(R.id.value_speed);
-                tv.setText(String.valueOf(s.getSpeed()*3.6));
+                TextView tv;
+                if (s.getDistance() != s.no_data) {
+                    tv = (TextView) getView().findViewById(R.id.value_distance);
+                    tv.setText(String.format("%.2f", s.getDistance()));
+                }
+                if (s.getSpeed() != s.no_data){
+                    tv = (TextView) getView().findViewById(R.id.value_speed);
+                    tv.setText(String.format("%.2f",s.getSpeed()));
+                }
                 tv = (TextView) getView().findViewById(R.id.value_contribution_location);
                 tv.setText(String.valueOf(s.getLocationContribution()));
                 tv = (TextView) getView().findViewById(R.id.value_contribution_distance);
@@ -87,4 +85,5 @@ public class DashboardFragment extends Fragment {
         });
 
     }
+
 }

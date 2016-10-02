@@ -43,7 +43,7 @@ public class GameStatus {
 
 
     //Setting Tags and default values
-    private final float no_data = Float.valueOf(R.string.value_nodata);
+    public final float no_data = Float.valueOf(R.integer.value_nodata);
     private String status_class;
     private String profile_class;
     private String device_tag;

@@ -1,6 +1,8 @@
 package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -82,6 +84,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     // The activity Tracker
     private ActivityTracker actTracker = new ActivityTracker();
 
+    // Wraps Android's native log framework.
+    LogWrapper logWrapper;
+
     // Global variables to be used during app execution
     int counter_points = 0;
     float accumulated_distance = 0;
@@ -90,6 +95,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     public GameStatus gameStatus;
 
     // Fragments for being used on interface development
+    private DataFragment dataFragment;
     private ProfileFragment profileFragment;
     private DashboardFragment dashboardFragment;
     private AboutFragment aboutFragment = new AboutFragment();
@@ -98,20 +104,39 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_session);
+
+        // Setting Game Status
         gameStatus = new GameStatus(getResources());
         gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
         gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
         gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
 
-        // Should be instanciated after creating a gameStatus object
+        // Initialize all UI Fragments
         profileFragment = new ProfileFragment();
+        dashboardFragment = new DashboardFragment();
+        dashboardFragment.setArguments(getIntent().getExtras());
 
-        setContentView(R.layout.activity_session);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, dashboardFragment).commit();
+
+        // Handling previous Status when app resumes using data fragments
+        FragmentManager fm = getFragmentManager();
+        dataFragment = (DataFragment) fm.findFragmentByTag("temporalStatus");
+        // create the fragment and data the first time
+        if (dataFragment == null) {
+            // add the fragment
+            dataFragment = new DataFragment();
+            fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
+            // load the data from the web
+            dataFragment.setTemporalStatus(gameStatus);
+        } else {
+            gameStatus = dataFragment.getTemporalStatus();
+        }
 
         // Starting and Setting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         // Setting the drawer layout, a toggle for open/close and a listener for selected items
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -119,10 +144,10 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 this, drawer, toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
 
+
         // Setting the navigation view with avatar and personal identification
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         // Adding a floating button and its listener
         FloatingActionButton btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
@@ -136,11 +161,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         });
 
 
-        dashboardFragment = new DashboardFragment();
-        dashboardFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, dashboardFragment).commit();
-
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
         initializeLogging();
@@ -152,18 +172,16 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         }
 
         // Setting Parse Server with username and password
-        ParseUser.logInInBackground("test@test.com", "test", new LogInCallback() {
-            public void done(ParseUser user, ParseException e) {
-                if (user != null) {
-                    // Hooray! The user is logged in.
-                    Log.d("Hooray", "Hooray! The user is logged - Mag-ike.");
-                } else {
-                    // Signup failed. Look at the ParseException to see what happened.
-                    Log.d("Signup failed", "Signup failed - Mag-ike - " + e.toString());
-                }
-            }
-        });
+        checkParseLogIn();
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // store the data in the fragment
+        dataFragment.setTemporalStatus(gameStatus);
 
 
     }
@@ -175,8 +193,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // This ensures that if the user deies the permissiones then uses Settings to re-enable
         // them, the app will start working.
         buildFitnessClient();
-
         //Set Screen based on Status
+        updateDashboardFromStatus(gameStatus);
 
     }
 
@@ -239,6 +257,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         return true;
     }
 
+    public void checkParseLogIn(){
+        ParseUser.logInInBackground(getString(R.string.username_parse), getString(R.string.password_parse),
+                new LogInCallback() {
+            public void done(ParseUser user, ParseException e) {
+                if (user != null) {
+                    // Hooray! The user is logged in.
+                    Log.d("Parse", "Connected to Parse - Mag-ike.");
+                } else {
+                    // Signup failed. Look at the ParseException to see what happened.
+                    Log.d("Parse", "Connection to Parse failed - Mag-ike - " + e.toString());
+                }
+            }
+        });
+    }
 
     // [START auth_build_googleapiclient_beginning]
     /**
@@ -590,25 +622,28 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
      * Initialize a custom log class tha outputs both to in-app targets and logcat
      */
     private void initializeLogging(){
-        // Wraps Android's native log framework.
-        LogWrapper logWrapper = new LogWrapper();
-        //Using Log, front-end to the logging chain, emulates adroid.util.log method signatures
-        Log.setLogNode(logWrapper);
-        // Filter strips out everything except the message text.
-        MessageOnlyLogFilter msgFilter= new MessageOnlyLogFilter();
-        logWrapper.setNext(msgFilter);
-        // On screen logging via customized TextView.
-        LogView logView = (LogView) findViewById(R.id.sample_logview);
+        if (logWrapper == null) {
+            // Wraps Android's native log framework.
+            logWrapper = new LogWrapper();
+            //Using Log, front-end to the logging chain, emulates adroid.util.log method signatures
+            Log.setLogNode(logWrapper);
+            // Filter strips out everything except the message text.
+            MessageOnlyLogFilter msgFilter = new MessageOnlyLogFilter();
+            logWrapper.setNext(msgFilter);
+            // On screen logging via customized TextView.
+            LogView logView = (LogView) findViewById(R.id.sample_logview);
 
-        // Fixing this lint errors adds logic without benefit.
-        // noinspection AndroidLintDeprecation
-        logView.setTextAppearance(this, R.style.Log);
-        logView.setMovementMethod(new ScrollingMovementMethod());
+            // Fixing this lint errors adds logic without benefit.
+            // noinspection AndroidLintDeprecation
+            logView.setTextAppearance(this, R.style.Log);
+            logView.setMovementMethod(new ScrollingMovementMethod());
 
-        logView.setBackgroundColor(Color.WHITE);
-        msgFilter.setNext(logView);
-        Log.i(TAG, "Ready");
-
+            logView.setBackgroundColor(Color.WHITE);
+            msgFilter.setNext(logView);
+            Log.i(TAG, "Ready");
+        } else {
+            Log.i(TAG, "Already started");
+        }
     }
 
     /**

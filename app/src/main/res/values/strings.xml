@@ -24,7 +24,7 @@
     <string name="longitude">Longitude:</string>
     <string name="altitude">Altitude:</string>
     <string name="nodata" translatable="false">~</string>
-    <string name="value_nodata" translatable="false">-999</string>
+    <integer name="value_nodata" translatable="false">-999</integer>
     <string name="cycling" translatable="false">Cycling:</string>
     <string name="title_activity_session" translatable="false">SessionActivity</string>
 
