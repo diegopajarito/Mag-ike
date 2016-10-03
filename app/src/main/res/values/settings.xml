@@ -5,6 +5,10 @@
     <string name="username_parse" translatable="false">test@test.com</string>
     <string name="password_parse" translatable="false">test</string>
     <string name="status_class_parse" translatable="false">Magike_Status</string>
+    <string name="dashboardFragment_label" translatable="false">dashboard</string>
+    <string name="profileFragment_label" translatable="false">profile</string>
+    <string name="aboutFragment_label" translatable="false">about</string>
+    <string name="email_tag" translatable="false">email</string>
     <string name="device_tag" translatable="false">device</string>
     <string name="latitude_tag" translatable="false">latitude</string>
     <string name="longitude_tag" translatable="false">longitude</string>
@@ -26,5 +30,4 @@
     <string name="age_range_tag" translatable="false">age_range</string>
     <string name="bike_type_tag" translatable="false">bike_type</string>
     <string name="bike_type_id_tag" translatable="false">bike_type_id</string>
-    <string name="email_tag" translatable="false">email</string>
 </resources>

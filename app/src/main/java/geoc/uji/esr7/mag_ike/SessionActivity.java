@@ -1,6 +1,7 @@
 package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -96,8 +97,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     // Fragments for being used on interface development
     private DataFragment dataFragment;
-    private ProfileFragment profileFragment;
-    private DashboardFragment dashboardFragment;
+    private ProfileFragment profileFragment = new ProfileFragment();
+    private DashboardFragment dashboardFragment = new DashboardFragment();
     private AboutFragment aboutFragment = new AboutFragment();
 
     @Override
@@ -106,25 +107,27 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         setContentView(R.layout.activity_session);
 
-        // Setting Game Status
-        gameStatus = new GameStatus(getResources());
-        gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-        gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
-        gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
+        android.support.v4.app.FragmentManager supportfm = getSupportFragmentManager();
 
-        // Initialize all UI Fragments
-        profileFragment = new ProfileFragment();
-        dashboardFragment = new DashboardFragment();
-        dashboardFragment.setArguments(getIntent().getExtras());
-
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, dashboardFragment).commit();
+        // Get existing fragment for Dashboard
+        if (supportfm.findFragmentByTag(getString(R.string.dashboardFragment_label)) == null){
+            dashboardFragment.setArguments(getIntent().getExtras());
+            supportfm.beginTransaction()
+                    .add(R.id.fragment_container, dashboardFragment, getString(R.string.dashboardFragment_label) ).commit();
+        } else {
+            dashboardFragment = (DashboardFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardFragment_label));
+        }
 
         // Handling previous Status when app resumes using data fragments
         FragmentManager fm = getFragmentManager();
         dataFragment = (DataFragment) fm.findFragmentByTag("temporalStatus");
         // create the fragment and data the first time
         if (dataFragment == null) {
+            // Setting Game Status
+            gameStatus = new GameStatus(getResources());
+            gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+            gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
+            gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
             // add the fragment
             dataFragment = new DataFragment();
             fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
@@ -183,7 +186,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // store the data in the fragment
         dataFragment.setTemporalStatus(gameStatus);
 
-
     }
 
     @Override
@@ -195,7 +197,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         buildFitnessClient();
         //Set Screen based on Status
         updateDashboardFromStatus(gameStatus);
-
     }
 
     @Override
@@ -226,36 +227,39 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Bundle args = new Bundle();
-        // Handle navigation view item clicks here.
-        if ( (item.getItemId() == R.id.nav_play) && !dashboardFragment.isVisible()) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, dashboardFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
 
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // Handle navigation view item clicks here.
+        if (item.getItemId() == R.id.nav_play) {
+            if(!dashboardFragment.isVisible()){
+                transaction.replace(R.id.fragment_container, dashboardFragment);
+                transaction.addToBackStack(null);
+            }
         } else if ( (item.getItemId() == R.id.nav_share) ) {
             Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
-        } else if ( (item.getItemId() == R.id.nav_profile) && !profileFragment.isVisible()) {
-            if (profileFragment.getArguments()  == null)
-                profileFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, profileFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-
-        } else if ( (item.getItemId() == R.id.nav_about) && !aboutFragment.isVisible()) {
-            if (aboutFragment.getArguments() == null)
-                aboutFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, aboutFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        } else if (item.getItemId() == R.id.nav_profile) {
+            if (getSupportFragmentManager().findFragmentByTag(getString(R.string.profileFragment_label)) == null){
+                transaction.add(profileFragment, getString(R.string.profileFragment_label));
+            }
+            if (!profileFragment.isVisible()){
+                transaction.replace(R.id.fragment_container, profileFragment);
+                transaction.addToBackStack(null);
+            }
+        } else if (item.getItemId() == R.id.nav_about) {
+            if (getSupportFragmentManager().findFragmentByTag(getString(R.string.aboutFragment_label)) == null){
+                transaction.add(aboutFragment,getString(R.string.aboutFragment_label));
+            }
+            if (!aboutFragment.isVisible()){
+                transaction.replace(R.id.fragment_container, aboutFragment);
+                transaction.addToBackStack(null);
+            }
         }
+        transaction.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     public void checkParseLogIn(){
         ParseUser.logInInBackground(getString(R.string.username_parse), getString(R.string.password_parse),
@@ -349,7 +353,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 // At least one datatype must be specified.
                 //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE) DataType.TYPE_LOCATION_TRACK, DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_WORKOUT_EXERCISE, DataType.AGGREGATE_STEP_COUNT_DELTA,
                 .setDataTypes(DataType.TYPE_LOCATION_SAMPLE,
-                        DataType.TYPE_STEP_COUNT_CUMULATIVE,
+                        //DataType.TYPE_STEP_COUNT_CUMULATIVE,
                         DataType.TYPE_CYCLING_PEDALING_CADENCE,
                         DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_DISTANCE_DELTA,
                         DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY )
@@ -373,8 +377,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
                                 registerFitnessDataListener(dataSource, DataType.AGGREGATE_SPEED_SUMMARY);
                                 // Listener for Step Count
-                            } else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE)) {
-                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE);
+                            /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE)) {
+                                registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE);*/
                                 // Listener for Distance Data
                             } else if (dataSource.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
                                 registerFitnessDataListener(dataSource, DataType.AGGREGATE_DISTANCE_DELTA);
@@ -523,15 +527,15 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             }
                         }
                     });
-        } else if (dataType == DataType.TYPE_STEP_COUNT_CUMULATIVE ){
+        } /*else if (dataType == DataType.TYPE_STEP_COUNT_CUMULATIVE ){
             stepCountListener= new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Cadence variables no-data vales
-                    float steps = dataPoint.getValue(Field.FIELD_STEPS).asFloat();
+                    int steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
                     String name =Field.FIELD_STEPS.getName();
                     // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(name,steps);
+                    gameStatus.saveStatus_Eventually(name,(float) steps);
                     updateDashboardFromStatus(gameStatus);
                 }
             };
@@ -554,7 +558,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             }
                         }
                     });
-        }
+        }*/
 
     }
 
@@ -757,8 +761,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         return gameStatus.getProfile();
     }
 
+
     @Override
     public void updateDashboardFromStatus(GameStatus s) {
         dashboardFragment.updateDashboardFromStatus(s);
     }
+
+
 }

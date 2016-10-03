@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ public class DashboardFragment extends Fragment {
 
 
     private OnStatusChangeListener mListener;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,8 +62,8 @@ public class DashboardFragment extends Fragment {
 
     public void updateDashboardFromStatus(final GameStatus s){
 
-        Activity act = getActivity();
-        act.runOnUiThread(new Runnable() {
+        Activity activity = getActivity();
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 TextView tv;

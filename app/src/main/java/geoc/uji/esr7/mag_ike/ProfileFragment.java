@@ -133,13 +133,13 @@ public class ProfileFragment extends Fragment {
             et_name.setText(profile.getAvatarName());
         RadioGroup radioGroup;
         RadioButton radioButton;
-        if ((profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_female)){
+        if ((profile.getAvatarId() != profile.id_not_set && profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_female)){
             tabHostGender.setCurrentTab(0);
             radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar_female);
             radioButton = (RadioButton) radioGroup.getChildAt(profile.getAvatarId());
             radioButton.setChecked(true);
         }
-        else if ((profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_male)){
+        else if ((profile.getAvatarId() != profile.id_not_set && profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_male)){
             tabHostGender.setCurrentTab(1);
             radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar_male);
             radioButton = (RadioButton) radioGroup.getChildAt(profile.getAvatarId());

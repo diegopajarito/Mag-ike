@@ -305,14 +305,6 @@
                             android:background="@drawable/ic_bicycle_type_7"
                             android:button="@drawable/sh_radio_button_selector" />
 
-                        <RadioButton
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:id="@+id/rb_bicycle_type_8"
-                            android:layout_margin="5dp"
-                            android:background="@drawable/ic_bicycle_type_8"
-                            android:button="@drawable/sh_radio_button_selector" />
-
                     </RadioGroup>
                 </HorizontalScrollView>
 
