@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import geoc.uji.esr7.mag_ike.common.logger.Log;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 import geoc.uji.esr7.mag_ike.common.status.Profile;
 
@@ -67,22 +68,26 @@ public class DashboardFragment extends Fragment {
             @Override
             public void run() {
                 TextView tv;
-                if (s.getDistance() != s.no_data) {
-                    tv = (TextView) getView().findViewById(R.id.value_distance);
-                    tv.setText(String.format("%.2f", s.getDistance()));
+                try {
+                    if (s.getDistance() != s.no_data) {
+                        tv = (TextView) getView().findViewById(R.id.value_distance);
+                        tv.setText(String.format("%.2f", s.getDistance()));
+                    }
+                    if (s.getSpeed() != s.no_data) {
+                        tv = (TextView) getView().findViewById(R.id.value_speed);
+                        tv.setText(String.format("%.2f", s.getSpeed()));
+                    }
+                    tv = (TextView) getView().findViewById(R.id.value_contribution_location);
+                    tv.setText(String.valueOf(s.getLocationContribution()));
+                    tv = (TextView) getView().findViewById(R.id.value_contribution_distance);
+                    tv.setText(String.valueOf(s.getDistanceContribution()));
+                    tv = (TextView) getView().findViewById(R.id.value_contribution_speed);
+                    tv.setText(String.valueOf(s.getSpeedContribution()));
+                    tv = (TextView) getView().findViewById(R.id.value_contribution);
+                    tv.setText(String.valueOf(s.getTotalContribution()));
+                } catch (Exception e){
+                    Log.i("Update", "Error on setting value - " + e.getMessage());
                 }
-                if (s.getSpeed() != s.no_data){
-                    tv = (TextView) getView().findViewById(R.id.value_speed);
-                    tv.setText(String.format("%.2f",s.getSpeed()));
-                }
-                tv = (TextView) getView().findViewById(R.id.value_contribution_location);
-                tv.setText(String.valueOf(s.getLocationContribution()));
-                tv = (TextView) getView().findViewById(R.id.value_contribution_distance);
-                tv.setText(String.valueOf(s.getDistanceContribution()));
-                tv = (TextView) getView().findViewById(R.id.value_contribution_speed);
-                tv.setText(String.valueOf(s.getSpeedContribution()));
-                tv = (TextView) getView().findViewById(R.id.value_contribution);
-                tv.setText(String.valueOf(s.getTotalContribution()));
             }
         });
 
