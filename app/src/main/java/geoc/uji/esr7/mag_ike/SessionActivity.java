@@ -26,6 +26,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -642,7 +643,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             logView.setTextAppearance(this, R.style.Log);
             logView.setMovementMethod(new ScrollingMovementMethod());
 
-            logView.setBackgroundColor(Color.WHITE);
+            logView.setBackgroundColor(Color.TRANSPARENT);
             msgFilter.setNext(logView);
             Log.i(TAG, "Ready");
         } else {
@@ -753,6 +754,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
      */
 
     public boolean onProfileUpdated(Profile p){
+        TextView tv;
+
+        if (p.getAvatarName() != p.nameDefault) {
+            tv = (TextView) this.findViewById(R.id.avatar_name_header);
+            tv.setText(p.getAvatarName());
+        }
+        if (p.getEmail() != "") {
+            tv = (TextView) this.findViewById(R.id.avatar_email_header);
+            tv.setText(p.getEmail());
+        }
+        if (p.getAvatarId() != p.id_not_set){
+
+        }
+
         return gameStatus.updateProfile(p);
     }
 

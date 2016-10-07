@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 import geoc.uji.esr7.mag_ike.common.status.Profile;
 
@@ -107,6 +108,7 @@ public class ProfileFragment extends Fragment {
 
         if ((et_name.getText() == null) || (et_name.getText().equals(profile.nameDefault) == false))
             temporalProfile.setAvatarName(et_name.getText().toString());
+
         RadioGroup radioGroup;
         if (tabHostGender.getCurrentTab() == 0) {
             temporalProfile.setGender(temporalProfile.gender_female);
@@ -131,6 +133,7 @@ public class ProfileFragment extends Fragment {
     public void updateScreenFromProfile(){
         if (profile.getAvatarName().equals(profile.nameDefault) == false)
             et_name.setText(profile.getAvatarName());
+
         RadioGroup radioGroup;
         RadioButton radioButton;
         if ((profile.getAvatarId() != profile.id_not_set && profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_female)){
