@@ -24,4 +24,30 @@
         <item name="android:lineSpacingMultiplier">1.1</item>
     </style>
 
+    <style name="BigNumber" parent="@android:style/TextAppearance.Large">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">84sp</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="SmallNumber" parent="@android:style/TextAppearance.Large">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="UnitsLabel" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+
 </resources>

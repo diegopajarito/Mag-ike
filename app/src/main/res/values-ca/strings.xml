@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mag-ike</string>
+    <string name="app_name">Ciclista</string>
     <string name="action_settings">Configuraciò</string>
     <string name="permission_denied_explanation">El permís va ser negat peró és necessari per a la funcionalitat de l\'aplicaciò</string>
     <string name="permission_rationale">Els dades d\'ubicaciò són usats per l\'API de Google Fit</string>
@@ -41,4 +41,9 @@
     <string name="profile_age_0_20">Menor de 20</string>
     <string name="profile_age_50_">Major de 50</string>
     <string name="about_text">Aquesta aplicació es part del projecte ESR07 de GEOC</string>
+    <string name="contribution_location_label">Ubicació</string>
+    <string name="contribution_distance_label">Distància</string>
+    <string name="contribution_speed_label">Velocitat</string>
+    <string name="contribution_max_label">Màx.</string>
+    <string name="contribution_total_label">Total</string>
 </resources>

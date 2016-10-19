@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mag-ike</string>
+    <string name="app_name">Cyclist</string>
     <string name="action_settings">Settings</string>
     <string name="ok" translatable="false">OK</string>
     <string name="permission_rationale">Location data is used as part of the Google Fit API</string>
@@ -58,4 +58,9 @@
     <string name="profile_age_40_50" translatable="false">40 - 40</string>
     <string name="profile_age_50_">More than 50</string>
     <string name="about_text">This app is part of GEO-C ESR07 project</string>
+    <string name="contribution_location_label">Location</string>
+    <string name="contribution_distance_label">Distance</string>
+    <string name="contribution_speed_label">Speed</string>
+    <string name="contribution_max_label">Max.</string>
+    <string name="contribution_total_label">Total</string>
 </resources>

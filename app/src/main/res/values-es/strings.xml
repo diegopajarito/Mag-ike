@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mag-ike</string>
+    <string name="app_name">Ciclista</string>
     <string name="action_settings">Configuración</string>
     <string name="permission_denied_explanation">El permiso fue negado pero es necesario para la funcionalidad de esta aplicación</string>
     <string name="settings">Menú</string>
@@ -41,4 +41,9 @@
     <string name="profile_age_0_20">Menor de 20</string>
     <string name="profile_age_50_">Mayor de 50</string>
     <string name="about_text">Esta aplicación es parte del projecto ESR07 de GEO-C</string>
+    <string name="contribution_location_label">Ubicación</string>
+    <string name="contribution_distance_label">Distancia</string>
+    <string name="contribution_speed_label">Velocidad</string>
+    <string name="contribution_max_label">Máx.</string>
+    <string name="contribution_total_label">Total</string>
 </resources>

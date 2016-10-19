@@ -4,12 +4,12 @@
     tools:context=".SessionActivity">
     <item
         android:id="@+id/action_cycling"
-        android:icon="@drawable/ic_cycling_disabled"
+        android:icon="@drawable/ic_cycling_enabled"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_location"
-        android:icon="@drawable/ic_location_disabled"
+        android:icon="@drawable/ic_location_enabled"
         android:title=""
         app:showAsAction="ifRoom"/>
 
