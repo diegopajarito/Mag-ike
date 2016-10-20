@@ -46,4 +46,5 @@
     <string name="contribution_speed_label">Velocidad</string>
     <string name="contribution_max_label">Máx.</string>
     <string name="contribution_total_label">Total</string>
+    <string name="day_label">Dia</string>
 </resources>
