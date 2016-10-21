@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -68,10 +69,13 @@ public class DashboardFragment extends Fragment {
             @Override
             public void run() {
                 TextView tv;
+                ProgressBar pv;
                 try {
                     if (s.getDistance() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
-                        tv.setText(String.format("%.0f", 420.0  ));
+                        tv.setText(String.format("%.0f", s.getDistance()  ));
+                        pv = (ProgressBar) getView().findViewById(R.id.progress_bar_distance);
+                        pv.setProgress((int) s.getDistance()/100);
                     }
                     if (s.getSpeed() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_speed);
