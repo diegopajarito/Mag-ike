@@ -36,29 +36,35 @@ public class DashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view  = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
         sb_goal = (SeekBar) view.findViewById(R.id.sb_goal);
         pb_distance = (ProgressBar) view.findViewById(R.id.progress_bar_distance);
 
         sb_goal.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateDistanceGoalfromSeekBar(sb_goal);
+                Log.d("seekbar","changed");
+
+
+           //     updateDistanceGoalfromSeekBar(sb_goal);
+
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                Log.d("seekbar", "start");
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d("seekbar", "stop");
 
             }
         });
 
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        return view;
+        //return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
-
 
 
     @Override
@@ -102,11 +108,12 @@ public class DashboardFragment extends Fragment {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
                         tv.setText(String.format("%.0f", s.getDistance()  ));
                         tv = (TextView) getView().findViewById(R.id.value_max_distance);
-                        tv.setText(String.format("%.0f", s.getDistanceContribution()));
-                        pb_distance = (ProgressBar) getView().findViewById(R.id.progress_bar_distance);
-                        sb_goal = (SeekBar) getView().findViewById(R.id.sb_goal);
+                        tv.setText(String.format("%d", s.getDistanceContribution()));
+                      //  pb_distance = (ProgressBar) getView().findViewById(R.id.progress_bar_distance);
+                        //sb_goal = (SeekBar) getView().findViewById(R.id.sb_goal);
                         pb_distance.setProgress(s.getDistanceContribution()/100);
-                        sb_goal.setProgress((int) s.getDistance()/100);
+                        sb_goal.setProgress(9);
+                      //  sb_goal.setProgress((int) s.getDistance()/100);
                     }
                     if (s.getSpeed() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_speed);
