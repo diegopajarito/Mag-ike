@@ -8,12 +8,9 @@
     <string name="activity">Tu actividad</string>
     <string name="speed_label">Velocidad:</string>
     <string name="steps_label">Tus pasos:</string>
-    <string name="coordinates">Coordenadas:</string>
     <string name="speed_nodata">Tu velocidad no está disponible</string>
     <string name="credits_icons_autor">Íconos hechos por Vectors Market</string>
     <string name="contribution_label">Contribución:</string>
-    <string name="distance_label">Distancia:</string>
-    <string name="distance_nodata">Tu distancia no está disponible</string>
     <string name="contribution_nodata">Tu contribución no está disponible</string>
     <string name="contribution_units">Unidades</string>
     <string name="altitude">Altitud:</string>
@@ -44,7 +41,9 @@
     <string name="contribution_location_label">Ubicación</string>
     <string name="contribution_distance_label">Distancia</string>
     <string name="contribution_speed_label">Velocidad</string>
-    <string name="contribution_max_label">Máx.</string>
-    <string name="contribution_total_label">Total</string>
-    <string name="day_label">Dia</string>
+
+
+    <string name="dashboard_day_of">de</string>
+    <string name="dashboard_day_label">Dia</string>
+    <string name="dashboard_goal_label">Tu meta:</string>
 </resources>

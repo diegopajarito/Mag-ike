@@ -6,16 +6,12 @@
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality</string>
     <string name="settings">Settings</string>
     <string name="activity">Your activity</string>
-    <string name="speed_label">Speed:</string>
+
     <string name="speed_units" translatable="false">Km/h</string>
-    <string name="steps_label">Your steps:</string>
-    <string name="coordinates">Coordinates:</string>
-    <string name="speed_nodata">Speed data not available</string>
-    <string name="coordinates_notfound" translatable="false">-</string>
+    <string name="distance_units" translatable="false">m.</string>
+
     <string name="credits_icons_autor">Icons made by Vectors Market </string>
-    <string name="distance_label">Distance:</string>
-    <string name="distance_nodata">Distance data not available</string>
-    <string name="distance_units" translatable="false">m</string>
+
     <string name="contribution_label">Contribution:</string>
     <string name="contribution_nodata">Contribution data not available</string>
     <string name="contribution_units">Units</string>
@@ -44,9 +40,6 @@
     <string name="action_fitness_text">We are using your fitness data</string>
     <string name="action_location_text">We are using your location</string>
     <string name="action_fitness_text_error">Sorry, We cannot access your fitness data</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile_name">Avatar name</string>
     <string name="profile_email" translatable="false">name@ma.il</string>
     <string name="profile_male">Male</string>
@@ -61,8 +54,11 @@
     <string name="contribution_location_label">Location</string>
     <string name="contribution_distance_label">Distance</string>
     <string name="contribution_speed_label">Speed</string>
-    <string name="contribution_max_label">Max.</string>
-    <string name="contribution_total_label">Total</string>
-    <string name="dayof_label" translatable="false">/</string>
-    <string name="day_label">Day</string>
+
+    <string name="dashboard_day_of">of</string>
+    <string name="dashboard_day_label">Day</string>
+    <string name="dashboard_campaign_length" translatable="false">10</string>
+    <string name="dashboard_goal_label">Your goal:</string>
+    <string name="dashboard_goal_default" translatable="false">1</string>
+    <string name="dashboard_goal_units" translatable="false">Km.</string>
 </resources>

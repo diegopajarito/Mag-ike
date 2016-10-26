@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_day_label"
                     android:gravity="center_vertical|center_horizontal"
-                    android:text="@string/day_label"
+                    android:text="@string/dashboard_day_label"
                     android:layout_gravity="center_vertical" />
 
                 <TextView
@@ -44,26 +44,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_current_day"
-                    android:layout_toEndOf="@+id/tv_day_label"
                     style="@style/MediumSizeText"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp" />
 
                 <TextView
-                    android:text="@string/dayof_label"
+                    android:text="@string/dashboard_day_of"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_day_of"
-                    android:layout_toEndOf="@+id/tv_current_day"
                     android:layout_gravity="bottom" />
 
                 <TextView
-                    android:text="@string/nodata"
+                    android:text="@string/dashboard_campaign_length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_total_day"
                     android:textAlignment="gravity"
-                    android:layout_toEndOf="@+id/tv_day_of"
                     android:layout_gravity="bottom"
                     android:layout_marginLeft="5dp" />
 
@@ -99,13 +96,14 @@
                 android:layout_row="0"
                 android:gravity="center_horizontal"
                 style="@style/BigNumber"
-                android:layout_width="200dp" />
+                android:layout_width="200dp"
+                android:layout_columnSpan="2" />
 
             <TextView
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/distance_units"
-                android:layout_column="1"
+                android:layout_column="2"
                 android:layout_row="0"
                 android:textColor="@color/colorPrimaryDark"
                 style="@style/UnitsLabel"
@@ -114,85 +112,65 @@
 
             <ProgressBar
                 style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_height="wrap_content"
                 android:id="@+id/progress_bar_distance"
                 android:layout_column="0"
                 android:layout_row="1"
-                android:layout_columnSpan="2"
-                android:layout_width="200dp" />
+                android:layout_columnSpan="3"
+                android:max="10"
+                android:progressTint="@color/colorPrimaryDark"
+                android:progressBackgroundTint="@color/colorBackground"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/contribution_max_label"
+                android:text="@string/dashboard_goal_label"
                 android:layout_column="0"
                 android:layout_row="1"
-                android:textColor="@color/colorPrimaryDark"
-                android:id="@+id/label_max_distance" />
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/label_max_distance"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
+                android:text="@string/dashboard_goal_default"
                 android:layout_column="1"
                 android:layout_row="1"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorPrimary"
                 style="@style/SmallNumber"
-                android:id="@+id/value_max_distance" />
+                android:id="@+id/value_max_distance"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/distance_units"
-                android:layout_column="1"
-                android:layout_row="1"
-                android:textColor="@color/colorPrimaryDark"
-                android:id="@+id/units_max_distance" />
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/numberPicker"
-                android:fadingEdgeLength="50dp"
+                android:text="@string/dashboard_goal_units"
                 android:layout_column="2"
-                android:layout_row="0"
-                android:layout_rowSpan="3" />
+                android:layout_row="1"
+                android:textColor="@color/colorPrimary"
+                android:id="@+id/units_max_distance"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="3dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <SeekBar
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/contribution_total_label"
+                android:id="@+id/sb_goal"
                 android:layout_column="0"
                 android:layout_row="2"
-                android:textColor="@color/colorPrimaryDark"
-                android:id="@+id/label_total_distance" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
-                android:layout_column="1"
-                android:layout_row="2"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
-                style="@style/SmallNumber"
-                android:id="@+id/value_total_distance" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/distance_units"
-                android:layout_column="1"
-                android:layout_row="2"
-                android:textColor="@color/colorPrimaryDark"
-                android:id="@+id/units_total_distance" />
+                android:thumbTint="@color/colorPrimaryDark"
+                android:progressTint="@color/colorPrimaryDark"
+                android:layout_columnSpan="3"
+                android:layout_width="200dp"
+                android:layout_gravity="center_horizontal"
+                android:max="10" />
 
 
         </GridLayout>
@@ -213,9 +191,9 @@
                 android:layout_row="0"
                 android:gravity="center_horizontal"
                 android:textColor="@color/colorPrimaryDark"
-                style="@style/BigNumber"
                 android:layout_columnSpan="2"
-                android:layout_width="200dp" />
+                android:layout_width="200dp"
+                style="@style/SmallNumber" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -252,7 +230,8 @@
                 android:layout_row="0"
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -265,7 +244,8 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -276,7 +256,8 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_column="1"
                 android:layout_row="0"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -289,7 +270,8 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="14sp" />
             <TextView
                 android:layout_height="wrap_content"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
@@ -299,7 +281,8 @@
                 android:layout_column="2"
                 android:layout_row="0"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -312,20 +295,8 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
-                android:id="@+id/value_contribution"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_column="3"
-                android:layout_row="0"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal" />
+                android:layout_marginRight="5dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -338,7 +309,22 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:text="@string/nodata"
+                android:id="@+id/value_contribution"
+                android:gravity="center_horizontal"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_column="3"
+                android:layout_row="0"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textSize="18sp" />
 
         </GridLayout>
 

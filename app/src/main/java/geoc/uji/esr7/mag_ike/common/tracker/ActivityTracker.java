@@ -51,14 +51,4 @@ public class ActivityTracker  {
         return answer;
     }
 
-    public String getLocationText(Context c, DataPoint dp){
-        //String answer = c.getString(R.string.coordinates) + c.getString(R.string.coordinates_notfound);
-        String answer = c.getString(R.string.coordinates);
-        List<Field> fields = dp.getDataSource().getDataType().getFields();
-        for (Field field : fields){
-            answer += field.getName();
-            answer += dp.getValue(field).toString();
-        }
-        return answer;
-    }
 }

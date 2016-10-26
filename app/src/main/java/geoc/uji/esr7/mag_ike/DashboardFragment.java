@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -23,12 +24,37 @@ public class DashboardFragment extends Fragment {
 
 
     private OnStatusChangeListener mListener;
+    private Activity activity;
+    private View view;
+    private SeekBar sb_goal;
+    private ProgressBar pb_distance;
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        view  = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        sb_goal = (SeekBar) view.findViewById(R.id.sb_goal);
+        pb_distance = (ProgressBar) view.findViewById(R.id.progress_bar_distance);
+
+        sb_goal.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                updateDistanceGoalfromSeekBar(sb_goal);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
@@ -38,6 +64,7 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof OnStatusChangeListener) {
             mListener = (OnStatusChangeListener) context;
         } else {
@@ -64,18 +91,22 @@ public class DashboardFragment extends Fragment {
 
     public void updateDashboardFromStatus(final GameStatus s){
 
-        Activity activity = getActivity();
+        activity = getActivity();
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 TextView tv;
-                ProgressBar pv;
+                //ProgressBar pb_distance;
                 try {
                     if (s.getDistance() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
                         tv.setText(String.format("%.0f", s.getDistance()  ));
-                        pv = (ProgressBar) getView().findViewById(R.id.progress_bar_distance);
-                        pv.setProgress((int) s.getDistance()/100);
+                        tv = (TextView) getView().findViewById(R.id.value_max_distance);
+                        tv.setText(String.format("%.0f", s.getDistanceContribution()));
+                        pb_distance = (ProgressBar) getView().findViewById(R.id.progress_bar_distance);
+                        sb_goal = (SeekBar) getView().findViewById(R.id.sb_goal);
+                        pb_distance.setProgress(s.getDistanceContribution()/100);
+                        sb_goal.setProgress((int) s.getDistance()/100);
                     }
                     if (s.getSpeed() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_speed);
@@ -95,6 +126,17 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+    }
+
+    public void updateDistanceGoalfromSeekBar(final SeekBar sb){
+        activity = getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int goal = sb.getProgress();
+                pb_distance.setMax(goal);
+            }
+        });
     }
 
 }

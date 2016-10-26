@@ -8,11 +8,8 @@
     <string name="activity">La teva activitat</string>
     <string name="speed_label">Velocitat:</string>
     <string name="steps_label">Els teus passos:</string>
-    <string name="coordinates">Coordenades:</string>
     <string name="speed_nodata">La teva velocitat no està disponible</string>
     <string name="credits_icons_autor">Icones fets per Vectors Market</string>
-    <string name="distance_label">Distància</string>
-    <string name="distance_nodata">La teva distància no està disponible</string>
     <string name="contribution_label">Contribució:</string>
     <string name="contribution_nodata">La teva contribució no està disponible</string>
     <string name="contribution_units">Unitats</string>
@@ -44,7 +41,9 @@
     <string name="contribution_location_label">Ubicació</string>
     <string name="contribution_distance_label">Distància</string>
     <string name="contribution_speed_label">Velocitat</string>
-    <string name="contribution_max_label">Màx.</string>
-    <string name="contribution_total_label">Total</string>
-    <string name="day_label">Dia</string>
+
+
+    <string name="dashboard_day_of">de</string>
+    <string name="dashboard_day_label">Dia</string>
+    <string name="dashboard_goal_label">L\'objectiu:</string>
 </resources>
