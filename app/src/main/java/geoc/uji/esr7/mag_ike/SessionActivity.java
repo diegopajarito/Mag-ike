@@ -464,16 +464,16 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                             }
                         }
                     });
-        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA || dataType == DataType.TYPE_DISTANCE_CUMULATIVE){
+        } //else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA || dataType == DataType.TYPE_DISTANCE_CUMULATIVE){
+        else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA ){
             distanceListener= new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
                     float distance = dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
-                    String name = Field.FIELD_DISTANCE.getName();
                     accumulated_distance += distance;
                     // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(name,distance);
+                    gameStatus.saveStatus_Eventually(distance,accumulated_distance);
                     updateDashboardFromStatus(gameStatus);
                 }
             };

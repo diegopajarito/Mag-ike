@@ -62,6 +62,7 @@ public class GameStatus {
     private String precision_tag;
     private String time_gps_tag;
     private String distance_tag;
+    private String last_distance_tag;
     private String time_distance_tag;
     private String speed_tag;
     private String time_speed_tag;
@@ -301,16 +302,6 @@ public class GameStatus {
             parseObject.put(cycling_tag,this.cycling);
             parseObject.put(time_cycling_tag,this.getCycling());
             addSpeedContribution();
-        } else if (label.equals(Field.FIELD_DISTANCE.getName())){
-            this.setDistance(value);
-            parseObject.put(distance_tag,this.getDistance());
-            this.setTime_distance(new Date());
-            parseObject.put(time_distance_tag, this.getTime_distance());
-            parseObject.put(speed_tag, this.getSpeed());
-            parseObject.put(time_speed_tag, this.getTime_speed());
-            parseObject.put(cycling_tag,this.getCycling());
-            parseObject.put(time_cycling_tag,this.getTime_cycling());
-            addDistanceContribution();
         } else if (label.equals(Field.FIELD_RPM.getName())){
             parseObject.put(distance_tag,this.getDistance());
             parseObject.put(time_distance_tag, this.getTime_distance());
@@ -334,10 +325,38 @@ public class GameStatus {
                 }
             }
         });
-
-        //return answer;
     }
 
+    public void saveStatus_Eventually(float distance, float last_distance){
+        parseObject = new ParseObject(this.status_class);
+        parseObject.put(device_tag,this.getDevice());
+        parseObject.put(latitude_tag,this.getLatitude());
+        parseObject.put(longitude_tag,this.getLongitude());
+        parseObject.put(altitude_tag,this.getAltitude());
+        parseObject.put(precision_tag,this.getPrecision());
+        parseObject.put(time_gps_tag,this.getTime_gps());
+        this.setDistance(distance);
+        parseObject.put(distance_tag,this.getDistance());
+        this.setLast_distance(last_distance);
+        parseObject.put(last_distance_tag,this.getLast_distance());
+        this.setTime_distance(new Date());
+        parseObject.put(time_distance_tag, this.getTime_distance());
+        parseObject.put(speed_tag, this.getSpeed());
+        parseObject.put(time_speed_tag, this.getTime_speed());
+        parseObject.put(cycling_tag,this.getCycling());
+        parseObject.put(time_cycling_tag,this.getTime_cycling());
+        addDistanceContribution();
+        parseObject.saveEventually(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("PARSE - DISTANCE SAVED OK", String.valueOf(e));
+                } else {
+                    Log.d("PARSE - SAVE DISTANCE FAILED", String.valueOf(e));
+
+                }
+            }
+        });
+    }
 
     private void saveProfile_Eventually(){
         parseObject = new ParseObject(this.profile_class);

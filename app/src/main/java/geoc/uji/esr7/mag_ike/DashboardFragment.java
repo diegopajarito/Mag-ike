@@ -34,12 +34,12 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // After Inflating this view this one should be returned, take care of a new inflate it will erase any change
         view  = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         sb_goal = (SeekBar) view.findViewById(R.id.sb_goal);
         pb_distance = (ProgressBar) view.findViewById(R.id.progress_bar_distance);
-
+/*
         sb_goal.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -61,9 +61,10 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+        **/
 
         return view;
-        //return inflater.inflate(R.layout.fragment_dashboard, container, false);
+
     }
 
 
@@ -108,16 +109,13 @@ public class DashboardFragment extends Fragment {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
                         tv.setText(String.format("%.0f", s.getDistance()  ));
                         tv = (TextView) getView().findViewById(R.id.value_max_distance);
-                        tv.setText(String.format("%d", s.getDistanceContribution()));
-                      //  pb_distance = (ProgressBar) getView().findViewById(R.id.progress_bar_distance);
-                        //sb_goal = (SeekBar) getView().findViewById(R.id.sb_goal);
-                        pb_distance.setProgress(s.getDistanceContribution()/100);
-                        sb_goal.setProgress(9);
-                      //  sb_goal.setProgress((int) s.getDistance()/100);
+                        tv.setText(String.format("%.f", s.getLast_distance()));
+                        pb_distance.setProgress((int) s.getDistance()/100);
+                        sb_goal.setProgress((int) s.getLast_distance()/100);
                     }
                     if (s.getSpeed() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_speed);
-                        tv.setText(String.format("%.2f", s.getSpeed()));
+                        tv.setText(String.format("%.2f", s.getSpeed() * 3.6));
                     }
                     tv = (TextView) getView().findViewById(R.id.value_contribution_location);
                     tv.setText(String.valueOf(s.getLocationContribution()));
