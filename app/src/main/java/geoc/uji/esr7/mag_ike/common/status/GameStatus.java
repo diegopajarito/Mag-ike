@@ -43,7 +43,7 @@ public class GameStatus {
 
 
     //Setting Tags and default values
-    public final float no_data = Float.valueOf(R.integer.value_nodata);
+    public float no_data;
     private String status_class;
     private String profile_class;
     private String device_tag;
@@ -78,6 +78,7 @@ public class GameStatus {
         this.profile_class = res.getString(R.string.profile_class_parse);
 
         //Setting all properties to no_data Value
+        no_data = res.getInteger(R.integer.value_nodata);
         latitude = longitude = altitude = precision = speed = cycling = no_data;
         time_gps = time_speed = time_distance = time_cycling = new Date();
 
@@ -85,6 +86,7 @@ public class GameStatus {
         this.profile = new Profile();
 
         //Setting all properties tags from resources
+
         device_tag = res.getString(R.string.device_tag);
         latitude_tag = res.getString(R.string.latitude_tag);
         longitude_tag = res.getString(R.string.longitude_tag);
@@ -92,6 +94,7 @@ public class GameStatus {
         precision_tag = res.getString(R.string.precision_tag);
         time_gps_tag = res.getString(R.string.time_gps_tag);
         distance_tag = res.getString(R.string.distance_tag);
+        last_distance_tag = res.getString(R.string.last_distance_tag);
         time_distance_tag = res.getString(R.string.time_distance_tag);
         speed_tag = res.getString(R.string.speed_tag);
         time_speed_tag = res.getString(R.string.time_speed_tag);
@@ -264,6 +267,7 @@ public class GameStatus {
         this.setTime_gps(new Date());
         parseObject.put(time_gps_tag,this.getTime_gps());
         parseObject.put(distance_tag,this.getDistance());
+        parseObject.put(last_distance_tag,this.getLast_distance());
         parseObject.put(time_distance_tag,this.getTime_distance());
         parseObject.put(speed_tag,this.getSpeed());
         parseObject.put(time_speed_tag,this.getTime_speed());
@@ -294,6 +298,7 @@ public class GameStatus {
         parseObject.put(time_gps_tag,this.getTime_gps());
         if (label.equals(Field.FIELD_SPEED.getName())) {
             parseObject.put(distance_tag,this.getDistance());
+            parseObject.put(last_distance_tag,this.getLast_distance());
             parseObject.put(time_distance_tag, this.getTime_distance());
             this.setSpeed(value);
             parseObject.put(speed_tag, this.getSpeed());
@@ -304,6 +309,7 @@ public class GameStatus {
             addSpeedContribution();
         } else if (label.equals(Field.FIELD_RPM.getName())){
             parseObject.put(distance_tag,this.getDistance());
+            parseObject.put(last_distance_tag,this.getLast_distance());
             parseObject.put(time_distance_tag, this.getTime_distance());
             parseObject.put(speed_tag, this.getSpeed());
             parseObject.put(time_speed_tag, this.getTime_speed());

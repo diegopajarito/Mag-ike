@@ -109,7 +109,7 @@ public class DashboardFragment extends Fragment {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
                         tv.setText(String.format("%.0f", s.getDistance()  ));
                         tv = (TextView) getView().findViewById(R.id.value_max_distance);
-                        tv.setText(String.format("%.f", s.getLast_distance()));
+                        tv.setText(String.format("%.0f", s.getLast_distance()));
                         pb_distance.setProgress((int) s.getDistance()/100);
                         sb_goal.setProgress((int) s.getLast_distance()/100);
                     }

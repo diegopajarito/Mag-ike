@@ -471,10 +471,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
                     float distance = dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
-                    accumulated_distance += distance;
-                    // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(distance,accumulated_distance);
-                    updateDashboardFromStatus(gameStatus);
+                    if (distance >= 0) {
+                        accumulated_distance += distance;
+                        // Store Data into server and update interface with new values
+                        gameStatus.saveStatus_Eventually(distance, accumulated_distance);
+                        updateDashboardFromStatus(gameStatus);
+                    }
                 }
             };
             // Register listener with the sensor API
