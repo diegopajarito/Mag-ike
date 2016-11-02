@@ -16,7 +16,7 @@
             android:columnCount="3"
             android:rowCount="1"
             android:layout_centerHorizontal="true"
-            android:id="@+id/grid_campaign_time"
+            android:id="@+id/grid_time"
             android:layout_marginTop="50dp">
 
             <GridLayout
@@ -116,7 +116,7 @@
             android:rowCount="3"
             android:id="@+id/grid_distance"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/grid_campaign_time"
+            android:layout_below="@+id/grid_time"
             android:layout_marginTop="20dp"
             android:paddingLeft="40dp"
             android:paddingRight="40dp">

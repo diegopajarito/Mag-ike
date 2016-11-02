@@ -28,7 +28,15 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
-        <item name="android:textSize">96sp</item>
+        <item name="android:textSize">72sp</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="HighlightedNumber" parent="@android:style/TextAppearance.Large">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:typeface">monospace</item>
     </style>
 
@@ -44,7 +52,7 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:typeface">monospace</item>
     </style>
 
@@ -53,8 +61,23 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:textColor">@color/colorPrimary</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="seekBarDistanceStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_column">0</item>
+        <item name="android:layout_row">2</item>
+        <item name="android:thumbTint">@color/colorPrimaryDark</item>
+        <item name="android:progressTint">@color/colorPrimaryDark</item>
+        <item name="android:layout_columnSpan">3</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:max">20</item>
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:paddingRight">50dp</item>
+        <item name="android:progressTintMode">src_atop</item>
     </style>
 
 
