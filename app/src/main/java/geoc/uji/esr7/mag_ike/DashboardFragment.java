@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -24,11 +25,18 @@ import geoc.uji.esr7.mag_ike.common.status.Profile;
 public class DashboardFragment extends Fragment {
 
 
-    private OnStatusChangeListener mListener;
+    private onDashboardUpdate mListener;
     private Activity activity;
     private View view;
     private SeekBar sb_distance;
     private ImageView iv_gauge;
+    private Chronometer chronometer;
+
+    // Container Activity must implement this interface
+    // Check Parent Activity
+    public interface onDashboardUpdate {
+        long getChronometerBase();
+    }
 
 
 
@@ -40,8 +48,9 @@ public class DashboardFragment extends Fragment {
 
         sb_distance = (SeekBar) view.findViewById(R.id.sb_distance);
         iv_gauge = (ImageView) view.findViewById(R.id.gauge);
-
-
+        chronometer = (Chronometer) view.findViewById(R.id.chronometer_session);
+        chronometer.setBase(mListener.getChronometerBase());
+        chronometer.start();
 
         return view;
 
@@ -53,7 +62,7 @@ public class DashboardFragment extends Fragment {
         super.onAttach(context);
 
         if (context instanceof OnStatusChangeListener) {
-            mListener = (OnStatusChangeListener) context;
+            mListener = (onDashboardUpdate) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -83,7 +92,7 @@ public class DashboardFragment extends Fragment {
             @Override
             public void run() {
                 TextView tv;
-                //ProgressBar pb_distance;
+
                 try {
                     if (s.getDistance() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
@@ -93,9 +102,9 @@ public class DashboardFragment extends Fragment {
                     if (s.getSpeed() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_speed);
                         tv.setText(String.format("%.2f", s.getSpeed() * 3.6));
-                        if(s.getSpeed() < 1.8){
+                        if(s.getSpeed() < 2.5){
                             iv_gauge.setImageResource(R.drawable.ic_gauge_walking);
-                        } else if (s.getSpeed() < 7.5){
+                        } else if (s.getSpeed() < 6.9){
                             iv_gauge.setImageResource(R.drawable.ic_gauge_cycling);
                         } else {
                             iv_gauge.setImageResource(R.drawable.ic_gauge_car);

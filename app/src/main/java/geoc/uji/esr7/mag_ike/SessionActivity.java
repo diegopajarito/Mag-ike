@@ -26,6 +26,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,7 +63,7 @@ import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener {
+        DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
 
     public static final String TAG = "Google Fit - BasicSensorsApi";
     // [START auth_variable_references]
@@ -92,6 +93,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     // Global variables to be used during app execution
     int counter_points = 0;
     float accumulated_distance = 0;
+    Chronometer chronometer;
 
     // A status object for having control of
     public GameStatus gameStatus;
@@ -137,6 +139,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         } else {
             gameStatus = dataFragment.getTemporalStatus();
         }
+
+        // Starting Global Chronometer
+        chronometer = new Chronometer(getApplicationContext());
+
+        chronometer.start();
 
         // Starting and Setting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -782,6 +789,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     @Override
     public void updateDashboardFromStatus(GameStatus s) {
         dashboardFragment.updateDashboardFromStatus(s);
+    }
+
+
+    @Override
+    public long getChronometerBase() {
+        return this.chronometer.getBase();
     }
 
 
