@@ -14,11 +14,11 @@
 
     <ImageView
         android:id="@+id/avatar_icon_header"
-        android:layout_width="54dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_avatar_default"
+        android:src="@drawable/ic_avatar_female_cyclist_1_bw"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:layout_weight="0.80" />
+        android:layout_weight="0.80"
+        android:layout_width="100dp" />
 
     <TextView
         android:layout_width="match_parent"

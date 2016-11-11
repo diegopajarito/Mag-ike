@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -61,6 +62,8 @@ import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
+
+import static android.R.attr.data;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
@@ -161,6 +164,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
 
         // Adding a floating button and its listener
+        /*
         FloatingActionButton btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +174,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 mp.start();
             }
         });
+        */
 
 
         // This method sets up our custom logger, which will print all log messages to the device
@@ -178,8 +183,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
-        if (!checkPermissions()) {
-            requestPermissions();
+        if (!checkPermissions_account() || !checkPermissions_fitness()) {
+            //requestPermissions_account();
+            requestPermissions_fitness();
         }
 
         // Setting Parse Server with username and password
@@ -295,7 +301,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
      */
     private void buildFitnessClient() {
 
-        if (mClient == null && checkPermissions()) {
+        if (mClient == null && checkPermissions_fitness()) {
             mClient = new GoogleApiClient.Builder(this)
                     .addApi(Fitness.SENSORS_API)
                     .addScope(new Scope(Scopes.FITNESS_LOCATION_READ))
@@ -663,14 +669,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     /**
      * Return the current state of the permissions needed.
      */
-    private boolean checkPermissions() {
+    private boolean checkPermissions_fitness() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
+    private boolean checkPermissions_account() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.GET_ACCOUNTS);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
+    }
 
-    private void requestPermissions() {
+
+    private void requestPermissions_fitness() {
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
@@ -700,6 +712,37 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(SessionActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    private void requestPermissions_account() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.GET_ACCOUNTS);
+        if (shouldProvideRationale) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            Snackbar.make(
+                    findViewById(android.R.id.content),
+                    R.string.permission_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // Request permission
+                            ActivityCompat.requestPermissions(SessionActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                        }
+                    })
+                    .show();
+        } else {
+            Log.i(TAG, "Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(SessionActivity.this,
+                    new String[]{Manifest.permission.GET_ACCOUNTS},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }

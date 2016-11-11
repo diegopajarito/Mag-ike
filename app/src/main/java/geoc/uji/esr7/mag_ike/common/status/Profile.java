@@ -1,5 +1,6 @@
 package geoc.uji.esr7.mag_ike.common.status;
 
+import android.graphics.drawable.Drawable;
 import android.widget.Switch;
 
 /**
@@ -185,7 +186,6 @@ public class Profile {
     public void setBikeType(int bikeType) {
         // Add id set
         this.bikeType = bikeType;
-        this.bikeTypeId = bikeType;
     }
 
     public String getEmail() {
@@ -195,4 +195,6 @@ public class Profile {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

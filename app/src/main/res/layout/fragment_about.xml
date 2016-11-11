@@ -13,92 +13,57 @@
 
         <ImageView
             android:layout_width="match_parent"
-            app:srcCompat="@drawable/ic_geoc"
+            app:srcCompat="@mipmap/ic_launcher"
             android:id="@+id/logo_geoc"
-            android:layout_marginBottom="30dp"
             android:cropToPadding="false"
-            android:layout_marginTop="30dp"
-            android:layout_height="25dp" />
+            android:layout_height="150dp"
+            android:layout_marginTop="30dp" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_above="@+id/logo_uji"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:layout_above="@+id/logo_marie_curie"
             android:layout_below="@+id/logo_geoc">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/about_cyclist"
                     android:gravity="center_vertical|center_horizontal"
                     android:layout_gravity="center_vertical|center_horizontal"
-                    android:layout_row="1"
-                    android:layout_column="0"
-                    android:layout_columnSpan="3"
-                    android:lines="10" />
+                    android:id="@+id/about_cyclist" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:textAppearance="@android:style/Widget.DeviceDefault.Light.Button.Small"
-                    android:text="@string/credits_icons_source"
-                    android:id="@+id/tv_credits_3"
-                    android:layout_column="0"
-                    android:layout_row="2" />
+                    android:text="@string/about_geoc"
+                    android:id="@+id/about_geoc"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="14sp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="?android:attr/textColorTertiary" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:textAppearance="@android:style/Widget.DeviceDefault.Light.Button.Small"
-                    android:text="@string/credits_icons_licence"
-                    android:id="@+id/tv_credits_2"
-                    android:layout_column="0"
-                    android:layout_row="1" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@android:style/Widget.DeviceDefault.Light.Button.Small"
-                    android:text="@string/credits_icons_autor"
-                    android:id="@+id/tv_credits_1"
-                    android:layout_column="0"
-                    android:layout_row="0" />
+                    android:text="@string/about_icons"
+                    android:id="@+id/about_icons"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="14sp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="?android:attr/textColorTertiary" />
 
             </LinearLayout>
         </ScrollView>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            app:srcCompat="@drawable/ic_uji"
-            android:layout_height="45dp"
-            android:layout_above="@+id/logo_marie_curie"
-            android:layout_margin="10dp"
-            android:id="@+id/logo_uji" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            app:srcCompat="@drawable/id_nova"
-            android:id="@+id/logo_nova"
-            android:layout_above="@+id/logo_marie_curie"
-            android:layout_toEndOf="@+id/logo_uji"
-            android:layout_margin="10dp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            app:srcCompat="@drawable/ic_munster"
-            android:id="@+id/logo_munster"
-            android:layout_toEndOf="@+id/logo_nova"
-            android:layout_above="@+id/logo_marie_curie"
-            android:layout_margin="10dp" />
 
         <ImageView
             android:layout_width="match_parent"

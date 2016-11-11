@@ -3,6 +3,7 @@ package geoc.uji.esr7.mag_ike;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -171,5 +172,6 @@ public class ProfileFragment extends Fragment {
         radioButton = radioGroup.findViewById(radioButtonId);
         return radioGroup.indexOfChild(radioButton);
     }
+
 
 }

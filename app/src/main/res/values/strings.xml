@@ -10,7 +10,7 @@
     <string name="speed_units" translatable="false">Km/h</string>
     <string name="distance_units" translatable="false">m.</string>
 
-    <string name="credits_icons_autor">Icons made by Vectors Market </string>
+    <string name="about_icons">Icons made by Freepik from www.flaticon.com is licensed by CC 3.0 BY</string>
 
     <string name="contribution_label">Contribution:</string>
     <string name="contribution_nodata">Contribution data not available</string>
@@ -34,8 +34,6 @@
     <string name="menu_play">Play</string>
     <string name="menu_board">Leaderboard</string>
     <string name="menu_share">Share</string>
-    <string name="credits_icons_licence">Is licensed by CC 3.0 BY</string>
-    <string name="credits_icons_source">From www.flaticon.com</string>
     <string name="error_function_not_available">Sorry, you can\'t do this yet.</string>
     <string name="action_fitness_text">We are using your fitness data</string>
     <string name="action_location_text">We are using your location</string>
@@ -50,7 +48,8 @@
     <string name="profile_age_30_40" translatable="false">30 - 40</string>
     <string name="profile_age_40_50" translatable="false">40 - 40</string>
     <string name="profile_age_50_">More than 50</string>
-    <string name="about_text">This app is part of GEO-C ESR07 project</string>
+    <string name="about_cyclist">#Ciclist belongs to the research project \"Mobile services for green living\". It is an experiment without any commercial motivation. Research team kindly thank your participation.</string>
+    <string name="about_geoc">The Geo-C European Joint Doctorate in Geoinformatics aims to enable open smart cities. For more information about the project go to www.geo-c.eu</string>
     <string name="contribution_location_label">Location</string>
     <string name="contribution_distance_label">Distance</string>
     <string name="contribution_speed_label">Speed</string>
@@ -61,4 +60,5 @@
     <string name="dashboard_goal_label">Your goal:</string>
     <string name="dashboard_goal_default" translatable="false">1</string>
     <string name="dashboard_goal_units" translatable="false">Km.</string>
+    <string name="profile_bike_shared">Shared or Public</string>
 </resources>

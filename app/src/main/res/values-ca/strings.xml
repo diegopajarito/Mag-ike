@@ -9,7 +9,7 @@
     <string name="speed_label">Velocitat:</string>
     <string name="steps_label">Els teus passos:</string>
     <string name="speed_nodata">La teva velocitat no està disponible</string>
-    <string name="credits_icons_autor">Icones fets per Vectors Market</string>
+    <string name="about_icons">Icones fet per Freepik presos de www.flaticon.com llicenciat sota CC 3.0 BY</string>
     <string name="contribution_label">Contribució:</string>
     <string name="contribution_nodata">La teva contribució no està disponible</string>
     <string name="contribution_units">Unitats</string>
@@ -23,8 +23,6 @@
     <string name="menu_play">Jugar</string>
     <string name="menu_board">Tauler</string>
     <string name="menu_share">Compartir</string>
-    <string name="credits_icons_licence">Llicenciat per CC 3.0 BY</string>
-    <string name="credits_icons_source">De www.flaticon.com</string>
     <string name="error_function_not_available">Oh, encara no pots fer aixó</string>
     <string name="action_fitness_text">Estem usando les teves dades d\'activitat física</string>
     <string name="action_location_text">Estem usando la teva ubicació</string>
@@ -37,7 +35,8 @@
     <string name="profile_age">Edat (Anys)</string>
     <string name="profile_age_0_20">Menor de 20</string>
     <string name="profile_age_50_">Major de 50</string>
-    <string name="about_text">Aquesta aplicació es part del projecte ESR07 de GEOC</string>
+    <string name="about_cyclist">#Ciclista és part del projecte \"Servicios Móviles per a promoure estils de vida sostenible\" i és un experiment informatic sense cap interes comercial. L\'equip de desenvolupament de l\'aplicació agraïm la seua participació.</string>
+    <string name="about_geoc">El programa Geo-C Doctorat Europeu en Geoinformática promou el desenvolupament de ciutats intel·ligents. Per a més informació pot visitar www.geo-c.eu.</string>
     <string name="contribution_location_label">Ubicació</string>
     <string name="contribution_distance_label">Distància</string>
     <string name="contribution_speed_label">Velocitat</string>
@@ -46,4 +45,5 @@
     <string name="dashboard_day_of">de</string>
     <string name="dashboard_day_label">Dia</string>
     <string name="dashboard_goal_label">L\'objectiu:</string>
+    <string name="profile_bike_shared">Compartida o Pública</string>
 </resources>

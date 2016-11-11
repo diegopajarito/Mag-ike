@@ -71,7 +71,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginRight="35dp"
             android:animateLayoutChanges="true"
-            android:layout_marginTop="50dp">
+            android:layout_marginTop="60dp">
 
             <ImageView
                 android:layout_width="113dp"
@@ -220,7 +220,7 @@
             android:id="@+id/status_contribution"
             android:layout_alignParentStart="false"
             android:layout_centerHorizontal="false"
-            android:layout_alignParentBottom="true"
+            android:layout_alignParentBottom="false"
             android:layout_alignParentLeft="false">
 
             <TextView
