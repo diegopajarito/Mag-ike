@@ -47,10 +47,21 @@ public class DashboardFragment extends Fragment {
         view  = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         sb_distance = (SeekBar) view.findViewById(R.id.sb_distance);
+
         iv_gauge = (ImageView) view.findViewById(R.id.gauge);
         chronometer = (Chronometer) view.findViewById(R.id.chronometer_session);
         chronometer.setBase(mListener.getChronometerBase());
         chronometer.start();
+
+
+        // Disable Seekbar to be changed by user
+        sb_distance.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+
 
         return view;
 
