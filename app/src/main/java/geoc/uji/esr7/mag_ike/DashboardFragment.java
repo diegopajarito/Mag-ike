@@ -53,6 +53,7 @@ public class DashboardFragment extends Fragment {
         chronometer.setBase(mListener.getChronometerBase());
         chronometer.start();
 
+        /*
 
         // Disable Seekbar to be changed by user
         sb_distance.setOnTouchListener(new View.OnTouchListener(){
@@ -62,6 +63,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        */
 
         return view;
 
