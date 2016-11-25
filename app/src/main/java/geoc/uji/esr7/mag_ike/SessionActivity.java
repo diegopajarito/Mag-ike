@@ -1,9 +1,11 @@
 package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -31,7 +33,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -68,11 +72,12 @@ import static android.R.attr.data;
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
 
-    public static final String TAG = "Google Fit - BasicSensorsApi";
+    public static final String TAG = "Cyclist - BasicSensorsApi";
     // [START auth_variable_references]
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
 
+    private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     // [START mListener_variable_reference]
@@ -97,6 +102,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     int counter_points = 0;
     float accumulated_distance = 0;
     Chronometer chronometer;
+    private String defaultEmail = "";
 
     // A status object for having control of
     public GameStatus gameStatus;
@@ -134,6 +140,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
             gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
             gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
+            getUserData();
+            //gameStatus.getProfile().setEmail(getUserEmail());
             // add the fragment
             dataFragment = new DataFragment();
             fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
@@ -184,7 +192,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
         if (!checkPermissions_account() || !checkPermissions_fitness()) {
-            //requestPermissions_account();
+            requestPermissions_account();
             requestPermissions_fitness();
         }
 
@@ -639,7 +647,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
 
     /**
-     * Initialize a custom log class tha outputs both to in-app targets and logcat
+     * Initialize a custom log class tha outputs both toREQUEST_PERMISSIONS_EMAIL_CODE in-app targets and logcat
      */
     private void initializeLogging(){
         if (logWrapper == null) {
@@ -706,7 +714,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                     })
                     .show();
         } else {
-            Log.i(TAG, "Requesting permission");
+            Log.i(TAG, "Requesting fitness permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
@@ -731,13 +739,13 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         public void onClick(View view) {
                             // Request permission
                             ActivityCompat.requestPermissions(SessionActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                                    new String[]{Manifest.permission.GET_ACCOUNTS},
+                                    REQUEST_PERMISSIONS_EMAIL_CODE);
                         }
                     })
                     .show();
         } else {
-            Log.i(TAG, "Requesting permission");
+            Log.i(TAG, "Requesting account permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
@@ -747,6 +755,30 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         }
     }
 
+    // Functions gets an intent to start an activity
+    // then onActivityResult will set variables up
+    private void getUserData(){
+        try {
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
+            startActivityForResult(intent, REQUEST_PERMISSIONS_EMAIL_CODE);
+        } catch (ActivityNotFoundException e) {
+            Log.i(TAG, "Error requesting user data");
+        }
+    }
+
+    /**
+     * Callback received when default user data is requested
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_PERMISSIONS_EMAIL_CODE && resultCode == RESULT_OK) {
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+
+            gameStatus.getProfile().setEmail(accountName);
+            accountName = data.getStringExtra(AccountManager.KEY_ACCOUNTS);
+        }
+    }
 
     /**
      * Callback received when a permissions request has been completed.
@@ -755,7 +787,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         Log.i(TAG, "onRequestPermissionResult");
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE || requestCode == REQUEST_PERMISSIONS_EMAIL_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
