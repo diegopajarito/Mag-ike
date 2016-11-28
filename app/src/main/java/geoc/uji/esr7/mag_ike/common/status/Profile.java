@@ -16,7 +16,7 @@ public class Profile {
     private String gender;
     private String ageRange;
     private int bikeType;
-    private int bikeTypeId;
+    private boolean bikeRented;
     private String email;
 
     // Fixed Values for id's and domains
@@ -57,7 +57,8 @@ public class Profile {
     private final int bike_type_id_9 = 9;
     private final int bike_type_id_10 = 10;
 
-
+    private final boolean bike_rented_yes = true;
+    private final boolean bike_rented_no = false;
 
 
     // Default constructor
@@ -67,7 +68,7 @@ public class Profile {
         this.gender =text_not_set;
         this.ageRange = text_not_set;
         this.bikeType = id_not_set;
-        this.bikeTypeId = id_not_set;
+        this.bikeRented = bike_rented_no;
         this.email = text_not_set;
 
 
@@ -124,13 +125,67 @@ public class Profile {
     }
 
     public int getAvatarId() {
-        return this.avatarId;
+        int pos = this.id_not_set;
+        switch (this.avatarId){
+            case avatar_female_id_1:
+                pos = 0;
+                break;
+            case avatar_male_id_1:
+                pos = 1;
+                break;
+            case avatar_female_id_2:
+                pos = 2;
+                break;
+            case avatar_male_id_2:
+                pos = 3;
+                break;
+            case avatar_female_id_3:
+                pos = 4;
+                break;
+            case avatar_male_id_3:
+                pos = 5;
+                break;
+            case avatar_female_id_4:
+                pos = 6;
+                break;
+            case avatar_male_id_4:
+                pos = 7;
+                break;
+        }
+        return pos;
     }
 
     public void setAvatarId(int avatarId) {
         // Add id set
-        this.avatarId = avatarId;
-
+        switch (avatarId){
+            case 0:
+                this.avatarId = this.avatar_female_id_1;
+                break;
+            case 1:
+                this.avatarId = this.avatar_male_id_1;
+                break;
+            case 2:
+                this.avatarId = this.avatar_female_id_2;
+                break;
+            case 3:
+                this.avatarId = this.avatar_male_id_2;
+                break;
+            case 4:
+                this.avatarId = this.avatar_female_id_3;
+                break;
+            case 5:
+                this.avatarId = this.avatar_male_id_3;
+                break;
+            case 6:
+                this.avatarId = this.avatar_female_id_4;
+                break;
+            case 7:
+                this.avatarId = this.avatar_male_id_4;
+                break;
+            default:
+                this.avatarId = this.id_not_set;
+                break;
+        }
     }
 
     public String getGender() { return gender; }
@@ -196,5 +251,14 @@ public class Profile {
         this.email = email;
     }
 
+    public boolean isBikeRented() {
+        return bikeRented;
+    }
 
+    public void setBikeRented(boolean bikeRented) {
+        if (bikeRented = true)
+            this.bikeRented = bike_rented_yes;
+        else
+            this.bikeRented = bike_rented_no;
+    }
 }

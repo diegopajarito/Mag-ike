@@ -32,8 +32,10 @@
     <string name="profile_name">Nom d\'avatar</string>
     <string name="profile_female">Dona</string>
     <string name="profile_male">Home</string>
-    <string name="profile_age">Edat (Anys)</string>
-    <string name="profile_age_0_20">Menor de 20</string>
+    <string name="profile_age_0_20">Menor de 20 anys</string>
+    <string name="profile_age_20_30">20 - 30 anys</string>
+    <string name="profile_age_30_40">30 - 40 anys</string>
+    <string name="profile_age_40_50">40 - 50 anys</string>
     <string name="profile_age_50_">Major de 50</string>
     <string name="about_cyclist">#Ciclista és part del projecte \"Servicios Móviles per a promoure estils de vida sostenible\" i és un experiment informatic sense cap interes comercial. L\'equip de desenvolupament de l\'aplicació agraïm la seua participació.</string>
     <string name="about_geoc">El programa Geo-C Doctorat Europeu en Geoinformática promou el desenvolupament de ciutats intel·ligents. Per a més informació pot visitar www.geo-c.eu.</string>
@@ -46,4 +48,5 @@
     <string name="dashboard_day_label">Dia</string>
     <string name="dashboard_goal_label">L\'objectiu:</string>
     <string name="profile_bike_shared">Compartida o Pública</string>
+
 </resources>

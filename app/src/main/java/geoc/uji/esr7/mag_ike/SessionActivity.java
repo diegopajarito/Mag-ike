@@ -30,6 +30,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,6 +105,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     float accumulated_distance = 0;
     Chronometer chronometer;
     private String defaultEmail = "";
+    private ImageView iv_avatar;
 
     // A status object for having control of
     public GameStatus gameStatus;
@@ -141,7 +144,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
             gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
             getUserData();
-            //gameStatus.getProfile().setEmail(getUserEmail());
             // add the fragment
             dataFragment = new DataFragment();
             fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
@@ -774,8 +776,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PERMISSIONS_EMAIL_CODE && resultCode == RESULT_OK) {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-
             gameStatus.getProfile().setEmail(accountName);
+            // Update Email at side bar
+            TextView tv = (TextView) this.findViewById(R.id.avatar_email_header);
+            tv.setText(gameStatus.getProfile().getEmail());
+            // Add more data from google profile
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNTS);
         }
     }
@@ -839,17 +844,22 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     public boolean onProfileUpdated(Profile p){
         TextView tv;
+        RadioGroup rg;
+        RadioButton rb;
+        int id;
 
-        if (p.getAvatarName() != p.nameDefault) {
+
+        // Update Avatar name at Side bar
+        if (!p.getAvatarName().equals(p.nameDefault) && !p.getAvatarName().equals("")) {
             tv = (TextView) this.findViewById(R.id.avatar_name_header);
             tv.setText(p.getAvatarName());
         }
-        if (p.getEmail() != "") {
-            tv = (TextView) this.findViewById(R.id.avatar_email_header);
-            tv.setText(p.getEmail());
-        }
+        // Update Avatar ImageView at Side bar
         if (p.getAvatarId() != p.id_not_set){
-
+            iv_avatar = (ImageView) this.findViewById(R.id.avatar_icon_header);
+            rg = (RadioGroup) this.findViewById(R.id.rg_avatar);
+            rb = (RadioButton) rg.findViewById(rg.getCheckedRadioButtonId());
+            iv_avatar.setImageDrawable(rb.getBackground());
         }
 
         return gameStatus.updateProfile(p);
