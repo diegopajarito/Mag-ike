@@ -7,8 +7,6 @@
     <string name="settings">Menú</string>
     <string name="activity">La teva activitat</string>
     <string name="speed_label">Velocitat:</string>
-    <string name="steps_label">Els teus passos:</string>
-    <string name="speed_nodata">La teva velocitat no està disponible</string>
     <string name="about_icons">Icones fet per Freepik presos de www.flaticon.com llicenciat sota CC 3.0 BY</string>
     <string name="contribution_label">Contribució:</string>
     <string name="contribution_nodata">La teva contribució no està disponible</string>

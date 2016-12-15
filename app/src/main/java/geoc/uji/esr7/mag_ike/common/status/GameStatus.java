@@ -9,6 +9,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import geoc.uji.esr7.mag_ike.R;
@@ -24,6 +25,8 @@ public class GameStatus {
     private String device;
     private String language;
     private String country;
+    private Date campaign_start_date;
+    private int campaign_length;
     private float latitude;
     private float longitude;
     private float altitude;
@@ -54,7 +57,7 @@ public class GameStatus {
     private String gender_tag;
     private String age_range_tag;
     private String bike_type_tag;
-    private String bike_type_id_tag;
+    private String bike_rented_tag;
     private String email_tag;
     private String latitude_tag;
     private String longitude_tag;
@@ -86,7 +89,7 @@ public class GameStatus {
         this.profile = new Profile();
 
         //Setting all properties tags from resources
-
+        campaign_length = R.integer.dashboard_campaign_length;
         device_tag = res.getString(R.string.device_tag);
         latitude_tag = res.getString(R.string.latitude_tag);
         longitude_tag = res.getString(R.string.longitude_tag);
@@ -107,9 +110,31 @@ public class GameStatus {
         gender_tag = res.getString(R.string.gender_tag);
         age_range_tag = res.getString(R.string.age_range_tag);
         bike_type_tag = res.getString(R.string.bike_type_tag);
-        bike_type_id_tag = res.getString(R.string.bike_type_id_tag);
+        bike_rented_tag = res.getString(R.string.bike_rented_tag);
         email_tag = res.getString(R.string.email_tag);
 
+    }
+
+    public void setCampaignStartDate(Date start) { this.campaign_start_date = start; }
+
+    public Date getCampaignStartDate() { return campaign_start_date; }
+
+    public int getCampaignDay(){
+        Date today = new Date();
+        int days = (int) Math.ceil( ( today.getTime() - getCampaignStartDate().getTime() ) / 1000.0 / 60.0 / 60.0 / 24.0 );
+        if (days > this.getCampaignLength()) {
+            setCampaignStartDate(today);
+            days = (int) Math.ceil((today.getTime() - getCampaignStartDate().getTime()) / 1000.0 / 60.0 / 60.0 / 24.0);
+        }
+        return days;
+    }
+
+    public int getCampaignLength() {
+        return campaign_length;
+    }
+
+    public void setCampaignLength(int campaign_length) {
+        this.campaign_length = campaign_length;
     }
 
     public String getDevice() {
@@ -374,6 +399,7 @@ public class GameStatus {
         parseObject.put(gender_tag, this.profile.getGender());
         parseObject.put(age_range_tag, this.profile.getAgeRange());
         parseObject.put(bike_type_tag, this.profile.getBikeType());
+        parseObject.put(bike_rented_tag, this.profile.isBikeRented());
         parseObject.put(email_tag, this.profile.getEmail());
         parseObject.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
@@ -384,6 +410,10 @@ public class GameStatus {
                 }
             }
         });
+    }
+
+    public void saveStatus_SharedPrefferences(){
+
     }
 
 }

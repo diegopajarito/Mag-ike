@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -102,17 +103,20 @@ public class ProfileFragment extends Fragment {
     }
 
     public void updateProfileFromScreen() {
-
+        RadioGroup radioGroup;
+        Switch switch_rented;
         // Name
         if ((et_name.getText() == null) || (et_name.getText().equals(profile.nameDefault) == false))
             temporalProfile.setAvatarName(et_name.getText().toString());
-
-        RadioGroup radioGroup;
-        RadioButton rb;
-
+        // avatar
+        radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar);
+        temporalProfile.setAvatarId(getCheckedRadioButtonIndex(radioGroup));
         // Age
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_age);
         temporalProfile.setAgeRangeById(getCheckedRadioButtonIndex(radioGroup));
+        // bike type
+        switch_rented = (Switch) getActivity().findViewById(R.id.sw_rented);
+        temporalProfile.setBikeRented(switch_rented.isChecked());
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_bike_type);
         temporalProfile.setBikeType(getCheckedRadioButtonIndex(radioGroup));
     }
@@ -121,6 +125,7 @@ public class ProfileFragment extends Fragment {
     public void updateScreenFromProfile(){
         RadioGroup radioGroup;
         RadioButton radioButton;
+        Switch switchSelector;
         // Name
         if (profile.getAvatarName().equals(profile.nameDefault) == false)
             et_name.setText(profile.getAvatarName());
@@ -137,6 +142,8 @@ public class ProfileFragment extends Fragment {
         }
         // Bike
         // public
+        switchSelector = (Switch) getActivity().findViewById(R.id.sw_rented);
+        switchSelector.setChecked(profile.isBikeRented());
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_bike_type);
         if ((radioGroup!= null) && (profile.getBikeType() != profile.id_not_set)) {
             radioButton = (RadioButton) radioGroup.getChildAt(profile.getBikeType());

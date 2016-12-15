@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Chronometer;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -58,6 +60,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -69,16 +72,15 @@ import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 
-import static android.R.attr.data;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
 
+    public static final String GAME_STATUS = "GameStatusFile";
     public static final String TAG = "Cyclist - BasicSensorsApi";
     // [START auth_variable_references]
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
-
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -94,21 +96,17 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private OnDataPointListener stepCountListener;
     // [END mListener_variable_reference]
 
-    // The activity Tracker
-    private ActivityTracker actTracker = new ActivityTracker();
 
     // Wraps Android's native log framework.
     LogWrapper logWrapper;
 
     // Global variables to be used during app execution
-    int counter_points = 0;
-    float accumulated_distance = 0;
-    Chronometer chronometer;
-    private String defaultEmail = "";
+    private SharedPreferences settings;
+    public GameStatus gameStatus;
+    private float accumulated_distance = 0;
+    public Chronometer chronometer;
     private ImageView iv_avatar;
 
-    // A status object for having control of
-    public GameStatus gameStatus;
 
     // Fragments for being used on interface development
     private DataFragment dataFragment;
@@ -120,14 +118,44 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // When permissions are revoked the app is restarted so onCreate is sufficient to check for
+        // permissions core to the Activity's functionality.
+        if (!checkPermissions_account() || !checkPermissions_fitness()) {
+            requestPermissions_account();
+            requestPermissions_fitness();
+        }
+
+        // Recover Stored values for campaign setup
+        settings = getSharedPreferences(GAME_STATUS, 0);
+        Long storedStart = settings.getLong(getString(R.string.campaign_start_date_tag), 0);
+        if (storedStart == 0) {
+            // Saving the first day of execution of the app in the file
+            SharedPreferences.Editor editor = settings.edit();
+            storedStart = new Date().getTime();
+            editor.putLong(getString(R.string.campaign_start_date_tag), storedStart);
+            editor.commit();
+        }
+        String storedEmail =  settings.getString(getString(R.string.email_tag),"");
+
+        // Start Service for tracking Location, distance, speed, cadence
+
+        // Set the content View
         setContentView(R.layout.activity_session);
 
-        android.support.v4.app.FragmentManager supportfm = getSupportFragmentManager();
 
-        // Get existing fragment for Dashboard
-        if (supportfm.findFragmentByTag(getString(R.string.dashboardFragment_label)) == null){
+        // Starting Global Chronometer
+        chronometer = new Chronometer(getApplicationContext());
+        chronometer.start();
+        if (savedInstanceState != null) {
+            chronometer.setBase(savedInstanceState.getLong(getString(R.string.chronometer_base_tag)));
+        }
+
+        // Create a Fragment Manager and setting it to start with the one called dashboard
+        android.support.v4.app.FragmentManager supportFm;
+        supportFm = getSupportFragmentManager();
+        if (supportFm.findFragmentByTag(getString(R.string.dashboardFragment_label)) == null){
             dashboardFragment.setArguments(getIntent().getExtras());
-            supportfm.beginTransaction()
+            supportFm.beginTransaction()
                     .add(R.id.fragment_container, dashboardFragment, getString(R.string.dashboardFragment_label) ).commit();
         } else {
             dashboardFragment = (DashboardFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardFragment_label));
@@ -139,12 +167,17 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // create the fragment and data the first time
         if (dataFragment == null) {
             // Setting Game Status
+
+            // A method for defining all this initial setup for gameStatus
             gameStatus = new GameStatus(getResources());
             gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
             gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
             gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
-            getUserData();
-            // add the fragment
+            gameStatus.getProfile().setEmail(storedEmail);
+            gameStatus.setCampaignLength(getResources().getInteger(R.integer.dashboard_campaign_length));
+            gameStatus.setCampaignStartDate(new Date(storedStart));
+
+            // add the data fragment
             dataFragment = new DataFragment();
             fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
             // load the data from the web
@@ -153,10 +186,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             gameStatus = dataFragment.getTemporalStatus();
         }
 
-        // Starting Global Chronometer
-        chronometer = new Chronometer(getApplicationContext());
-
-        chronometer.start();
 
         // Starting and Setting the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -173,30 +202,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Adding a floating button and its listener
-        /*
-        FloatingActionButton btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
-        btn_pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final MediaPlayer mp = MediaPlayer.create(SessionActivity.this, R.raw.sound_bell);
-                Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
-                mp.start();
-            }
-        });
-        */
-
 
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
         initializeLogging();
 
-        // When permissions are revoked the app is restarted so onCreate is sufficient to check for
-        // permissions core to the Activity's functionality.
-        if (!checkPermissions_account() || !checkPermissions_fitness()) {
-            requestPermissions_account();
-            requestPermissions_fitness();
-        }
 
         // Setting Parse Server with username and password
         checkParseLogIn();
@@ -205,11 +215,19 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // store the data in the fragment
-        dataFragment.setTemporalStatus(gameStatus);
+    protected void onStart() {
+        super.onStart();
 
+        // Refresh Screen to prevent deal with Refresh and Screen Rotation
+        updateDashboardFromStatus(gameStatus);
+        //updateSideBarFromProfile();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(getString(R.string.chronometer_base_tag), chronometer.getBase());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -219,9 +237,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // This ensures that if the user deies the permissiones then uses Settings to re-enable
         // them, the app will start working.
         buildFitnessClient();
-        //Set Screen based on Status
-        updateDashboardFromStatus(gameStatus);
+
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // store the data in the fragment
+        dataFragment.setTemporalStatus(gameStatus);
+
+
+
+        // Set Service Stop Timer
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -238,6 +267,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         if (item.getItemId() == R.id.action_location) {
             Toast.makeText(getApplicationContext(), R.string.action_location_text, Toast.LENGTH_SHORT).show();
+            GridLayout gl = (GridLayout) findViewById(R.id.status_contribution);
+            if (gl.getVisibility() == View.INVISIBLE)
+                gl.setVisibility(View.VISIBLE);
+            else
+                gl.setVisibility(View.INVISIBLE);
         } else if (item.getItemId() == R.id.action_cycling) {
             if (mClient.isConnected())
                 Toast.makeText(getApplicationContext(), R.string.action_fitness_text, Toast.LENGTH_SHORT).show();
@@ -283,7 +317,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     public void checkParseLogIn(){
         ParseUser.logInInBackground(getString(R.string.username_parse), getString(R.string.password_parse),
@@ -757,6 +790,26 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         }
     }
 
+    private void updateSideBarFromProfile(){
+        TextView tv;
+        RadioGroup rg;
+        RadioButton rb;
+        // Update Avatar name and email at Side bar
+        tv = (TextView) this.findViewById(R.id.avatar_email_header);
+        tv.setText(gameStatus.getProfile().getEmail());
+        if (!gameStatus.getProfile().getAvatarName().equals("")) {
+            tv = (TextView) this.findViewById(R.id.avatar_name_header);
+            tv.setText(gameStatus.getProfile().getAvatarName());
+        }
+        // Update Avatar ImageView at Side bar
+        if (gameStatus.getProfile().getAvatarId() != gameStatus.getProfile().id_not_set){
+            iv_avatar = (ImageView) this.findViewById(R.id.avatar_icon_header);
+            rg = (RadioGroup) this.findViewById(R.id.rg_avatar);
+            rb = (RadioButton) rg.findViewById(rg.getCheckedRadioButtonId());
+            iv_avatar.setImageDrawable(rb.getBackground());
+        }
+    }
+
     // Functions gets an intent to start an activity
     // then onActivityResult will set variables up
     private void getUserData(){
@@ -769,18 +822,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         }
     }
 
+
     /**
      * Callback received when default user data is requested
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PERMISSIONS_EMAIL_CODE && resultCode == RESULT_OK) {
+            TextView tv;
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            gameStatus.getProfile().setEmail(accountName);
-            // Update Email at side bar
-            TextView tv = (TextView) this.findViewById(R.id.avatar_email_header);
-            tv.setText(gameStatus.getProfile().getEmail());
-            // Add more data from google profile
+            settings = getSharedPreferences(GAME_STATUS, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(getString(R.string.email_tag), accountName);
+            editor.commit();
+            //Check additional parameters
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNTS);
         }
     }
@@ -840,42 +895,51 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     /**
      * Implementing interfaces for Profile Fragment
+     * It stores last values
      */
 
     public boolean onProfileUpdated(Profile p){
-        TextView tv;
-        RadioGroup rg;
-        RadioButton rb;
-        int id;
 
-
-        // Update Avatar name at Side bar
-        if (!p.getAvatarName().equals(p.nameDefault) && !p.getAvatarName().equals("")) {
-            tv = (TextView) this.findViewById(R.id.avatar_name_header);
-            tv.setText(p.getAvatarName());
-        }
-        // Update Avatar ImageView at Side bar
-        if (p.getAvatarId() != p.id_not_set){
-            iv_avatar = (ImageView) this.findViewById(R.id.avatar_icon_header);
-            rg = (RadioGroup) this.findViewById(R.id.rg_avatar);
-            rb = (RadioButton) rg.findViewById(rg.getCheckedRadioButtonId());
-            iv_avatar.setImageDrawable(rb.getBackground());
-        }
-
+        SharedPreferences settings = getSharedPreferences(GAME_STATUS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        updateSideBarFromProfile();
+        // Store profile in sharedPreferences
+        editor.putString(getString(R.string.avatar_tag), p.getAvatarName());
+        editor.putInt(getString(R.string.avatar_id_tag), p.getAvatarId());
+        editor.putString(getString(R.string.email_tag), p.getEmail());
+        editor.putString(getString(R.string.age_range_tag), p.getAgeRange());
+        editor.putBoolean(getString(R.string.bike_rented_tag), p.isBikeRented());
+        editor.putInt(getString(R.string.bike_type_tag), p.getBikeType());
+        editor.commit();
         return gameStatus.updateProfile(p);
     }
 
+    /**
+     * Checks if there are some additional data saved and update the profile
+     *
+     */
     @Override
     public Profile getCurrentProfile(){
+        SharedPreferences settings = getSharedPreferences(GAME_STATUS, 0);
+        if ( !settings.getString(getString(R.string.avatar_tag), "").equals("") )
+            gameStatus.getProfile().setAvatarName(settings.getString(getString(R.string.avatar_tag), ""));
+        if ( settings.getInt(getString(R.string.avatar_id_tag), -1) != -1 )
+            gameStatus.getProfile().setAvatarId(settings.getInt(getString(R.string.avatar_id_tag), -1));
+        if ( !settings.getString(getString(R.string.email_tag), "").equals("") )
+            gameStatus.getProfile().setEmail(settings.getString(getString(R.string.email_tag), ""));
+        if ( !settings.getString(getString(R.string.age_range_tag), "").equals("") )
+            gameStatus.getProfile().setAgeRange(settings.getString(getString(R.string.age_range_tag), ""));
+        gameStatus.getProfile().setBikeRented(settings.getBoolean(getString(R.string.bike_rented_tag), false));
+        if ( settings.getInt(getString(R.string.bike_type_tag), -1) != -1 )
+            gameStatus.getProfile().setBikeType(settings.getInt(getString(R.string.bike_type_tag), -1));
         return gameStatus.getProfile();
     }
-
 
     @Override
     public void updateDashboardFromStatus(GameStatus s) {
         dashboardFragment.updateDashboardFromStatus(s);
-    }
 
+    }
 
     @Override
     public long getChronometerBase() {

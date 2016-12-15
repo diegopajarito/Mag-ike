@@ -55,9 +55,10 @@
 
     <string name="dashboard_day_of">of</string>
     <string name="dashboard_day_label">Day</string>
-    <string name="dashboard_campaign_length" translatable="false">10</string>
+    <integer name="dashboard_campaign_length" translatable="false">10</integer>
     <string name="dashboard_goal_label">Your goal:</string>
     <string name="dashboard_goal_default" translatable="false">1</string>
     <string name="dashboard_goal_units" translatable="false">Km.</string>
     <string name="profile_bike_shared">Shared or Public</string>
+    <string name="speed_label">Speed</string>
 </resources>

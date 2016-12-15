@@ -9,6 +9,9 @@
     <string name="profileFragment_label" translatable="false">profile</string>
     <string name="aboutFragment_label" translatable="false">about</string>
     <string name="email_tag" translatable="false">email</string>
+    <string name="chronometer_base_tag" translatable="false">chronometer_base</string>
+    <string name="campaign_start_tag" translatable="false">campaign_start</string>
+    <string name="campaign_length_tag" translatable="false">campaign_length</string>
     <string name="device_tag" translatable="false">device</string>
     <string name="latitude_tag" translatable="false">latitude</string>
     <string name="longitude_tag" translatable="false">longitude</string>
@@ -30,5 +33,6 @@
     <string name="gender_tag" translatable="false">gender</string>
     <string name="age_range_tag" translatable="false">age_range</string>
     <string name="bike_type_tag" translatable="false">bike_type</string>
-    <string name="bike_type_id_tag" translatable="false">bike_type_id</string>
+    <string name="bike_rented_tag" translatable="false">bike_type_id</string>
+    <string name="campaign_start_date_tag" translatable="false">campaign_start_date</string>
 </resources>

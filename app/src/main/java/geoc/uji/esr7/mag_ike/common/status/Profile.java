@@ -46,16 +46,16 @@ public class Profile {
     private final String age_range_40_50= "40-50";
     private final String age_range_50_0= "50+";
 
-    private final int bike_type_id_1 = 1;
-    private final int bike_type_id_2 = 2;
-    private final int bike_type_id_3 = 3;
-    private final int bike_type_id_4 = 4;
-    private final int bike_type_id_5 = 5;
-    private final int bike_type_id_6 = 6;
-    private final int bike_type_id_7 = 7;
-    private final int bike_type_id_8 = 8;
-    private final int bike_type_id_9 = 9;
-    private final int bike_type_id_10 = 10;
+    private final int bike_type_id_1 = 0;
+    private final int bike_type_id_2 = 1;
+    private final int bike_type_id_3 = 2;
+    private final int bike_type_id_4 = 3;
+    private final int bike_type_id_5 = 4;
+    private final int bike_type_id_6 = 5;
+    private final int bike_type_id_7 = 6;
+    private final int bike_type_id_8 = 7;
+    private final int bike_type_id_9 = 8;
+    private final int bike_type_id_10 = 9;
 
     private final boolean bike_rented_yes = true;
     private final boolean bike_rented_no = false;

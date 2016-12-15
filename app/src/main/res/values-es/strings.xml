@@ -7,8 +7,6 @@
     <string name="permission_rationale">Los datos de ubicación son usados como parte del API de Google Fit</string>
     <string name="activity">Tu actividad</string>
     <string name="speed_label">Velocidad:</string>
-    <string name="steps_label">Tus pasos:</string>
-    <string name="speed_nodata">Tu velocidad no está disponible</string>
     <string name="about_icons">Icones fetes per Freepik de www.flaticon.com sota la llicencia CC 3.0 BY</string>
     <string name="contribution_label">Contribución:</string>
     <string name="contribution_nodata">Tu contribución no está disponible</string>
