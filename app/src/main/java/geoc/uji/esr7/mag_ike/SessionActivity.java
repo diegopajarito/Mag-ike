@@ -191,10 +191,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
-        if (!checkPermissions_account() || !checkPermissions_fitness()) {
-            requestPermissions_account();
-            requestPermissions_fitness();
+        if (!checkPermissions_fitness() || !checkPermissions_account()) {
+            requestPermissions();
         }
+
+
 
         // Setting Parse Server with username and password
         checkParseLogIn();
@@ -690,15 +691,17 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
 
-    private void requestPermissions_fitness() {
+    private void requestPermissions() {
+
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION);
 
+
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            Log.i(TAG, "Displaying Fitness/Location/Contacts permission rationale to provide additional context.");
             Snackbar.make(
                     findViewById(android.R.id.content),
                     R.string.permission_rationale,
@@ -708,51 +711,21 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         public void onClick(View view) {
                             // Request permission
                             ActivityCompat.requestPermissions(SessionActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.GET_ACCOUNTS},
                                     REQUEST_PERMISSIONS_REQUEST_CODE);
                         }
                     })
                     .show();
         } else {
-            Log.i(TAG, "Requesting fitness permission");
+            Log.i(TAG, "Requesting fitness/location/Contacts permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(SessionActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.GET_ACCOUNTS},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
-    }
 
-    private void requestPermissions_account() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.GET_ACCOUNTS);
-        if (shouldProvideRationale) {
-            Log.i(TAG, "Displaying permission rationale to provide additional context.");
-            Snackbar.make(
-                    findViewById(android.R.id.content),
-                    R.string.permission_rationale,
-                    Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Request permission
-                            ActivityCompat.requestPermissions(SessionActivity.this,
-                                    new String[]{Manifest.permission.GET_ACCOUNTS},
-                                    REQUEST_PERMISSIONS_EMAIL_CODE);
-                        }
-                    })
-                    .show();
-        } else {
-            Log.i(TAG, "Requesting account permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
-            ActivityCompat.requestPermissions(SessionActivity.this,
-                    new String[]{Manifest.permission.GET_ACCOUNTS},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
     }
 
     // Functions gets an intent to start an activity

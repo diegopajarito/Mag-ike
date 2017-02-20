@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">Ciclista</string>
     <string name="action_settings">Configuraciò</string>
-    <string name="permission_denied_explanation">El permís va ser negat peró és necessari per a la funcionalitat de l\'aplicaciò</string>
-    <string name="permission_rationale">Els dades d\'ubicaciò són usats per l\'API de Google Fit</string>
+    <string name="permission_denied_explanation">Sense la teva ubicació i contactes #Ciclista no funciona</string>
+    <string name="permission_rationale">Permetre al ciclista accedir a la teva ubicació i als teus contactes</string>
     <string name="settings">Menú</string>
     <string name="activity">La teva activitat</string>
     <string name="speed_label">Velocitat:</string>

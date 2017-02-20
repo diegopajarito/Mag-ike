@@ -14,7 +14,7 @@
     <string name="longitude_tag" translatable="false">longitude</string>
     <string name="altitude_tag" translatable="false">altitude</string>
     <string name="precision_tag" translatable="false">precision</string>
-    <string name="time_gps_tag">time_gps</string>
+    <string name="time_gps_tag" translatable="false">time_gps</string>
     <string name="distance_tag" translatable="false">distance</string>
     <string name="last_distance_tag" translatable="false">last_distance</string>
     <string name="time_distance_tag" translatable="false">time_distance</string>

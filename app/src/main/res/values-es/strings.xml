@@ -2,9 +2,9 @@
 <resources>
     <string name="app_name">Ciclista</string>
     <string name="action_settings">Configuración</string>
-    <string name="permission_denied_explanation">El permiso fue negado pero es necesario para la funcionalidad de esta aplicación</string>
+    <string name="permission_denied_explanation">Sin tu ubicación y contactos #Ciclista no funciona</string>
     <string name="settings">Menú</string>
-    <string name="permission_rationale">Los datos de ubicación son usados como parte del API de Google Fit</string>
+    <string name="permission_rationale">Permite a #Ciclista usar tu ubicación y contactos</string>
     <string name="activity">Tu actividad</string>
     <string name="speed_label">Velocidad:</string>
     <string name="steps_label">Tus pasos:</string>
