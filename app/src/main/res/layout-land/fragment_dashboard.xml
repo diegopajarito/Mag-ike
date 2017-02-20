@@ -1,5 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,113 +14,98 @@
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnCount="3"
+            android:columnCount="4"
             android:rowCount="1"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/grid_time"
-            android:layout_marginTop="50dp">
+            android:id="@+id/grid_campaign"
+            android:layout_column="0"
+            android:layout_row="0"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="35dp"
+            android:layout_marginTop="70dp"
+            android:useDefaultMargins="false">
 
-            <GridLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:columnCount="4"
-                android:rowCount="1"
-                android:id="@+id/grid_campaign"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/grid_time"
+                android:id="@+id/tv_day_label"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/dashboard_day_label"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_current_day"
+                style="@style/HighlightedNumber"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_day_of"
+                android:layout_gravity="center_vertical"
+                android:text="@string/dashboard_day_of" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_total_day"
+                android:textAlignment="gravity"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center_vertical" />
+
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/grid_time"
+            android:columnCount="1"
+            android:rowCount="1"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentTop="false"
+            android:animateLayoutChanges="true"
+            android:layout_alignTop="@+id/grid_campaign">
+
+            <ImageView
+                android:layout_width="113dp"
+                app:srcCompat="@drawable/ic_stopwatch"
+                android:id="@+id/imageView"
+                android:layout_height="80dp"
                 android:layout_column="0"
                 android:layout_row="0"
-                android:layout_marginRight="30dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_day_label"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:text="@string/dashboard_day_label"
-                    android:layout_gravity="center_vertical" />
-
-                <TextView
-                    android:text="3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_current_day"
-                    style="@style/MediumSizeText"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
-
-                <TextView
-                    android:text="@string/dashboard_day_of"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_day_of"
-                    android:layout_gravity="bottom" />
-
-                <TextView
-                    android:text="@string/dashboard_campaign_length"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_total_day"
-                    android:textAlignment="gravity"
-                    android:layout_gravity="bottom"
-                    android:layout_marginLeft="5dp" />
-
-            </GridLayout>
+                android:layout_alignTop="@+id/grid_time"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="false" />
 
             <Chronometer
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chronometer_session"
-                android:layout_column="1"
                 android:layout_row="0"
-                android:layout_marginLeft="40dp"
-                android:layout_gravity="center_vertical" />
-
-            <GridLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_speed"
-                android:layout_below="@+id/grid_distance"
-                android:layout_centerHorizontal="true">
-
-                <TextView
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                    android:text="@string/nodata"
-                    android:id="@+id/value_speed"
-                    android:layout_column="0"
-                    android:layout_row="0"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/colorPrimaryDark"
-                    style="@style/MediumSizeText"
-                    android:layout_columnSpan="2"
-                    android:layout_width="200dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/speed_units"
-                    android:id="@+id/speed_units"
-                    android:layout_column="2"
-                    android:layout_row="0"
-                    android:textColor="@color/colorPrimaryDark"
-                    style="@style/UnitsLabel" />
-
-            </GridLayout>
+                android:layout_column="0"
+                android:layout_gravity="center_vertical|center_horizontal"
+                style="@style/SmallNumber" />
 
         </GridLayout>
 
         <GridLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnCount="6"
+            android:columnCount="3"
             android:rowCount="3"
             android:id="@+id/grid_distance"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/grid_time"
-            android:layout_marginTop="20dp"
-            android:paddingLeft="40dp"
-            android:paddingRight="40dp">
+            android:layout_centerHorizontal="false"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/grid_speed"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp">
 
             <TextView
                 android:layout_height="wrap_content"
@@ -130,9 +116,9 @@
                 android:layout_row="0"
                 android:gravity="center_horizontal"
                 style="@style/BigNumber"
-                android:layout_width="200dp"
+                android:layout_width="wrap_content"
                 android:layout_columnSpan="2"
-                android:layout_rowSpan="2" />
+                android:minWidth="180dp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -143,74 +129,87 @@
                 android:textColor="@color/colorPrimaryDark"
                 style="@style/UnitsLabel"
                 android:id="@+id/label_distance"
-                android:layout_width="wrap_content"
-                android:layout_rowSpan="2" />
+                android:layout_width="wrap_content" />
 
-            <SeekBar
-                android:layout_height="wrap_content"
-                android:id="@+id/sb_goal"
-                android:layout_column="3"
-                android:layout_row="0"
-                android:thumbTint="@color/colorPrimaryDark"
-                android:progressTint="@color/colorPrimaryDark"
-                android:layout_columnSpan="3"
-                android:layout_width="200dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_marginLeft="20dp"
-                android:max="20" />
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@drawable/ic_flag_light_green"
+                android:id="@+id/imageView4"
+                android:layout_column="0"
+                android:layout_row="1" />
 
-            <ProgressBar
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:id="@+id/progress_bar_distance"
-                android:layout_column="3"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@drawable/ic_flag_green"
+                android:id="@+id/imageView3"
+                android:layout_column="1"
                 android:layout_row="1"
+                android:layout_gravity="right" />
+
+            <ImageView
+                app:srcCompat="@drawable/ic_flag_dark_green"
+                android:id="@+id/imageView2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_column="2"
+                android:layout_row="1"
+                android:layout_gravity="right" />
+
+            <SeekBar android:id="@+id/sb_distance"
+                android:layout_width="match_parent"
+                android:layout_column="0"
                 android:layout_columnSpan="3"
-                android:max="10"
-                android:progressTint="@color/colorPrimaryDark"
-                android:progressBackgroundTint="@color/colorBackground"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp" />
+                android:max="5000" />
+
+
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/grid_speed"
+            android:layout_centerHorizontal="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginBottom="5dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_gauge_walking"
+                android:id="@+id/gauge"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:baselineAlignBottom="true" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/dashboard_goal_label"
-                android:layout_column="3"
-                android:layout_row="1"
-                android:textColor="@color/colorPrimary"
-                android:id="@+id/label_max_distance"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="22dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/dashboard_goal_default"
-                android:layout_column="4"
+                android:text="@string/nodata"
+                android:id="@+id/value_speed"
+                android:layout_column="0"
                 android:layout_row="1"
-                android:gravity="center_vertical"
-                android:textColor="@color/colorPrimary"
-                style="@style/SmallNumber"
-                android:id="@+id/value_max_distance"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginRight="2dp" />
+                android:gravity="center_horizontal"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_width="200dp"
+                style="@style/SmallNumber" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/dashboard_goal_units"
-                android:layout_column="5"
+                android:text="@string/speed_units"
+                android:id="@+id/speed_units"
+                android:layout_column="1"
                 android:layout_row="1"
-                android:textColor="@color/colorPrimary"
-                android:id="@+id/units_max_distance"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="2dp" />
-
+                android:textColor="@color/colorPrimaryDark"
+                style="@style/UnitsLabel" />
 
         </GridLayout>
 
@@ -222,8 +221,11 @@
             android:id="@+id/status_contribution"
             android:layout_alignParentStart="false"
             android:layout_centerHorizontal="false"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="false">
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/grid_campaign"
+            android:visibility="invisible">
 
             <TextView
                 android:layout_height="wrap_content"
@@ -236,7 +238,8 @@
                 android:layout_row="0"
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -249,7 +252,8 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -260,7 +264,8 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_column="1"
                 android:layout_row="0"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -273,7 +278,8 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="14sp" />
             <TextView
                 android:layout_height="wrap_content"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
@@ -283,7 +289,8 @@
                 android:layout_column="2"
                 android:layout_row="0"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -296,20 +303,8 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
-                android:id="@+id/value_contribution"
-                android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_column="3"
-                android:layout_row="0"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal" />
+                android:layout_marginRight="5dp"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_height="wrap_content"
@@ -322,7 +317,22 @@
                 android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:text="@string/nodata"
+                android:id="@+id/value_contribution"
+                android:gravity="center_horizontal"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_column="3"
+                android:layout_row="0"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textSize="18sp" />
 
         </GridLayout>
 

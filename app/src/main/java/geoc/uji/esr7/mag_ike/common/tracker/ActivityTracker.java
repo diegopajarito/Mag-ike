@@ -33,22 +33,6 @@ public class ActivityTracker  {
         return arrayTrackSpeed.get(last-1);
     }
 
-    public TrackGPS getLastGPSPosition(){
-        int last = arrayTrackGPS.size();
-        return arrayTrackGPS.get(last-1);
-    }
 
-    public String getSpeedText(Context c, DataPoint dp){
-        String answer = c.getString(R.string.speed_nodata);
-        Field field = dp.getDataSource().getDataType().getFields().get(0);
-        String fieldName = dp.getDataType().getName();
-        if (fieldName.equals("distance")) {
-            Value val = dp.getValue(field);
-            String lbl = c.getString(R.string.speed_label);
-            String un = c.getString(R.string.speed_units);
-            answer = lbl.toString().concat(val.toString().concat(un.toString()));
-        }
-        return answer;
-    }
 
 }

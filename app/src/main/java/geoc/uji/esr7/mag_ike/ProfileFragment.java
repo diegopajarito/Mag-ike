@@ -4,6 +4,7 @@ package geoc.uji.esr7.mag_ike;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -11,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -27,10 +30,7 @@ public class ProfileFragment extends Fragment {
 
     private View rootView;
     private EditText et_name;
-    private EditText et_email;
-    private TabHost tabHostGender;
-    private TabHost.TabSpec tabFemale;
-    private TabHost.TabSpec tabMale;
+    private RadioGroup rg_avatar;
 
     // Container Activity must implement this interface
     // Check Parent Activity
@@ -51,27 +51,24 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         profile = mListener.getCurrentProfile();
-        temporalProfile = new Profile();
+        temporalProfile = profile;
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        //Setting all interface elements and listeners to control interface interaction
         et_name = (EditText) rootView.findViewById(R.id.et_name);
-        et_email = (EditText) rootView.findViewById(R.id.et_email);
+        rg_avatar = (RadioGroup) rootView.findViewById(R.id.rg_avatar);
 
-        // Setting the Tab Host for selecting avatars
-        tabHostGender = (TabHost)rootView.findViewById(R.id.tabHost_gender);
-        tabHostGender.setup();
-        //Tab 1 for females
-        tabFemale = tabHostGender.newTabSpec("Tab_Female");
-        tabFemale.setContent(R.id.tab_female);
-        tabFemale.setIndicator(getContext().getText(R.string.profile_female));
-        tabHostGender.addTab(tabFemale);
-        //Tab 2
-        tabMale = tabHostGender.newTabSpec("Tab_male");
-        tabMale.setContent(R.id.tab_male);
-        tabMale.setIndicator(getContext().getText(R.string.profile_male));
-        tabHostGender.addTab(tabMale);
+        rg_avatar.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (getCheckedRadioButtonIndex(group) % 2 == 0)
+                    temporalProfile.setGender(profile.gender_female);
+                else
+                    temporalProfile.setGender(profile.gender_male);
+                temporalProfile.setAvatarId(getCheckedRadioButtonIndex(group));
+            }
+        });
 
         return rootView;
     }
@@ -106,61 +103,52 @@ public class ProfileFragment extends Fragment {
     }
 
     public void updateProfileFromScreen() {
-
+        RadioGroup radioGroup;
+        Switch switch_rented;
+        // Name
         if ((et_name.getText() == null) || (et_name.getText().equals(profile.nameDefault) == false))
             temporalProfile.setAvatarName(et_name.getText().toString());
-
-        RadioGroup radioGroup;
-        if (tabHostGender.getCurrentTab() == 0) {
-            temporalProfile.setGender(temporalProfile.gender_female);
-            radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar_male);
-            temporalProfile.setAvatarId(getCheckedRadioButtonIndex(radioGroup));
-        }
-        else if (tabHostGender.getCurrentTab() == 1){
-            temporalProfile.setGender(temporalProfile.gender_male);
-            radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar_male);
-            temporalProfile.setAvatarId(getCheckedRadioButtonIndex(radioGroup));
-        }
+        // avatar
+        radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar);
+        temporalProfile.setAvatarId(getCheckedRadioButtonIndex(radioGroup));
+        // Age
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_age);
         temporalProfile.setAgeRangeById(getCheckedRadioButtonIndex(radioGroup));
+        // bike type
+        switch_rented = (Switch) getActivity().findViewById(R.id.sw_rented);
+        temporalProfile.setBikeRented(switch_rented.isChecked());
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_bike_type);
         temporalProfile.setBikeType(getCheckedRadioButtonIndex(radioGroup));
-        if ((et_name.getText() == null) || et_email.getText().equals(profile.text_not_set) == false)
-            temporalProfile.setEmail(et_email.getText().toString());
-
     }
 
 
     public void updateScreenFromProfile(){
-        if (profile.getAvatarName().equals(profile.nameDefault) == false)
-            et_name.setText(profile.getAvatarName());
-
         RadioGroup radioGroup;
         RadioButton radioButton;
-        if ((profile.getAvatarId() != profile.id_not_set && profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_female)){
-            tabHostGender.setCurrentTab(0);
-            radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar_female);
-            radioButton = (RadioButton) radioGroup.getChildAt(profile.getAvatarId());
+        Switch switchSelector;
+        // Name
+        if (profile.getAvatarName().equals(profile.nameDefault) == false)
+            et_name.setText(profile.getAvatarName());
+        //Avatar
+        if (profile.getAvatarId() != profile.id_not_set ){
+            radioButton = (RadioButton) rg_avatar.getChildAt(profile.getAvatarId());
             radioButton.setChecked(true);
         }
-        else if ((profile.getAvatarId() != profile.id_not_set && profile.getGender() != profile.text_not_set) && (profile.getGender() == profile.gender_male)){
-            tabHostGender.setCurrentTab(1);
-            radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_avatar_male);
-            radioButton = (RadioButton) radioGroup.getChildAt(profile.getAvatarId());
-            radioButton.setChecked(true);
-        }
+        //Age
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_age);
         if ((radioGroup != null) && (profile.getAgeRange().equals(profile.text_not_set) != true) ) {
             radioButton = (RadioButton) radioGroup.getChildAt(profile.getAgeRangeId());
             radioButton.setChecked(true);
         }
+        // Bike
+        // public
+        switchSelector = (Switch) getActivity().findViewById(R.id.sw_rented);
+        switchSelector.setChecked(profile.isBikeRented());
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_bike_type);
         if ((radioGroup!= null) && (profile.getBikeType() != profile.id_not_set)) {
             radioButton = (RadioButton) radioGroup.getChildAt(profile.getBikeType());
             radioButton.setChecked(true);
         }
-        if (profile.getEmail().equals(profile.text_not_set) == false)
-            et_email.setText(profile.getEmail());
     }
 
 

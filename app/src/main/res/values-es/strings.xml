@@ -7,8 +7,6 @@
     <string name="permission_rationale">Permite a #Ciclista usar tu ubicación y contactos</string>
     <string name="activity">Tu actividad</string>
     <string name="speed_label">Velocidad:</string>
-    <string name="steps_label">Tus pasos:</string>
-    <string name="speed_nodata">Tu velocidad no está disponible</string>
     <string name="about_icons">Icones fetes per Freepik de www.flaticon.com sota la llicencia CC 3.0 BY</string>
     <string name="contribution_label">Contribución:</string>
     <string name="contribution_nodata">Tu contribución no está disponible</string>
@@ -32,9 +30,11 @@
     <string name="profile_name">Nombre de avatar</string>
     <string name="profile_male">Hombre</string>
     <string name="profile_female">Mujer</string>
-    <string name="profile_age">Edad (Años)</string>
     <string name="profile_age_0_20">Menor de 20</string>
-    <string name="profile_age_50_">Mayor de 50</string>
+    <string name="profile_age_20_30">20 - 30 años</string>
+    <string name="profile_age_30_40">30 - 40 años</string>
+    <string name="profile_age_40_50">40 - 50 años</string>
+    <string name="profile_age_50_">Mayor de 50 años</string>
     <string name="about_cyclist">#Ciclista es parte del proyecto \"Servicios móviles para promover hábitos de vida sostenible\" y es un experimento informático sin ningún ánimo comercial. El equipo de desarrollo de la aplicación agradece su participación</string>
     <string name="about_geoc">El programa Geo-C Doctorado Europeo conjunto en Geoinformática promueve el desarrollo de ciudades abiertas e inteligentes. Para más información de Geo-C puede visitar www.geo-c.eu</string>
     <string name="contribution_location_label">Ubicación</string>
@@ -46,4 +46,5 @@
     <string name="dashboard_day_label">Dia</string>
     <string name="dashboard_goal_label">Tu meta:</string>
     <string name="profile_bike_shared">Compartida o Pública</string>
+
 </resources>

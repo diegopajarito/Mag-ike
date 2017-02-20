@@ -47,23 +47,10 @@ public class DashboardFragment extends Fragment {
         view  = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         sb_distance = (SeekBar) view.findViewById(R.id.sb_distance);
-
         iv_gauge = (ImageView) view.findViewById(R.id.gauge);
         chronometer = (Chronometer) view.findViewById(R.id.chronometer_session);
         chronometer.setBase(mListener.getChronometerBase());
         chronometer.start();
-
-        /*
-
-        // Disable Seekbar to be changed by user
-        sb_distance.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-
-        */
 
         return view;
 
@@ -107,10 +94,10 @@ public class DashboardFragment extends Fragment {
                 TextView tv;
 
                 try {
-                    if (s.getDistance() != s.no_data) {
+                    if (s.getLast_distance() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
-                        tv.setText(String.format("%.0f", s.getDistance()  ));
-                        sb_distance.setProgress((int) s.getDistance());
+                        tv.setText(String.format("%.0f", s.getLast_distance()  ));
+                        sb_distance.setProgress((int) s.getLast_distance());
                     }
                     if (s.getSpeed() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_speed);
@@ -131,6 +118,10 @@ public class DashboardFragment extends Fragment {
                     tv.setText(String.valueOf(s.getSpeedContribution()));
                     tv = (TextView) getView().findViewById(R.id.value_contribution);
                     tv.setText(String.valueOf(s.getTotalContribution()));
+                    tv = (TextView) getView().findViewById(R.id.tv_total_day);
+                    tv.setText(String.valueOf(s.getCampaignLength()));
+                    tv = (TextView) getView().findViewById(R.id.tv_current_day);
+                    tv.setText(String.valueOf(s.getCampaignDay()));
                 } catch (Exception e){
                     Log.i("Update", "Error on setting value - " + e.getMessage());
                 }
