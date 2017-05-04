@@ -46,5 +46,7 @@
     <string name="dashboard_day_label">Dia</string>
     <string name="dashboard_goal_label">L\'objectiu:</string>
     <string name="profile_bike_shared">Compartida o Pública</string>
+    <string name="notification_title">Pedalant la ciutat</string>
+    <string name="notification_text">Etiqueta el teu viatge quan arrives</string>
 
 </resources>

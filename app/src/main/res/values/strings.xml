@@ -61,4 +61,7 @@
     <string name="dashboard_goal_default" translatable="false">1</string>
     <string name="dashboard_goal_units" translatable="false">Km.</string>
     <string name="profile_bike_shared">Shared or Public</string>
+    <string name="tag_log" translatable="false">Cyclist</string>
+    <string name="notification_title">Pedaling the city</string>
+    <string name="notification_text">Tag your trip when arrived</string>
 </resources>

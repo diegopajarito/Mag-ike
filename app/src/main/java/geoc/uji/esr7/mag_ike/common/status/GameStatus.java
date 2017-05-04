@@ -89,7 +89,7 @@ public class GameStatus {
         this.profile = new Profile();
 
         //Setting all properties tags from resources
-        campaign_length = R.integer.dashboard_campaign_length;
+        campaign_length =10;
         device_tag = res.getString(R.string.device_tag);
         latitude_tag = res.getString(R.string.latitude_tag);
         longitude_tag = res.getString(R.string.longitude_tag);

@@ -2,23 +2,26 @@ package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,12 +32,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Chronometer;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
@@ -47,7 +48,6 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.request.DataSourcesRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
@@ -63,16 +63,15 @@ import geoc.uji.esr7.mag_ike.common.logger.LogView;
 import geoc.uji.esr7.mag_ike.common.logger.LogWrapper;
 import geoc.uji.esr7.mag_ike.common.logger.MessageOnlyLogFilter;
 import geoc.uji.esr7.mag_ike.common.status.Profile;
-import geoc.uji.esr7.mag_ike.common.tracker.ActivityTracker;
 
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
-
-import static android.R.attr.data;
+import geoc.uji.esr7.mag_ike.common.tracker.TrackingService;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
 
-    public static final String TAG = "Cyclist - BasicSensorsApi";
+
+    private static final String TAG = "Cycling";
     // [START auth_variable_references]
     private GoogleApiClient mClient = null;
     // [END auth_variable_references]
@@ -92,19 +91,25 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private OnDataPointListener stepCountListener;
     // [END mListener_variable_reference]
 
-    // The activity Tracker
-    private ActivityTracker actTracker = new ActivityTracker();
+    // The activity Service Intent
+    private Intent mTrackingIntent;
+    // The tracking activity ID
+    private final int trackingServiceID = 1;
+    // The notification builder for tracking service
+    private NotificationCompat.Builder mNotificationBuilder;
+
+    // Floating button to control the location tracking service
+    FloatingActionButton btn_pause;
 
     // Wraps Android's native log framework.
     LogWrapper logWrapper;
 
-    // Global variables to be used during app execution
-    int counter_points = 0;
+    // sets zero as initial value for distance
     float accumulated_distance = 0;
+    // the chronometer used for the dashboard
     Chronometer chronometer;
-    private String defaultEmail = "";
 
-    // A status object for having control of
+    // A status object used for storing game status through data fragments
     public GameStatus gameStatus;
 
     // Fragments for being used on interface development
@@ -117,14 +122,22 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /** dealing with interface set
+         * Set the layout
+         * check the fragments that are active when menu is selected
+         * setting the toolbar
+         * setting the side drawer layout
+         * setting the avatar and personal details on the side drawer
+         * setting the floating button for control the location trackin service
+         */
         setContentView(R.layout.activity_session);
 
-        android.support.v4.app.FragmentManager supportfm = getSupportFragmentManager();
+        android.support.v4.app.FragmentManager mSupportFM = getSupportFragmentManager();
 
         // Get existing fragment for Dashboard
-        if (supportfm.findFragmentByTag(getString(R.string.dashboardFragment_label)) == null){
+        if (mSupportFM.findFragmentByTag(getString(R.string.dashboardFragment_label)) == null){
             dashboardFragment.setArguments(getIntent().getExtras());
-            supportfm.beginTransaction()
+            mSupportFM.beginTransaction()
                     .add(R.id.fragment_container, dashboardFragment, getString(R.string.dashboardFragment_label) ).commit();
         } else {
             dashboardFragment = (DashboardFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardFragment_label));
@@ -153,7 +166,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         // Starting Global Chronometer
         chronometer = new Chronometer(getApplicationContext());
-
         chronometer.start();
 
         // Starting and Setting the toolbar
@@ -171,23 +183,36 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
         // Adding a floating button and its listener
-        /*
-        FloatingActionButton btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
+
+        btn_pause = (FloatingActionButton) findViewById(R.id.btn_pause);
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final MediaPlayer mp = MediaPlayer.create(SessionActivity.this, R.raw.sound_bell);
-                Toast.makeText(getApplicationContext(), R.string.error_function_not_available, Toast.LENGTH_LONG).show();
-                mp.start();
+                //Call the Service toggle
+                boolean serviceStatus = toggleTrackingService();
+                if (serviceStatus == true) {
+                    Toast.makeText(view.getContext(), "Service Started", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(view.getContext(), "Service Stopped", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
-        */
 
+
+        /**
+         * Setting options and services needed for the app
+         * on-screen Logger - to be deleted
+         * permissions checked for accessing the account data and fitness api
+         * Android service for starting the location track
+         * Logging into the Parse server for managing data storage
+         */
 
         // This method sets up our custom logger, which will print all log messages to the device
         // screen, as well as to adb logcat.
-        initializeLogging();
+        initializeLogging(); // To be deleted
 
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
@@ -195,6 +220,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             requestPermissions_account();
             requestPermissions_fitness();
         }
+
+        // Launch the toggle for the location tracking service for starting it
+        toggleTrackingService();
 
         // Setting Parse Server with username and password
         checkParseLogIn();
@@ -297,6 +325,51 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             }
         });
     }
+
+
+    /**
+     * Toggle method for control the Location tracking service
+     * - starts/finish of the service
+     * - sets icon of the floating button
+     * - sets the notification while the service is running
+     */
+
+    private boolean toggleTrackingService(){
+        boolean serviceStatus;
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (mTrackingIntent == null){
+            mTrackingIntent = new Intent(this, TrackingService.class);
+            this.startService(mTrackingIntent);
+            mNotificationBuilder = new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_bike_ride)
+                            .setContentTitle(getString(R.string.notification_title))
+                            .setContentText(getString(R.string.notification_text));
+            // The stack builder object will contain an artificial back stack for the started Activity.
+            // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(SessionActivity.class);
+            // Adds the Intent of the current activity that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(getIntent());
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT );
+            mNotificationBuilder.setContentIntent(resultPendingIntent);
+            // trackingServiceID allows you to update the notification later on.
+            mNotificationManager.notify(trackingServiceID, mNotificationBuilder.build());
+            btn_pause.setImageResource(R.drawable.ic_button_pause);
+            serviceStatus = true;
+        } else {
+            this.stopService(mTrackingIntent);
+            mTrackingIntent = null;
+            mNotificationManager.cancel(trackingServiceID);
+            btn_pause.setImageResource(R.drawable.ic_button_play);
+            serviceStatus = false;
+        }
+        Log.d("Toggle", String.valueOf(serviceStatus));
+        return serviceStatus;
+    }
+
+
 
     // [START auth_build_googleapiclient_beginning]
     /**
@@ -786,12 +859,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionResult");
+        Log.i(getString(R.string.tag_log), "onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE || requestCode == REQUEST_PERMISSIONS_EMAIL_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
-                Log.i(TAG, "User interaction was cancelled.");
+                Log.i(getString(R.string.tag_log), "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
                 buildFitnessClient();
