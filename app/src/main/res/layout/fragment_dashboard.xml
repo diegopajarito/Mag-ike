@@ -12,202 +12,181 @@
         android:layout_height="match_parent">
 
         <GridLayout
+            android:id="@+id/grid_campaign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnCount="4"
-            android:rowCount="1"
-            android:id="@+id/grid_campaign"
-            android:layout_column="0"
-            android:layout_row="0"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_column="0"
             android:layout_marginLeft="35dp"
             android:layout_marginTop="70dp"
+            android:layout_row="0"
+            android:columnCount="4"
+            android:rowCount="1"
             android:useDefaultMargins="false">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/tv_day_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:gravity="center_vertical|center_horizontal"
-                android:text="@string/dashboard_day_label"
-                android:layout_gravity="center_vertical" />
+                android:text="@string/dashboard_day_label" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/tv_current_day"
-                style="@style/HighlightedNumber"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
-
-            <TextView
+                style="@style/BigNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="1" />
+
+            <TextView
                 android:id="@+id/tv_day_of"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/dashboard_day_of" />
 
             <TextView
+                android:id="@+id/tv_total_day"
+                style="@style/HighlightedNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_total_day"
-                android:textAlignment="gravity"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
-                android:layout_gravity="center_vertical" />
+                android:text="7"
+                android:textAlignment="gravity" />
 
         </GridLayout>
 
         <GridLayout
+            android:id="@+id/grid_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/grid_time"
-            android:columnCount="1"
-            android:rowCount="1"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="35dp"
+            android:layout_marginTop="70dp"
             android:animateLayoutChanges="true"
-            android:layout_marginTop="60dp">
+            android:columnCount="1"
+            android:rowCount="1">
 
             <ImageView
-                android:layout_width="113dp"
-                app:srcCompat="@drawable/ic_stopwatch"
                 android:id="@+id/imageView"
+                android:layout_width="113dp"
                 android:layout_height="80dp"
-                android:layout_column="0"
-                android:layout_row="0"
-                android:layout_alignTop="@+id/grid_time"
-                android:layout_alignParentRight="false"
                 android:layout_alignParentEnd="false"
-                android:layout_gravity="center_vertical|center_horizontal" />
-
-            <Chronometer
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chronometer_session"
-                android:layout_row="0"
+                android:layout_alignParentRight="false"
+                android:layout_alignTop="@+id/grid_time"
                 android:layout_column="0"
                 android:layout_gravity="center_vertical|center_horizontal"
-                style="@style/SmallNumber" />
+                android:layout_row="0"
+                app:srcCompat="@drawable/ic_stopwatch" />
+
+            <Chronometer
+                android:id="@+id/chronometer_session"
+                style="@style/SmallNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_row="0" />
 
         </GridLayout>
 
         <GridLayout
-            android:layout_width="match_parent"
+            android:id="@+id/grid_tags"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:rowCount="3"
-            android:id="@+id/grid_distance"
-            android:layout_centerHorizontal="false"
             android:layout_below="@+id/grid_time"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:layout_marginTop="30dp"
+            android:columnCount="3"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="50dp">
+            android:rowCount="3">
 
             <TextView
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
                 android:id="@+id/value_distance"
-                android:layout_column="0"
-                android:layout_row="0"
-                android:gravity="center_horizontal"
                 style="@style/BigNumber"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
                 android:layout_columnSpan="2"
-                android:minWidth="200dp" />
+                android:layout_row="0"
+                android:gravity="center_horizontal"
+                android:minWidth="200dp"
+                android:text="765"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
             <TextView
+                android:id="@+id/label_distance"
+                style="@style/UnitsLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/distance_units"
                 android:layout_column="2"
                 android:layout_row="0"
-                android:textColor="@color/colorPrimaryDark"
-                style="@style/UnitsLabel"
-                android:id="@+id/label_distance"
-                android:layout_width="wrap_content" />
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_flag_light_green"
-                android:id="@+id/imageView4"
-                android:layout_column="0"
-                android:layout_row="1" />
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:srcCompat="@drawable/ic_flag_green"
-                android:id="@+id/imageView3"
-                android:layout_column="1"
-                android:layout_row="1"
-                android:layout_gravity="right" />
-
-            <ImageView
-                app:srcCompat="@drawable/ic_flag_dark_green"
-                android:id="@+id/imageView2"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_column="2"
-                android:layout_row="1"
-                android:layout_gravity="right" />
-
-            <SeekBar android:id="@+id/sb_distance"
-                android:layout_width="match_parent"
-                android:layout_column="0"
-                android:layout_columnSpan="3"
-                android:max="5000" />
+                android:text="@string/distance_units"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimaryDark" />
 
 
         </GridLayout>
 
         <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/grid_speed"
-            android:layout_below="@+id/grid_distance"
-            android:layout_marginTop="20dp"
-            android:layout_centerHorizontal="true">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_gauge_walking"
-                android:id="@+id/gauge"
-                android:layout_column="0"
-                android:layout_columnSpan="2"
-                android:layout_gravity="center_horizontal"
-                android:paddingLeft="70dp"
-                android:paddingRight="70dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/grid_tags"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:rowCount="3">
 
             <TextView
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="@string/nodata"
                 android:id="@+id/value_speed"
+                style="@style/BigNumber"
+                android:layout_width="wrap_content"
+                android:layout_alignBaseline="@+id/speed_units"
+                android:layout_alignBottom="@+id/speed_units"
                 android:layout_column="0"
-                android:layout_row="1"
+                android:layout_row="0"
+                android:layout_toLeftOf="@+id/speed_units"
                 android:gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_width="200dp"
-                style="@style/SmallNumber" />
+                android:minWidth="200dp"
+                android:text="11.5"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:textColor="@color/colorPrimaryDark" />
 
             <TextView
+                android:id="@+id/speed_units"
+                style="@style/UnitsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/speed_units"
-                android:id="@+id/speed_units"
+                android:layout_alignEnd="@+id/grid_time"
+                android:layout_alignRight="@+id/grid_time"
+                android:layout_below="@+id/grid_tags"
                 android:layout_column="1"
-                android:layout_row="1"
-                android:textColor="@color/colorPrimaryDark"
-                style="@style/UnitsLabel" />
+                android:layout_row="0"
+                android:text="@string/speed_units"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimaryDark" />
 
         </GridLayout>
+
+        <ImageView
+            android:id="@+id/gauge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="70dp"
+            android:paddingLeft="70dp"
+            android:paddingRight="70dp"
+            app:srcCompat="@drawable/ic_gauge_cycling" />
 
         <GridLayout
             android:layout_width="wrap_content"

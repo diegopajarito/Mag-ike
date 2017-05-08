@@ -93,6 +93,8 @@ public class DashboardFragment extends Fragment {
             public void run() {
                 TextView tv;
 
+                /*
+
                 try {
                     if (s.getLast_distance() != s.no_data) {
                         tv = (TextView) getView().findViewById(R.id.value_distance);
@@ -125,6 +127,8 @@ public class DashboardFragment extends Fragment {
                 } catch (Exception e){
                     Log.i("Update", "Error on setting value - " + e.getMessage());
                 }
+
+                */
             }
         });
 

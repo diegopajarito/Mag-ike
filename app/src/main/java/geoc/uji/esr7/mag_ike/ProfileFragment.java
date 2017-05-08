@@ -42,7 +42,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
 
@@ -51,7 +50,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         profile = mListener.getCurrentProfile();
-        temporalProfile = profile;
+        temporalProfile = new Profile();
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -114,9 +113,10 @@ public class ProfileFragment extends Fragment {
         // Age
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_age);
         temporalProfile.setAgeRangeById(getCheckedRadioButtonIndex(radioGroup));
-        // bike type
+        // bike rented
         switch_rented = (Switch) getActivity().findViewById(R.id.sw_rented);
         temporalProfile.setBikeRented(switch_rented.isChecked());
+        // bike type
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.rg_bike_type);
         temporalProfile.setBikeType(getCheckedRadioButtonIndex(radioGroup));
     }

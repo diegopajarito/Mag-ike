@@ -25,7 +25,7 @@ public class Profile {
 
     public final String gender_male = "Male";
     public final String gender_female = "Female";
-    public final String text_not_set = "Not set";
+    public final String text_not_set = "Not Set";
 
     public final int id_not_set= -1;
     private final int avatar_female_id_1= 100;
@@ -57,8 +57,6 @@ public class Profile {
     private final int bike_type_id_9 = 8;
     private final int bike_type_id_10 = 9;
 
-    private final boolean bike_rented_yes = true;
-    private final boolean bike_rented_no = false;
 
 
     // Default constructor
@@ -68,7 +66,7 @@ public class Profile {
         this.gender =text_not_set;
         this.ageRange = text_not_set;
         this.bikeType = id_not_set;
-        this.bikeRented = bike_rented_no;
+        this.bikeRented = false;
         this.email = text_not_set;
 
 
@@ -107,11 +105,10 @@ public class Profile {
             setBikeType(p.getBikeType());
             changed = true;
         }
-        if (this.email.equals(p.email) == false){
-            setEmail(p.getEmail());
+        if (this.isBikeRented() != p.isBikeRented()){
+            setBikeRented(p.isBikeRented());
             changed = true;
         }
-
         return changed;
     }
 
@@ -256,9 +253,6 @@ public class Profile {
     }
 
     public void setBikeRented(boolean bikeRented) {
-        if (bikeRented = true)
-            this.bikeRented = bike_rented_yes;
-        else
-            this.bikeRented = bike_rented_no;
+        this.bikeRented = bikeRented;
     }
 }

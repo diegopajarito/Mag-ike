@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="server_parse" translatable="false">http://150.128.97.150:1337/parse/</string>
-    <string name="application_id_parse" translatable="false">enableDashboard</string>
+    <string name="application_id_parse">enableDashboard</string>
     <string name="username_parse" translatable="false">test@test.com</string>
     <string name="password_parse" translatable="false">test</string>
     <string name="status_class_parse" translatable="false">Magike_Status</string>
@@ -12,6 +12,7 @@
     <string name="chronometer_base_tag" translatable="false">chronometer_base</string>
     <string name="campaign_start_tag" translatable="false">campaign_start</string>
     <string name="campaign_length_tag" translatable="false">campaign_length</string>
+    <string name="tracking_service_status_tag" translatable="false">tracking_service_status</string>
     <string name="device_tag" translatable="false">device</string>
     <string name="latitude_tag" translatable="false">latitude</string>
     <string name="longitude_tag" translatable="false">longitude</string>
