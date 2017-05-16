@@ -55,6 +55,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+    private static final int REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE = 123;
     private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
     private static final int REQUEST_OAUTH = 1431;
@@ -92,6 +93,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private DataFragment dataFragment;
     private ProfileFragment profileFragment = new ProfileFragment();
     private DashboardFragment dashboardFragment = new DashboardFragment();
+    private DashboardTagsFragment dashboardTagsFragment = new DashboardTagsFragment();
     private AboutFragment aboutFragment = new AboutFragment();
 
     @Override
@@ -166,7 +168,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
         if (!checkPermissions_account()) {
-            requestPermissions_account();
+            requestPermissions_fitness();
         } else if (!checkPermissions_fitness()){
             requestPermissions_fitness();
         }
@@ -240,10 +242,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if (item.getItemId() == R.id.action_location) {
             Toast.makeText(getApplicationContext(), R.string.action_location_text, Toast.LENGTH_SHORT).show();
         } else if (item.getItemId() == R.id.action_cycling) {
-            if (mClient.isConnected())
-                Toast.makeText(getApplicationContext(), R.string.action_fitness_text, Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(getApplicationContext(), R.string.action_fitness_text_error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.action_fitness_text, Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -262,6 +261,14 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             }
         } else if ( (item.getItemId() == R.id.nav_share) ) {
             Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
+        } else if (item.getItemId() == R.id.nav_play_tags) {
+            if (getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardTagsFragment_label)) == null){
+                transaction.add(dashboardTagsFragment, getString(R.string.dashboardTagsFragment_label));
+            }
+            if (!dashboardTagsFragment.isVisible()){
+                transaction.replace(R.id.fragment_container, dashboardTagsFragment);
+                transaction.addToBackStack(null);
+            }
         } else if (item.getItemId() == R.id.nav_profile) {
             if (getSupportFragmentManager().findFragmentByTag(getString(R.string.profileFragment_label)) == null){
                 transaction.add(profileFragment, getString(R.string.profileFragment_label));
@@ -381,9 +388,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         @Override
                         public void onClick(View view) {
                             // Request permission
+
                             ActivityCompat.requestPermissions(SessionActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                            Manifest.permission.GET_ACCOUNTS},
+                                    REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE);
                         }
                     })
                     .show();
@@ -393,8 +402,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(SessionActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.GET_ACCOUNTS},
+                    REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE);
         }
     }
 
@@ -460,7 +470,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         Log.i(getString(R.string.tag_log), "onRequestPermissionResult");
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE || requestCode == REQUEST_PERMISSIONS_EMAIL_CODE) {
+        if (requestCode == REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.

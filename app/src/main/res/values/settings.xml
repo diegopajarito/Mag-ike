@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="server_parse" translatable="false">http://150.128.97.150:1337/parse/</string>
-    <string name="application_id_parse">enableDashboard</string>
+    <string name="application_id_parse" translatable="false">enableDashboard</string>
     <string name="username_parse" translatable="false">test@test.com</string>
     <string name="password_parse" translatable="false">test</string>
     <string name="status_class_parse" translatable="false">Magike_Status</string>

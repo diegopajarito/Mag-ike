@@ -66,4 +66,7 @@
     <string name="notification_title">Pedaling the city</string>
     <string name="notification_text">Tag your trip when arrived</string>
     <string name="text_no_set" translatable="false">Not Set</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_tags" translatable="false">#tags</string>
+    <string name="dashboardTagsFragment_label" translatable="false">Tags</string>
 </resources>

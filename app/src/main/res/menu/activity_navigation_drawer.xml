@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_menu_play"
             android:title="@string/menu_play" />
         <item
+            android:id="@+id/nav_play_tags"
+            android:icon="@drawable/ic_menu_play"
+            android:title="@string/menu_tags" />
+        <item
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_menu_board"
             android:title="@string/menu_board" />

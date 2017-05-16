@@ -24,7 +24,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //Google play services
-    compile 'com.google.android.gms:play-services-auth:9.0.0'
+    
 
     //Parse
 
@@ -36,6 +36,7 @@ dependencies {
 
     //compile 'com.android.support:support-v4:23.4.0'
 
+    compile 'com.google.android.gms:play-services-auth:9.0.0'
     compile 'com.parse:parse-android:1.13.0'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.google.android.gms:play-services-fitness:9.0.0'
