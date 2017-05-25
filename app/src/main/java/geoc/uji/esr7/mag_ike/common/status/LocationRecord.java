@@ -1,5 +1,8 @@
 package geoc.uji.esr7.mag_ike.common.status;
 
+import android.content.res.Resources;
+
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.fitness.data.Field;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -18,6 +21,7 @@ public class LocationRecord {
 
     private ParseObject parseObject;
     private String locationRecord_class;
+    private String measurementRecord_class;
     private String device;
     public float no_data;
     private float latitude;
@@ -25,18 +29,10 @@ public class LocationRecord {
     private float altitude;
     private float precision;
     private Date time_gps;
+    private Date time_device;
     private float distance;
     private float last_distance;
-    private Date time_distance;
     private float speed;
-    private Date time_speed;
-    private float cycling;
-    private Date time_cycling;
-    private int locationContribution =0;
-    private int distanceContribution =0;
-    private int speedContribution =0;
-    private int cyclingContribution=0;
-
 
     private String device_tag;
     private String latitude_tag;
@@ -44,34 +40,41 @@ public class LocationRecord {
     private String altitude_tag;
     private String precision_tag;
     private String time_gps_tag;
+    private String time_device_tag;
+    private String measurement_tag;
+    private String value_tag;
+
     private String distance_tag;
     private String last_distance_tag;
-    private String time_distance_tag;
     private String speed_tag;
-    private String time_speed_tag;
-    private String cycling_tag;
-    private String time_cycling_tag;
 
-    public LocationRecord(){
+
+    public LocationRecord(Resources res){
+
+        //Setting the parse class names from resources
+        this.locationRecord_class = res.getString(R.string.location_class_parse);
+        this.measurementRecord_class = res.getString(R.string.measurement_class_parse);
 
         //Setting all properties to no_data Value
-        /*
-        no_data = res.getInteger(R.integer.value_nodata);
-        latitude = longitude = altitude = precision = speed = cycling = no_data;
-        time_gps = time_speed = time_distance = time_cycling = new Date();
 
+        no_data = res.getInteger(R.integer.value_nodata);
+        latitude = longitude = altitude = precision = speed  = no_data;
+        time_gps = time_device = new Date();
+
+        //Settings and tags
+        device_tag = res.getString(R.string.device_tag);
         latitude_tag = res.getString(R.string.latitude_tag);
         longitude_tag = res.getString(R.string.longitude_tag);
         altitude_tag = res.getString(R.string.altitude_tag);
         precision_tag = res.getString(R.string.precision_tag);
         time_gps_tag = res.getString(R.string.time_gps_tag);
+        time_device_tag = res.getString(R.string.time_device_tag);
+        measurement_tag = res.getString(R.string.measurement_tag);
+        value_tag = res.getString(R.string.value_tag);
+
         distance_tag = res.getString(R.string.distance_tag);
         last_distance_tag = res.getString(R.string.last_distance_tag);
-        time_distance_tag = res.getString(R.string.time_distance_tag);
         speed_tag = res.getString(R.string.speed_tag);
-        time_speed_tag = res.getString(R.string.time_speed_tag);
-        cycling_tag = res.getString(R.string.cycling_tag);
-        time_cycling_tag = res.getString(R.string.time_cycling_tag);*/
     }
 
 
@@ -143,13 +146,6 @@ public class LocationRecord {
             this.speed = speed;
     }
 
-    public float getCycling() { return cycling; }
-
-    public void setCycling(float cycling) {
-        if (cycling != no_data)
-            this.cycling = cycling;
-    }
-
     public Date getTime_gps() {
         return time_gps;
     }
@@ -158,47 +154,18 @@ public class LocationRecord {
         this.time_gps = time_gps;
     }
 
-    public Date getTime_distance() {
-        return time_distance;
+    public Date getTime_device() {
+        return time_device;
     }
 
-    public void setTime_distance(Date time_distance) {
-        this.time_distance = time_distance;
+    public void setTime_device(Date time_device) {
+        this.time_device = time_device;
     }
 
-    public Date getTime_speed() {
-        return time_speed;
-    }
-
-    public void setTime_speed(Date time_speed) {
-        this.time_speed = time_speed;
-    }
-
-    public Date getTime_cycling() { return time_cycling; }
-
-    public void setTime_cycling(Date time_cycling) { this.setTime_cycling(time_cycling); }
-
-    public int getLocationContribution() { return locationContribution; }
-
-    public void addLocationContribution() { this.locationContribution += 1; }
-
-    public int getDistanceContribution() { return distanceContribution; }
-
-    public void addDistanceContribution() { this.distanceContribution += 1; }
-
-    public int getSpeedContribution() { return speedContribution; }
-
-    public void addSpeedContribution() { this.speedContribution += 1; }
-
-    public int getCyclingContribution() { return cyclingContribution; }
-
-    public void addCyclingContribution() { this.cyclingContribution =+ 1; }
-
-    public int getTotalContribution() {return getLocationContribution() + getDistanceContribution() + getSpeedContribution() + getCyclingContribution(); }
 
 
 
-    public void saveStatus_Eventually(float lat, float lon, float alt, float pre){
+    public void saveLocation_Eventually(float lat, float lon, float alt, float pre){
 
         parseObject = new ParseObject(this.locationRecord_class);
         parseObject.put(device_tag,this.getDevice());
@@ -212,13 +179,6 @@ public class LocationRecord {
         parseObject.put(precision_tag,this.getPrecision());
         this.setTime_gps(new Date());
         parseObject.put(time_gps_tag,this.getTime_gps());
-        parseObject.put(distance_tag,this.getDistance());
-        parseObject.put(last_distance_tag,this.getLast_distance());
-        parseObject.put(time_distance_tag,this.getTime_distance());
-        parseObject.put(speed_tag,this.getSpeed());
-        parseObject.put(time_speed_tag,this.getTime_speed());
-        parseObject.put(cycling_tag,this.getCycling());
-        parseObject.put(time_cycling_tag,this.getTime_cycling());
 
         parseObject.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
@@ -230,39 +190,25 @@ public class LocationRecord {
             }
         });
 
-        //return answer;
     }
 
-    public void saveStatus_Eventually(final String label, float value){
-        parseObject = new ParseObject(this.locationRecord_class);
+    public void saveMeasurement_Eventually(final String label, float value){
+        parseObject = new ParseObject(this.measurementRecord_class);
         parseObject.put(device_tag,this.getDevice());
-        parseObject.put(latitude_tag,this.getLatitude());
-        parseObject.put(longitude_tag,this.getLongitude());
-        parseObject.put(altitude_tag,this.getAltitude());
-        parseObject.put(precision_tag,this.getPrecision());
-        parseObject.put(time_gps_tag,this.getTime_gps());
-        if (label.equals(Field.FIELD_SPEED.getName())) {
-            parseObject.put(distance_tag,this.getDistance());
-            parseObject.put(last_distance_tag,this.getLast_distance());
-            parseObject.put(time_distance_tag, this.getTime_distance());
+        this.setTime_device(new Date());
+        parseObject.put(time_device_tag,this.getTime_device());
+        if (label.equals(speed_tag)) {
+            parseObject.put(measurement_tag,speed_tag);
             this.setSpeed(value);
-            parseObject.put(speed_tag, this.getSpeed());
-            this.setTime_speed(new Date());
-            parseObject.put(time_speed_tag, this.getTime_speed());
-            parseObject.put(cycling_tag,this.cycling);
-            parseObject.put(time_cycling_tag,this.getCycling());
-            //addSpeedContribution();
-        } else if (label.equals(Field.FIELD_RPM.getName())){
-            parseObject.put(distance_tag,this.getDistance());
-            parseObject.put(last_distance_tag,this.getLast_distance());
-            parseObject.put(time_distance_tag, this.getTime_distance());
-            parseObject.put(speed_tag, this.getSpeed());
-            parseObject.put(time_speed_tag, this.getTime_speed());
-            this.setCycling(value);
-            parseObject.put(cycling_tag,this.getCycling());
-            this.setTime_cycling(new Date());
-            parseObject.put(time_cycling_tag,this.getTime_cycling());
-            //addCyclingContribution();
+            parseObject.put(value_tag, this.getSpeed());
+        } else if (label.equals(distance_tag)){
+            parseObject.put(measurement_tag,distance_tag);
+            this.setDistance(value);
+            parseObject.put(value_tag, this.getDistance());
+        } else if (label.equals(last_distance_tag)){
+            parseObject.put(measurement_tag,last_distance_tag);
+            this.setLast_distance(value);
+            parseObject.put(value_tag, this.getLast_distance());
         } else {
             return;
         }
@@ -278,35 +224,6 @@ public class LocationRecord {
         });
     }
 
-    public void saveStatus_Eventually(float distance, float last_distance){
-        parseObject = new ParseObject(this.locationRecord_class);
-        parseObject.put(device_tag,this.getDevice());
-        parseObject.put(latitude_tag,this.getLatitude());
-        parseObject.put(longitude_tag,this.getLongitude());
-        parseObject.put(altitude_tag,this.getAltitude());
-        parseObject.put(precision_tag,this.getPrecision());
-        parseObject.put(time_gps_tag,this.getTime_gps());
-        this.setDistance(distance);
-        parseObject.put(distance_tag,this.getDistance());
-        this.setLast_distance(last_distance);
-        parseObject.put(last_distance_tag,this.getLast_distance());
-        this.setTime_distance(new Date());
-        parseObject.put(time_distance_tag, this.getTime_distance());
-        parseObject.put(speed_tag, this.getSpeed());
-        parseObject.put(time_speed_tag, this.getTime_speed());
-        parseObject.put(cycling_tag,this.getCycling());
-        parseObject.put(time_cycling_tag,this.getTime_cycling());
-        //addDistanceContribution();
-        parseObject.saveEventually(new SaveCallback() {
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("PARSE - DISTANCE SAVED OK", String.valueOf(e));
-                } else {
-                    Log.d("PARSE - SAVE DISTANCE FAILED", String.valueOf(e));
 
-                }
-            }
-        });
-    }
 
 }

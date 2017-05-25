@@ -45,9 +45,9 @@
     <string name="profile_female">Female</string>
     <string name="profile_age">Age (Years)</string>
     <string name="profile_age_0_20">  Less than 20</string>
-    <string name="profile_age_20_30" translatable="false">20 - 30</string>
-    <string name="profile_age_30_40" translatable="false">30 - 40</string>
-    <string name="profile_age_40_50" translatable="false">40 - 50</string>
+    <string name="profile_age_20_30">20 - 30</string>
+    <string name="profile_age_30_40">30 - 40</string>
+    <string name="profile_age_40_50">40 - 50</string>
     <string name="profile_age_50_">More than 50</string>
     <string name="about_cyclist">#Ciclist belongs to the research project \"Mobile services for green living\". It is an experiment without any commercial motivation. Research team kindly thank your participation.</string>
     <string name="about_geoc">The Geo-C European Joint Doctorate in Geoinformatics aims to enable open smart cities. For more information about the project go to www.geo-c.eu</string>
@@ -66,7 +66,45 @@
     <string name="notification_title">Pedaling the city</string>
     <string name="notification_text">Tag your trip when arrived</string>
     <string name="text_no_set" translatable="false">Not Set</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_tags" translatable="false">#tags</string>
     <string name="dashboardTagsFragment_label" translatable="false">Tags</string>
+
+    <string name="speed_label">Speed:</string>
+
+
+
+
+    <string-array name="tag_array_1">
+        <item>Fast</item>
+        <item>Moderated</item>
+        <item>Slow-moving</item>
+        <item>Inspiring</item>
+        <item>Relaxed</item>
+        <item>Dull</item>
+        <item>Safe</item>
+        <item>Dangerous</item>
+    </string-array>
+
+    <string-array name="tag_array_2">
+        <item>Quick</item>
+        <item>Normal</item>
+        <item>Time-consuming</item>
+        <item>Light</item>
+        <item>Worthy</item>
+        <item>Crowded</item>
+        <item>Secure</item>
+        <item>Risky</item>
+    </string-array>
+
+    <string-array name="tag_array_3">
+        <item>Speedy</item>
+        <item>Average</item>
+        <item>Brake-intensive</item>
+        <item>Efficient</item>
+        <item>Enough</item>
+        <item>Disconnected</item>
+        <item>Sheltered</item>
+        <item>Hazardous</item>
+    </string-array>
+
 </resources>

@@ -48,5 +48,41 @@
     <string name="profile_bike_shared">Compartida o Pública</string>
     <string name="notification_title">Pedalant la ciutat</string>
     <string name="notification_text">Etiqueta el teu viatge quan arrives</string>
+    <string name="profile_age">Edat (Anys)</string>
+
+
+
+    <string-array name="tag_array_1">
+        <item>Veloz</item>
+        <item>Moderado</item>
+        <item>Lento</item>
+        <item>Inspirador</item>
+        <item>Relajado</item>
+        <item>Aburrido</item>
+        <item>Confiable</item>
+        <item>Peligroso</item>
+    </string-array>
+
+    <string-array name="tag_array_2">
+        <item>Rápido</item>
+        <item>Normal</item>
+        <item>Tetardado</item>
+        <item>Suave</item>
+        <item>Adecuado</item>
+        <item>Concurrido</item>
+        <item>Seguro</item>
+        <item>Arriesgado</item>
+    </string-array>
+
+    <string-array name="tag_array_3">
+        <item>Ágil</item>
+        <item>Promedio</item>
+        <item>Prolongado</item>
+        <item>Eficiente</item>
+        <item>Suficiente</item>
+        <item>Sin Conexión</item>
+        <item>Protegido</item>
+        <item>Escabroso</item>
+    </string-array>
 
 </resources>

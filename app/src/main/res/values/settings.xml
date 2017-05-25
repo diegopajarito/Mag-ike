@@ -5,6 +5,8 @@
     <string name="username_parse" translatable="false">test@test.com</string>
     <string name="password_parse" translatable="false">test</string>
     <string name="status_class_parse" translatable="false">Magike_Status</string>
+    <string name="location_class_parse" translatable="false">Cycling_Location</string>
+    <string name="measurement_class_parse" translatable="false">Cycling_Measurement</string>
     <string name="dashboardFragment_label" translatable="false">dashboard</string>
     <string name="profileFragment_label" translatable="false">profile</string>
     <string name="aboutFragment_label" translatable="false">about</string>
@@ -21,7 +23,9 @@
     <string name="time_gps_tag" translatable="false">time_gps</string>
     <string name="distance_tag" translatable="false">distance</string>
     <string name="last_distance_tag" translatable="false">last_distance</string>
-    <string name="time_distance_tag" translatable="false">time_distance</string>
+    <string name="time_device_tag" translatable="false">time_device</string>
+    <string name="measurement_tag" translatable="false">measurement</string>
+    <string name="value_tag" translatable="false">value</string>
     <string name="speed_tag" translatable="false">speed</string>
     <string name="time_speed_tag" translatable="false">time_speed</string>
     <string name="cycling_tag" translatable="false">cycling</string>

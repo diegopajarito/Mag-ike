@@ -3,6 +3,7 @@ package geoc.uji.esr7.mag_ike.common.tracker;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -76,20 +77,17 @@ public class TrackingService extends IntentService {
     float accumulated_distance = 0;
 
 
-
-
-
     public TrackingService() {
         super("TrackingService");
     }
 
 
 
-
-
     @Override
     public void onCreate() {
         super.onCreate();
+        locationRecord = new LocationRecord(getResources());
+        locationRecord.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
         buildFitnessClient();
         final String action = "Tracking Service Starting";
         Log.i(getString(R.string.tag_log),action);
@@ -108,11 +106,12 @@ public class TrackingService extends IntentService {
         if (!mClient.isConnected()) {
             mTryingToConnect = true;
             mClient.connect();
+            int n = 1;
 
             //Wait until the service either connects or fails to connect
             while (mTryingToConnect) {
                 try {
-                    Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client ....");
+                    Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++ );
                     Thread.sleep(100, 0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -278,7 +277,7 @@ public class TrackingService extends IntentService {
                     pres = dataPoint.getValue(Field.FIELD_ACCURACY).asFloat();
                     alt = dataPoint.getValue(Field.FIELD_ALTITUDE).asFloat();
                     // Store Data into server and update interface with new values
-                    locationRecord.saveStatus_Eventually(lat,lon,alt,pres);
+                    locationRecord.saveLocation_Eventually(lat,lon,alt,pres);
                 }
             };
             // Register listener with the sensor API
@@ -309,7 +308,7 @@ public class TrackingService extends IntentService {
                     float speed = dataPoint.getValue(Field.FIELD_SPEED).asFloat();
                     String name = Field.FIELD_SPEED.getName();
                     // Store Data into server and update interface with new values
-                    locationRecord.saveStatus_Eventually(name,speed);
+                    locationRecord.saveMeasurement_Eventually(getString(R.string.speed_tag),speed);
                 }
             };
             // Register listener with the sensor API
@@ -341,8 +340,10 @@ public class TrackingService extends IntentService {
                     float distance = dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
                     if (distance >= 0) {
                         accumulated_distance += distance;
+                        String name = Field.FIELD_SPEED.getName();
                         // Store Data into server and update interface with new values
-                        locationRecord.saveStatus_Eventually(distance, accumulated_distance);
+                        locationRecord.saveMeasurement_Eventually(getString(R.string.distance_tag),distance);
+                        locationRecord.saveMeasurement_Eventually(getString(R.string.last_distance_tag), accumulated_distance);
                     }
                 }
             };
@@ -366,68 +367,7 @@ public class TrackingService extends IntentService {
                             }
                         }
                     });
-        } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE ){
-            cyclingListener= new OnDataPointListener() {
-                @Override
-                public void onDataPoint(DataPoint dataPoint) {
-                    // Cadence variables no-data vales
-                    float cadence = dataPoint.getValue(Field.FIELD_RPM).asFloat();
-                    String name = Field.FIELD_RPM.getName();
-                    // Store Data into server and update interface with new values
-                    locationRecord.saveStatus_Eventually(name,cadence);
-                }
-            };
-            // Register listener with the sensor API
-            Fitness.SensorsApi.add(
-                    mClient,
-                    new SensorRequest.Builder()
-                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
-                            .setDataType(dataType) // Can't be omitted.
-                            .setSamplingRate(1, TimeUnit.SECONDS)
-                            .build(),
-                    cyclingListener)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            if (status.isSuccess()) {
-                                Log.i(getString(R.string.tag_log), "Cycling Listener registered!");
-                            } else {
-                                Log.i(getString(R.string.tag_log), "Cycling Listener not registered.");
-                            }
-                        }
-                    });
-        } /*else if (dataType == DataType.TYPE_STEP_COUNT_CUMULATIVE ){
-            stepCountListener= new OnDataPointListener() {
-                @Override
-                public void onDataPoint(DataPoint dataPoint) {
-                    // Cadence variables no-data vales
-                    int steps = dataPoint.getValue(Field.FIELD_STEPS).asInt();
-                    String name =Field.FIELD_STEPS.getName();
-                    // Store Data into server and update interface with new values
-                    gameStatus.saveStatus_Eventually(name,(float) steps);
-                    updateDashboardFromStatus(gameStatus);
-                }
-            };
-            // Register listener with the sensor API
-            Fitness.SensorsApi.add(
-                    mClient,
-                    new SensorRequest.Builder()
-                            .setDataSource(dataSource) // Optional but recommended for custom data sets.
-                            .setDataType(dataType) // Can't be omitted.
-                            .setSamplingRate(1, TimeUnit.MINUTES)
-                            .build(),
-                    stepCountListener)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            if (status.isSuccess()) {
-                                Log.i(TAG, "Step Count Listener registered!");
-                            } else {
-                                Log.i(TAG, "Step Count Listener not registered.");
-                            }
-                        }
-                    });
-        }*/
+        }
 
     }
 
