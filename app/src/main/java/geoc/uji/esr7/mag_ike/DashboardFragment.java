@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
+import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
 import geoc.uji.esr7.mag_ike.common.status.Profile;
 
 
@@ -32,13 +33,56 @@ public class DashboardFragment extends Fragment {
     private ImageView iv_gauge;
     private Chronometer chronometer;
 
+
+    public DashboardFragment() {
+        // Required empty public constructor
+    }
+
     // Container Activity must implement this interface
     // Check Parent Activity
     public interface onDashboardUpdate {
         long getChronometerBase();
     }
 
+    // Container Activity must implement this interface
+    // Check Parent Activity
+    public interface OnLocationChangeListener {
+        void updateDashboard(float speed, float distance);
+    }
 
+    public void updateDashboard(final float speed, final float distance){
+
+        activity = getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv;
+                try {
+
+                        tv = (TextView) getView().findViewById(R.id.value_distance);
+                        tv.setText(String.format("%.0f", distance  ));
+
+                    //if (lr.getSpeed() != lr.no_data) {
+                        tv = (TextView) getView().findViewById(R.id.value_speed);
+                        tv.setText(String.format("%.2f", speed * 3.6));
+                        if(speed < 2.5){
+                            iv_gauge.setImageResource(R.drawable.ic_gauge_walking);
+                        } else if (speed < 6.9){
+                            iv_gauge.setImageResource(R.drawable.ic_gauge_cycling);
+                        } else {
+                            iv_gauge.setImageResource(R.drawable.ic_gauge_car);
+                        }
+                    //)}
+
+                } catch (Exception e){
+                    Log.i("Update", "Error on setting value - " + e.getMessage());
+                }
+
+
+            }
+        });
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +106,7 @@ public class DashboardFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnStatusChangeListener) {
+        if (context instanceof onDashboardUpdate) {
             mListener = (onDashboardUpdate) context;
         } else {
             throw new RuntimeException(context.toString()
@@ -76,63 +120,6 @@ public class DashboardFragment extends Fragment {
         mListener = null;
     }
 
-    // Container Activity must implement this interface
-    // Check Parent Activity
-    public interface OnStatusChangeListener {
-        void updateDashboardFromStatus(GameStatus s);
-    }
 
-    public DashboardFragment() {
-        // Required empty public constructor
-    }
-
-    public void updateDashboardFromStatus(final GameStatus s){
-
-        activity = getActivity();
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView tv;
-
-                /*
-
-                try {
-                    if (s.getLast_distance() != s.no_data) {
-                        tv = (TextView) getView().findViewById(R.id.value_distance);
-                        tv.setText(String.format("%.0f", s.getLast_distance()  ));
-                        sb_distance.setProgress((int) s.getLast_distance());
-                    }
-                    if (s.getSpeed() != s.no_data) {
-                        tv = (TextView) getView().findViewById(R.id.value_speed);
-                        tv.setText(String.format("%.2f", s.getSpeed() * 3.6));
-                        if(s.getSpeed() < 2.5){
-                            iv_gauge.setImageResource(R.drawable.ic_gauge_walking);
-                        } else if (s.getSpeed() < 6.9){
-                            iv_gauge.setImageResource(R.drawable.ic_gauge_cycling);
-                        } else {
-                            iv_gauge.setImageResource(R.drawable.ic_gauge_car);
-                        }
-                    }
-                    tv = (TextView) getView().findViewById(R.id.value_contribution_location);
-                    tv.setText(String.valueOf(s.getLocationContribution()));
-                    tv = (TextView) getView().findViewById(R.id.value_contribution_distance);
-                    tv.setText(String.valueOf(s.getDistanceContribution()));
-                    tv = (TextView) getView().findViewById(R.id.value_contribution_speed);
-                    tv.setText(String.valueOf(s.getSpeedContribution()));
-                    tv = (TextView) getView().findViewById(R.id.value_contribution);
-                    tv.setText(String.valueOf(s.getTotalContribution()));
-                    tv = (TextView) getView().findViewById(R.id.tv_total_day);
-                    tv.setText(String.valueOf(s.getCampaignLength()));
-                    tv = (TextView) getView().findViewById(R.id.tv_current_day);
-                    tv.setText(String.valueOf(s.getCampaignDay()));
-                } catch (Exception e){
-                    Log.i("Update", "Error on setting value - " + e.getMessage());
-                }
-
-                */
-            }
-        });
-
-    }
 
 }

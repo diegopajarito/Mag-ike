@@ -46,12 +46,13 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
+import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
 import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 import geoc.uji.esr7.mag_ike.common.tracker.TrackingService;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        DashboardFragment.OnStatusChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
+        DashboardFragment.OnLocationChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
 
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -175,7 +176,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mFitStatusReceiver, new IntentFilter(TrackingService.FIT_NOTIFY_INTENT));
-        //LocalBroadcastManager.getInstance(this).registerReceiver(mFitDataReceiver, new IntentFilter(TrackingService.HISTORY_INTENT));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mLocationReceiver, new IntentFilter(TrackingService.LOCATION_UPDATE_INTENT));
 
         //requestFitConnection();
 
@@ -186,10 +187,13 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     protected void onStop() {
-        super.onStop();
         // store the data in the fragment
         dataFragment.setTemporalStatus(gameStatus);
         saveStatusOnSharedPreferences(gameStatus);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
+        super.onStop();
+
     }
 
     @Override
@@ -222,7 +226,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         }
 
         //Set Dashboard fragment and sidebar
-        updateDashboardFromStatus(gameStatus);
         updateSidebarFromProfile();
     }
 
@@ -554,10 +557,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
 
-    @Override
-    public void updateDashboardFromStatus(GameStatus s) {
-        dashboardFragment.updateDashboardFromStatus(s);
-    }
 
 
     @Override
@@ -567,9 +566,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     /**
      * Using a Broadcast Receiver to communicate from Service to Activity
+     * Action, check permissions
      */
-
-
     private BroadcastReceiver mFitStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -587,6 +585,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 Log.d(getString(R.string.tag_log), "Fit connection successful - closing connect screen if it's open.");
                 fitHandleConnection();
             }
+        }
+    };
+
+    /**
+     * Using a Broadcast Receiver to communicate from Service to Activity
+     * Action, update interface
+     */
+
+    private BroadcastReceiver mLocationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            float speed = intent.getFloatExtra(getString(R.string.speed_tag),0);
+            float distance = intent.getFloatExtra(getString(R.string.speed_tag),0);
+            updateDashboard(speed, distance);
         }
     };
 
@@ -734,4 +746,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         return changed;
     }
 
+    @Override
+    public void updateDashboard(float speed, float distance) {
+        dashboardFragment.updateDashboard(speed, distance);
+    }
 }

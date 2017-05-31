@@ -4,18 +4,14 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSource;
@@ -26,13 +22,10 @@ import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
 
-import java.util.concurrent.TimeUnit;
 
-import geoc.uji.esr7.mag_ike.ProfileFragment;
+import java.util.concurrent.TimeUnit;
 import geoc.uji.esr7.mag_ike.R;
-import geoc.uji.esr7.mag_ike.SessionActivity;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
-import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
 
 
@@ -47,10 +40,13 @@ public class TrackingService extends IntentService {
     // Google Fit client
     private GoogleApiClient mClient;
     private boolean mTryingToConnect = false;
+    private static final int trackingServiceID = 1;
+    private LocalBroadcastManager broadcaster;
 
     public static final String SERVICE_REQUEST_TYPE = "requestType";
     public static final int TYPE_REQUEST_CONNECTION = 2;
 
+    public static final String LOCATION_UPDATE_INTENT = "locationUpdateIntent";
     public static final String FIT_NOTIFY_INTENT = "fitStatusUpdateIntent";
     public static final String FIT_EXTRA_CONNECTION_MESSAGE = "fitFirstConnection";
     public static final String FIT_EXTRA_NOTIFY_FAILED_STATUS_CODE = "fitExtraFailedStatusCode";
@@ -64,8 +60,6 @@ public class TrackingService extends IntentService {
     private OnDataPointListener locationListener;
     private OnDataPointListener speedListener;
     private OnDataPointListener distanceListener;
-    private OnDataPointListener cyclingListener;
-    private OnDataPointListener stepCountListener;
     // [END mListener_variable_reference]
 
 
@@ -82,7 +76,6 @@ public class TrackingService extends IntentService {
     }
 
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -90,10 +83,10 @@ public class TrackingService extends IntentService {
         locationRecord.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
         buildFitnessClient();
         final String action = "Tracking Service Starting";
-        Log.i(getString(R.string.tag_log),action);
+        Log.i(getString(R.string.tag_log), action);
+        //Setting the broadcaster for updating user interface
+        broadcaster = LocalBroadcastManager.getInstance(this);
     }
-
-
 
 
     @Override
@@ -111,7 +104,7 @@ public class TrackingService extends IntentService {
             //Wait until the service either connects or fails to connect
             while (mTryingToConnect) {
                 try {
-                    Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++ );
+                    Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++);
                     Thread.sleep(100, 0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -138,71 +131,69 @@ public class TrackingService extends IntentService {
     }
 
 
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         final String action = "Tracking Service Starting";
-        Log.i(getString(R.string.tag_log),action);
+        Log.i(getString(R.string.tag_log), action);
+
+        // Add the unregister Services        unregisterFitnessDataListener();
     }
 
 
-
-
-
     // [START auth_build_googleapiclient_beginning]
+
     /**
-     *  Build a {@link GoogleApiClient} that will authenticate the user and allow the application
-     *  to connect to Fitness APIs. The scopes included should match the scopes your app needs
-     *  (see documentation for details). Authentication will occasionally fail intentionally,
-     *  and in those cases, there will be a known resolution, which the OnConnectionFailedListener()
-     *  can address. Examples of this include the user never having signed in before, or having
-     *  multiple accounts on the device and needing to specify which account to use, etc.
+     * Build a {@link GoogleApiClient} that will authenticate the user and allow the application
+     * to connect to Fitness APIs. The scopes included should match the scopes your app needs
+     * (see documentation for details). Authentication will occasionally fail intentionally,
+     * and in those cases, there will be a known resolution, which the OnConnectionFailedListener()
+     * can address. Examples of this include the user never having signed in before, or having
+     * multiple accounts on the device and needing to specify which account to use, etc.
      */
     private void buildFitnessClient() {
 
-            mClient = new GoogleApiClient.Builder(this)
-                    .addApi(Fitness.SENSORS_API)
-                    .addScope(new Scope(Scopes.FITNESS_LOCATION_READ))
-                    .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
-                    .addConnectionCallbacks(
-                            new GoogleApiClient.ConnectionCallbacks() {
-                                @Override
-                                public void onConnected(Bundle bundle) {
-                                    Log.i(getString(R.string.tag_log), "Connected to Google Fit!!!");
-                                    // Now you can make calls to the Fitness APIs.
-                                    findFitnessDataSources();
-                                }
+        mClient = new GoogleApiClient.Builder(this)
+                .addApi(Fitness.SENSORS_API)
+                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ))
+                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ))
+                .addConnectionCallbacks(
+                        new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(Bundle bundle) {
+                                Log.i(getString(R.string.tag_log), "Connected to Google Fit!!!");
+                                // Now you can make calls to the Fitness APIs.
+                                findFitnessDataSources();
+                            }
 
-                                @Override
-                                public void onConnectionSuspended(int i) {
-                                    // If your connection to the sensor gets lost at some point,
-                                    // you'll be able to determine the reason and react to it here.
-                                    if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-                                        Log.i(getString(R.string.tag_log), "Connection to Google Fit lost.  Cause: Network Lost.");
-                                    } else if (i
-                                            == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-                                        Log.i(getString(R.string.tag_log),
-                                                "Connection to Google Fit lost.  Reason: Service Disconnected");
-                                    }
+                            @Override
+                            public void onConnectionSuspended(int i) {
+                                // If your connection to the sensor gets lost at some point,
+                                // you'll be able to determine the reason and react to it here.
+                                if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
+                                    Log.i(getString(R.string.tag_log), "Connection to Google Fit lost.  Cause: Network Lost.");
+                                } else if (i
+                                        == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
+                                    Log.i(getString(R.string.tag_log),
+                                            "Connection to Google Fit lost.  Reason: Service Disconnected");
                                 }
                             }
-                    )
-                    .addOnConnectionFailedListener(
-                            new GoogleApiClient.OnConnectionFailedListener() {
-                                @Override
-                                public void onConnectionFailed( ConnectionResult result ) {
+                        }
+                )
+                .addOnConnectionFailedListener(
+                        new GoogleApiClient.OnConnectionFailedListener() {
+                            @Override
+                            public void onConnectionFailed(ConnectionResult result) {
 
-                                    Log.d(getString(R.string.tag_log), "onConnectionFailedListener error :" + result.getErrorMessage());
+                                Log.d(getString(R.string.tag_log), "onConnectionFailedListener error :" + result.getErrorMessage());
 
-                                    mTryingToConnect = false;
-                                    notifyUiFailedConnection(result);
+                                mTryingToConnect = false;
+                                notifyUiFailedConnection(result);
 
-                                }
-                            })
-                    .build();
-            Log.i(getString(R.string.tag_log), "Fitness Client built");
+                            }
+                        })
+                .build();
+        Log.i(getString(R.string.tag_log), "Fitness Client built");
 
     }
     // [END auth_build_google api client_beginning]
@@ -212,8 +203,8 @@ public class TrackingService extends IntentService {
      * Find available data sources and attempt to register on a specific {@link DataType}.
      * If the application cares about a data type but doesn't care about the source of the data,
      * this can be skipped entirely, instead calling
-     *     {@link com.google.android.gms.fitness.SensorsApi
-     *     #register(GoogleApiClient, SensorRequest, DataSourceListener)},
+     * {@link com.google.android.gms.fitness.SensorsApi
+     * #register(GoogleApiClient, SensorRequest, DataSourceListener)},
      * where the {@link SensorRequest} contains the desired data type.
      */
     private void findFitnessDataSources() {
@@ -226,7 +217,7 @@ public class TrackingService extends IntentService {
                         //DataType.TYPE_STEP_COUNT_CUMULATIVE,
                         DataType.TYPE_CYCLING_PEDALING_CADENCE,
                         DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_DISTANCE_DELTA,
-                        DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY )
+                        DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY)
                 // Can specify whether data type is raw or derived.
                 .setDataSourceTypes(DataSource.TYPE_RAW, DataSource.TYPE_DERIVED)
                 .build())
@@ -266,7 +257,7 @@ public class TrackingService extends IntentService {
      */
     private void registerFitnessDataListener(DataSource dataSource, final DataType dataType) {
         // [START register_data_listener]
-        if (dataType == DataType.TYPE_LOCATION_SAMPLE){
+        if (dataType == DataType.TYPE_LOCATION_SAMPLE) {
             locationListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
@@ -277,7 +268,7 @@ public class TrackingService extends IntentService {
                     pres = dataPoint.getValue(Field.FIELD_ACCURACY).asFloat();
                     alt = dataPoint.getValue(Field.FIELD_ALTITUDE).asFloat();
                     // Store Data into server and update interface with new values
-                    locationRecord.saveLocation_Eventually(lat,lon,alt,pres);
+                    locationRecord.saveLocation_Eventually(lat, lon, alt, pres);
                 }
             };
             // Register listener with the sensor API
@@ -300,7 +291,7 @@ public class TrackingService extends IntentService {
                             }
                         }
                     });
-        } else if (dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY){
+        } else if (dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY) {
             speedListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
@@ -308,7 +299,8 @@ public class TrackingService extends IntentService {
                     float speed = dataPoint.getValue(Field.FIELD_SPEED).asFloat();
                     String name = Field.FIELD_SPEED.getName();
                     // Store Data into server and update interface with new values
-                    locationRecord.saveMeasurement_Eventually(getString(R.string.speed_tag),speed);
+                    locationRecord.saveMeasurement_Eventually(getString(R.string.speed_tag), speed);
+                    notifyUiChange();
                 }
             };
             // Register listener with the sensor API
@@ -332,8 +324,8 @@ public class TrackingService extends IntentService {
                         }
                     });
         } //else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA || dataType == DataType.TYPE_DISTANCE_CUMULATIVE){
-        else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA ){
-            distanceListener= new OnDataPointListener() {
+        else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA) {
+            distanceListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
                     // Distance variables no-data vales
@@ -342,8 +334,9 @@ public class TrackingService extends IntentService {
                         accumulated_distance += distance;
                         String name = Field.FIELD_SPEED.getName();
                         // Store Data into server and update interface with new values
-                        locationRecord.saveMeasurement_Eventually(getString(R.string.distance_tag),distance);
+                        locationRecord.saveMeasurement_Eventually(getString(R.string.distance_tag), distance);
                         locationRecord.saveMeasurement_Eventually(getString(R.string.last_distance_tag), accumulated_distance);
+                        notifyUiChange();
                     }
                 }
             };
@@ -381,7 +374,7 @@ public class TrackingService extends IntentService {
         // Waiting isn't actually necessary as the unregister call will complete regardless,
         // even if called from within onStop, but a callback can still be added in order to
         // inspect the results.
-        if (dataType == DataType.TYPE_LOCATION_SAMPLE && locationListener != null){
+        if (dataType == DataType.TYPE_LOCATION_SAMPLE && locationListener != null) {
             Fitness.SensorsApi.remove(mClient, locationListener).setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
@@ -392,7 +385,7 @@ public class TrackingService extends IntentService {
                     }
                 }
             });
-        } else if ((dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY) && speedListener != null){
+        } else if ((dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY) && speedListener != null) {
             Fitness.SensorsApi.remove(mClient, speedListener).setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
@@ -403,7 +396,7 @@ public class TrackingService extends IntentService {
                     }
                 }
             });
-        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA && distanceListener != null){
+        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA && distanceListener != null) {
             Fitness.SensorsApi.remove(mClient, distanceListener).setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
@@ -414,25 +407,10 @@ public class TrackingService extends IntentService {
                     }
                 }
             });
-        } else if (dataType == DataType.TYPE_CYCLING_PEDALING_CADENCE){
-            Fitness.SensorsApi.remove(mClient, cyclingListener).setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        Log.i(getString(R.string.tag_log), "Cycling Listener was removed!");
-                    } else {
-                        Log.i(getString(R.string.tag_log), "Cycling Listener was not removed.");
-                    }
-                }
-            });
         }
 
         // [END unregister_data_listener]
     }
-
-
-
-
 
 
     private void notifyUiFitConnected() {
@@ -449,5 +427,12 @@ public class TrackingService extends IntentService {
     }
 
 
+    public void notifyUiChange() {
+        Intent intent = new Intent(LOCATION_UPDATE_INTENT);
+        intent.putExtra(getString(R.string.speed_tag), locationRecord.getSpeed());
+        intent.putExtra(getString(R.string.distance_tag), locationRecord.getDistance());
+        intent.putExtra(getString(R.string.last_distance_tag), locationRecord.getLast_distance());
+        broadcaster.sendBroadcast(intent);
+    }
 
 }

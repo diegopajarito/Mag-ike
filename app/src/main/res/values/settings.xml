@@ -30,7 +30,7 @@
     <string name="time_speed_tag" translatable="false">time_speed</string>
     <string name="cycling_tag" translatable="false">cycling</string>
     <string name="time_cycling_tag" translatable="false">time_cycling</string>
-    <string name="profile_class_parse" translatable="false">Magike_Profile</string>
+    <string name="profile_class_parse" translatable="false">Cyclist_Profile</string>
     <string name="language_tag" translatable="false">language</string>
     <string name="country_tag" translatable="false">country</string>
     <string name="avatar_tag" translatable="false">avatar</string>

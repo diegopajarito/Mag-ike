@@ -1,6 +1,8 @@
 package geoc.uji.esr7.mag_ike.common.status;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.widget.Toast;
 
 import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.fitness.data.Field;
@@ -115,7 +117,7 @@ public class LocationRecord {
         return precision;
     }
 
-    public void setPrecision(int precision) {
+    public void setPrecision(float precision) {
         if (precision != no_data)
             this.precision = precision;
     }
