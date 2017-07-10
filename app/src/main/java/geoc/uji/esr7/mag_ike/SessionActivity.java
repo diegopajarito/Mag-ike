@@ -215,7 +215,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             dataFragment = new DataFragment();
             dataFragment.setTemporalStatus(gameStatus);
             fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
-        } else { // There is a fragment with temporal data to load into the game statos
+        } else { // There is a fragment with temporal data to load into the game status
             gameStatus = dataFragment.getTemporalStatus();
         }
 
@@ -452,9 +452,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     // then onActivityResult will set variables up
     private void checkUserData(){
         try {
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                    new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, false, null, null, null, null);
-            startActivityForResult(intent, REQUEST_PERMISSIONS_EMAIL_CODE);
+            if (gameStatus.getProfile().getEmail().equals(gameStatus.getProfile().text_not_set)) {
+                Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                        new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+                startActivityForResult(intent, REQUEST_PERMISSIONS_EMAIL_CODE);
+            }
         } catch (ActivityNotFoundException e) {
             Log.i(TAG, "Error requesting user data");
         }
