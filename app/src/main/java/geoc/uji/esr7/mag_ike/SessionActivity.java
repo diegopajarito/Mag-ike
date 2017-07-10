@@ -93,7 +93,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     public GameStatus gameStatus;
 
     // Fragments for being used on interface development
-    private DataFragment dataFragment;
     private ProfileFragment profileFragment = new ProfileFragment();
     private DashboardFragment dashboardFragment = new DashboardFragment();
     private DashboardTagsFragment dashboardTagsFragment = new DashboardTagsFragment();
@@ -186,8 +185,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     protected void onStop() {
-        // store the data in the fragment
-        dataFragment.setTemporalStatus(gameStatus);
         saveStatusOnSharedPreferences(gameStatus);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
@@ -199,24 +196,15 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     protected void onResume(){
         super.onResume();
 
-        // Handling previous Status when app resumes using data fragments
-        FragmentManager fm = getFragmentManager();
-        dataFragment = (DataFragment) fm.findFragmentByTag("temporalStatus");
-        // Look for an existing fragment with temporal data
-        if (dataFragment == null) {
-            gameStatus = new GameStatus(getResources());
+        gameStatus = new GameStatus(getResources());
+        if(!isSharedPreferencesEmpty()){
+            updateStatusFromSharedPreferences();
+        } else {
             gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
             gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
             gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
             checkUserData();
-            if(!isSharedPreferencesEmpty()){
-                updateStatusFromSharedPreferences();
-            }
-            dataFragment = new DataFragment();
-            dataFragment.setTemporalStatus(gameStatus);
-            fm.beginTransaction().add(dataFragment,"temporalStatus").commit();
-        } else { // There is a fragment with temporal data to load into the game status
-            gameStatus = dataFragment.getTemporalStatus();
+            saveStatusOnSharedPreferences(gameStatus);
         }
 
         // If tracking service is not started, start it
@@ -452,11 +440,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     // then onActivityResult will set variables up
     private void checkUserData(){
         try {
-            if (gameStatus.getProfile().getEmail().equals(gameStatus.getProfile().text_not_set)) {
-                Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                        new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
-                startActivityForResult(intent, REQUEST_PERMISSIONS_EMAIL_CODE);
-            }
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+            startActivityForResult(intent, REQUEST_PERMISSIONS_EMAIL_CODE);
         } catch (ActivityNotFoundException e) {
             Log.i(TAG, "Error requesting user data");
         }
