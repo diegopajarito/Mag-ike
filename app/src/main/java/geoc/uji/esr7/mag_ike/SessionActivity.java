@@ -59,6 +59,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private static final int REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE = 123;
     private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
+    private boolean LOCATION_PERMISSION_GRANTED = false;
+    private boolean CONTACTS_PERMISSION_GRANTED = false;
     private static final int REQUEST_OAUTH = 1431;
 
     private static final String TAG = "Cycling";
@@ -168,17 +170,14 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         // When permissions are revoked the app is restarted so onCreate is sufficient to check for
         // permissions core to the Activity's functionality.
-        if (!checkPermissions_account()) {
-            requestPermissions_fitness();
-        } else if (!checkPermissions_fitness()){
-            requestPermissions_fitness();
-        }
+        LOCATION_PERMISSION_GRANTED = checkPermissions_fitness();
+        CONTACTS_PERMISSION_GRANTED = checkPermissions_account();
+
+        requestPermissions(LOCATION_PERMISSION_GRANTED, CONTACTS_PERMISSION_GRANTED);
 
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mFitStatusReceiver, new IntentFilter(TrackingService.FIT_NOTIFY_INTENT));
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocationReceiver, new IntentFilter(TrackingService.LOCATION_UPDATE_INTENT));
-
-        //requestFitConnection();
 
         // Setting Parse Server with username and password
         checkParseLogIn();
@@ -221,7 +220,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         }
 
         // If tracking service is not started, start it
-        if(!gameStatus.isTrackingServiceStatus()){
+        if(!gameStatus.isTrackingServiceStatus() && checkPermissions_fitness()){
             gameStatus.setTrackingServiceStatus(startTrackingService());
         }
 
@@ -374,14 +373,25 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
 
-    private void requestPermissions_fitness() {
-        boolean shouldProvideRationale =
-                ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
+    private void requestPermissions(boolean permission_location, boolean permission_contacts) {
+
+        final String[] permissions_string;
+        if (!permission_location && !permission_contacts)
+            permissions_string = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.GET_ACCOUNTS};
+        else if (!permission_location && permission_contacts)
+            permissions_string = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+        else if (permission_location && !permission_contacts)
+            permissions_string = new String[]{Manifest.permission.GET_ACCOUNTS};
+        else {
+            permissions_string = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.GET_ACCOUNTS};
+            return;}
+
+
 
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
-        if (shouldProvideRationale) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.GET_ACCOUNTS)) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
             Snackbar.make(
                     findViewById(android.R.id.content),
@@ -392,9 +402,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                         public void onClick(View view) {
                             // Request permission
 
-                            ActivityCompat.requestPermissions(SessionActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                                            Manifest.permission.GET_ACCOUNTS},
+                            ActivityCompat.requestPermissions(SessionActivity.this, permissions_string,
                                     REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE);
                         }
                     })
@@ -404,9 +412,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
-            ActivityCompat.requestPermissions(SessionActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.GET_ACCOUNTS},
+            ActivityCompat.requestPermissions(SessionActivity.this, permissions_string,
                     REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE);
         }
     }
@@ -480,7 +486,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 Log.i(getString(R.string.tag_log), "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
-                //buildFitnessClient();
+
                 Log.i(getString(R.string.tag_log), "User granted the permission");
             } else {
                 // Permission denied.

@@ -2,8 +2,8 @@
     <string name="app_name">Cyclist</string>
     <string name="action_settings">Settings</string>
     <string name="ok" translatable="false">OK</string>
-    <string name="permission_rationale">Location data is used as part of the Google Fit API</string>
-    <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality</string>
+    <string name="permission_rationale">Let #Cyclist to use your location and contacts to work</string>
+    <string name="permission_denied_explanation">Without your permission for location and contacts #Cyclist cannot work</string>
     <string name="settings">Settings</string>
     <string name="activity">Your activity</string>
 
@@ -15,7 +15,7 @@
     <string name="contribution_label">Contribution:</string>
     <string name="contribution_nodata">Contribution data not available</string>
     <string name="contribution_units">Units</string>
-    <string name="test" translatable="false">test</string>
+    <string name="test" translatable="false">More than 50</string>
     <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
     <string name="altitude">Altitude:</string>
@@ -27,7 +27,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="avatar_label">Cycist</string>
+    <string name="avatar_label">Höhe:</string>
     <string name="avatar_email" translatable="false">cyclist@geo-c.eu</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
@@ -44,7 +44,7 @@
     <string name="profile_male">Male</string>
     <string name="profile_female">Female</string>
     <string name="profile_age">Age (Years)</string>
-    <string name="profile_age_0_20">  Less than 20</string>
+    <string name="profile_age_0_20">Less than 20</string>
     <string name="profile_age_20_30">20 - 30</string>
     <string name="profile_age_30_40">30 - 40</string>
     <string name="profile_age_40_50">40 - 50</string>
