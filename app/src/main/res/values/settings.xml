@@ -39,5 +39,5 @@
     <string name="age_range_tag" translatable="false">age_range</string>
     <string name="bike_type_tag" translatable="false">bike_type</string>
     <string name="bike_rented_tag" translatable="false">bike_type_id</string>
-    <string name="campaign_start_date_tag" translatable="false">campaign_start_date</string>
+    <string name="campaign_start_date_tag" translatable="false">campaign_start</string>
 </resources>

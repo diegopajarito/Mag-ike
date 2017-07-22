@@ -8,9 +8,6 @@
     <string name="activity">La teva activitat</string>
     <string name="speed_label">Velocitat:</string>
     <string name="about_icons">Icones fet per Freepik presos de www.flaticon.com llicenciat sota CC 3.0 BY</string>
-    <string name="contribution_label">Contribució:</string>
-    <string name="contribution_nodata">La teva contribució no està disponible</string>
-    <string name="contribution_units">Unitats</string>
     <string name="altitude">Altitud:</string>
     <string name="longitude">Longitud:</string>
     <string name="latitude">Latitud:</string>
@@ -37,12 +34,9 @@
     <string name="profile_age_50_">Major de 50</string>
     <string name="about_cyclist">#Ciclista és part del projecte \"Servicios Móviles per a promoure estils de vida sostenible\" i és un experiment informatic sense cap interes comercial. L\'equip de desenvolupament de l\'aplicació agraïm la seua participació.</string>
     <string name="about_geoc">El programa Geo-C Doctorat Europeu en Geoinformática promou el desenvolupament de ciutats intel·ligents. Per a més informació pot visitar www.geo-c.eu.</string>
-    <string name="contribution_location_label">Ubicació</string>
-    <string name="contribution_distance_label">Distància</string>
-    <string name="contribution_speed_label">Velocitat</string>
 
 
-    <string name="dashboard_day_of">de</string>
+    <string name="dashboard_trip_label">Viatges</string>
     <string name="dashboard_day_label">Dia</string>
     <string name="dashboard_goal_label">L\'objectiu:</string>
     <string name="profile_bike_shared">Compartida o Pública</string>
@@ -52,37 +46,42 @@
 
 
 
+
+
     <string-array name="tag_array_1">
-        <item>Veloz</item>
-        <item>Moderado</item>
-        <item>Lento</item>
+        <item>Veloç</item>
+        <item>Moderat</item>
+        <item>Lent</item>
         <item>Inspirador</item>
-        <item>Relajado</item>
-        <item>Aburrido</item>
+        <item>Relaxat</item>
+        <item>Avorrit</item>
         <item>Confiable</item>
-        <item>Peligroso</item>
+        <item>Perillós</item>
     </string-array>
 
     <string-array name="tag_array_2">
-        <item>Rápido</item>
+        <item>Ràpid</item>
         <item>Normal</item>
-        <item>Tetardado</item>
-        <item>Suave</item>
-        <item>Adecuado</item>
-        <item>Concurrido</item>
-        <item>Seguro</item>
-        <item>Arriesgado</item>
+        <item>Retardat</item>
+        <item>Suau</item>
+        <item>Adequat</item>
+        <item>Concorregut</item>
+        <item>Segur</item>
+        <item>Arriscat</item>
     </string-array>
 
     <string-array name="tag_array_3">
-        <item>Ágil</item>
+        <item>Àgil</item>
         <item>Promedio</item>
-        <item>Prolongado</item>
-        <item>Eficiente</item>
-        <item>Suficiente</item>
-        <item>Sin Conexión</item>
-        <item>Protegido</item>
-        <item>Escabroso</item>
+        <item>Prolongat</item>
+        <item>Eficient</item>
+        <item>Suficient</item>
+        <item>Sense Conexió</item>
+        <item>Desprotegit</item>
+        <item>Escabrós</item>
     </string-array>
+    <string name="tag_add">Nova etiqueta ...</string>
+    <string name="tag_cancel">Cancel·lar</string>
+    <string name="dashboard_time_label">Temps</string>
 
 </resources>

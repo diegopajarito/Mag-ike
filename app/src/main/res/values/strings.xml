@@ -12,9 +12,6 @@
 
     <string name="about_icons">Icons made by Freepik from www.flaticon.com is licensed by CC 3.0 BY</string>
 
-    <string name="contribution_label">Contribution:</string>
-    <string name="contribution_nodata">Contribution data not available</string>
-    <string name="contribution_units">Units</string>
     <string name="test" translatable="false">More than 50</string>
     <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
@@ -51,11 +48,8 @@
     <string name="profile_age_50_">More than 50</string>
     <string name="about_cyclist">#Ciclist belongs to the research project \"Mobile services for green living\". It is an experiment without any commercial motivation. Research team kindly thank your participation.</string>
     <string name="about_geoc">The Geo-C European Joint Doctorate in Geoinformatics aims to enable open smart cities. For more information about the project go to www.geo-c.eu</string>
-    <string name="contribution_location_label">Location</string>
-    <string name="contribution_distance_label">Distance</string>
-    <string name="contribution_speed_label">Speed</string>
 
-    <string name="dashboard_day_of">of</string>
+    <string name="dashboard_trip_label">Trips</string>
     <string name="dashboard_day_label">Day</string>
     <integer name="dashboard_campaign_length" translatable="false">10</integer>
     <string name="dashboard_goal_label">Your goal:</string>
@@ -70,8 +64,6 @@
     <string name="dashboardTagsFragment_label" translatable="false">Tags</string>
 
     <string name="speed_label">Speed:</string>
-
-
 
 
     <string-array name="tag_array_1">
@@ -106,5 +98,18 @@
         <item>Sheltered</item>
         <item>Hazardous</item>
     </string-array>
+    <string name="tag_add">Add a tag</string>
+    <string name="tag_cancel">Cancel</string>
+    <string name="dashboard_time_label">Time</string>
+    <string name="dashboard_default_cero" translatable="false">0</string>
+    <string name="dashboard_default_one" translatable="false">1</string>
+    <string name="dashboard_default_nodata" translatable="false">-</string>
+    <string name="trip_counter_tag" translatable="false">trip_count</string>
+    <string name="trip_start_date_tag" translatable="false">trip_start</string>
+    <string name="trip_class_parse" translatable="false">Cyclist_Trip</string>
+    <string name="trip_stop_date_tag" translatable="false">trip_stop</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="leaderboardFragment_label" translatable="false">leaderboard</string>
 
 </resources>

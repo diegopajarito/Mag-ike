@@ -11,25 +11,22 @@
             android:icon="@drawable/ic_menu_play"
             android:title="@string/menu_tags" />
         <item
-            android:id="@+id/nav_dashboard"
+            android:id="@+id/nav_leader_board"
             android:icon="@drawable/ic_menu_board"
             android:title="@string/menu_board" />
         <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/ic_menu_share"
-            android:title="@string/menu_share" />
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_menu_profile"
+            android:title="@string/menu_profile" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_menu_about"
+            android:title="@string/menu_about" />
     </group>
 
     <item android:title="@string/menu_settings">
         <menu>
-            <item
-                android:id="@+id/nav_profile"
-                android:icon="@drawable/ic_menu_profile"
-                android:title="@string/menu_profile" />
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_about"
-                android:title="@string/menu_about" />
+
         </menu>
     </item>
 

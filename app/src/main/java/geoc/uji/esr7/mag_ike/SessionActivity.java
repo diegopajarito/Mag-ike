@@ -2,7 +2,6 @@ package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -41,18 +40,19 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.fitness.FitnessStatusCodes;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import java.sql.Date;
+import java.util.Calendar;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
-import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
 import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 import geoc.uji.esr7.mag_ike.common.tracker.TrackingService;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        DashboardFragment.OnLocationChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate {
+        DashboardFragment.OnLocationChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate,
+        DashboardTagsFragment.onDashboardUpdate {
 
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -96,6 +96,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private ProfileFragment profileFragment = new ProfileFragment();
     private DashboardFragment dashboardFragment = new DashboardFragment();
     private DashboardTagsFragment dashboardTagsFragment = new DashboardTagsFragment();
+    private LeaderboardFragment leaderboardFragment = new LeaderboardFragment();
     private AboutFragment aboutFragment = new AboutFragment();
 
     @Override
@@ -203,6 +204,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
             gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
             gameStatus.setCountry(getResources().getConfiguration().locale.getDisplayCountry());
+            gameStatus.setCampaignStartDate(Calendar.getInstance().getTime());
             checkUserData();
             saveStatusOnSharedPreferences(gameStatus);
         }
@@ -214,6 +216,20 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         //Set Dashboard fragment and sidebar
         updateSidebarFromProfile();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Long start_time =  getTripStopDateOnSharedPreferences();
+        if (start_time > 0 ) {
+            Date stop_time = new Date(Calendar.getInstance().getTimeInMillis());
+            gameStatus.getTrip().setStopTime(stop_time);
+            gameStatus.getTrip().addTripToCounter();
+            gameStatus.saveTrip_Eventually();
+        }
+
+        saveStatusOnSharedPreferences(gameStatus);
     }
 
     @Override
@@ -249,31 +265,36 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 transaction.replace(R.id.fragment_container, dashboardFragment);
                 transaction.addToBackStack(null);
             }
-        } else if ( (item.getItemId() == R.id.nav_share) ) {
-            Toast.makeText(getApplicationContext(), "Share", Toast.LENGTH_LONG).show();
         } else if (item.getItemId() == R.id.nav_play_tags) {
-            if (getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardTagsFragment_label)) == null){
-                transaction.add(dashboardTagsFragment, getString(R.string.dashboardTagsFragment_label));
-            }
             if (!dashboardTagsFragment.isVisible()){
                 transaction.replace(R.id.fragment_container, dashboardTagsFragment);
-                transaction.addToBackStack(null);
+                //transaction.addToBackStack();
+            } else if (getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardTagsFragment_label)) == null){
+                transaction.add(dashboardTagsFragment, getString(R.string.dashboardTagsFragment_label));
+                //transaction.addToBackStack(null);
+            }
+        } else if (item.getItemId() == R.id.nav_leader_board) {
+            if (!leaderboardFragment.isVisible()){
+                transaction.replace(R.id.fragment_container, leaderboardFragment);
+                //transaction.addToBackStack(null);
+            } else if (getSupportFragmentManager().findFragmentByTag(getString(R.string.leaderboardFragment_label)) == null){
+                transaction.add(profileFragment, getString(R.string.leaderboardFragment_label));
+                //transaction.addToBackStack(null);
             }
         } else if (item.getItemId() == R.id.nav_profile) {
-            if (getSupportFragmentManager().findFragmentByTag(getString(R.string.profileFragment_label)) == null){
-                transaction.add(profileFragment, getString(R.string.profileFragment_label));
-            }
             if (!profileFragment.isVisible()){
                 transaction.replace(R.id.fragment_container, profileFragment);
-                transaction.addToBackStack(null);
+                //transaction.addToBackStack(null);
+            } else if (getSupportFragmentManager().findFragmentByTag(getString(R.string.profileFragment_label)) == null){
+                transaction.add(profileFragment, getString(R.string.profileFragment_label));
+                //transaction.addToBackStack(null);
             }
         } else if (item.getItemId() == R.id.nav_about) {
-            if (getSupportFragmentManager().findFragmentByTag(getString(R.string.aboutFragment_label)) == null){
-                transaction.add(aboutFragment,getString(R.string.aboutFragment_label));
-            }
             if (!aboutFragment.isVisible()){
                 transaction.replace(R.id.fragment_container, aboutFragment);
-                transaction.addToBackStack(null);
+                //transaction.addToBackStack(null);
+            } else if (getSupportFragmentManager().findFragmentByTag(getString(R.string.aboutFragment_label)) == null){
+                //transaction.add(aboutFragment,getString(R.string.aboutFragment_label));
             }
         }
         transaction.commit();
@@ -312,6 +333,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         mTrackingIntent = new Intent(this, TrackingService.class);
         mTrackingIntent.putExtra(TrackingService.SERVICE_REQUEST_TYPE, TrackingService.TYPE_REQUEST_CONNECTION);
         this.startService(mTrackingIntent);
+        onTrackingServiceStart(chronometer.getBase());
+        saveTripStartDateOnSharedPreferences();
         mNotificationBuilder = new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.ic_bike_ride)
                             .setContentTitle(getString(R.string.notification_title))
@@ -336,7 +359,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         this.stopService(mTrackingIntent);
         mNotificationManager.cancel(trackingServiceID);
         btn_pause.setImageResource(R.drawable.ic_button_play);
-        chronometer.stop();
+        onTrackingServiceStop();
         mTrackingIntent = null;
         mNotificationManager = null;
         Log.i(getString(R.string.tag_log), "Tracking service Stopped");
@@ -558,6 +581,27 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         return this.chronometer.getBase();
     }
 
+    @Override
+    public void onTrackingServiceStart(long base){
+        dashboardFragment.onTrackingServiceStart(base);
+    }
+
+    @Override
+    public void onTrackingServiceStop(){
+        chronometer.stop();
+        dashboardFragment.onTrackingServiceStop();
+    }
+
+    @Override
+    public int getDayOfCampaign() {
+        return gameStatus.getCampaignDay();
+    }
+
+    @Override
+    public int getTripCounter() {
+        return gameStatus.getTrip().getTrip_counter();
+    }
+
     /**
      * Using a Broadcast Receiver to communicate from Service to Activity
      * Action, check permissions
@@ -591,7 +635,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         @Override
         public void onReceive(Context context, Intent intent) {
             float speed = intent.getFloatExtra(getString(R.string.speed_tag),0);
-            float distance = intent.getFloatExtra(getString(R.string.speed_tag),0);
+            float distance = intent.getFloatExtra(getString(R.string.last_distance_tag),0);
             updateDashboard(speed, distance);
         }
     };
@@ -655,6 +699,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if(!gameStatus.getLanguage().equals(null)) {
             mSPEditor.putString(this.gameStatus.language_tag, this.gameStatus.getLanguage());
         }
+        if(gameStatus.getCampaignStartDate().getTime() > 0){
+            mSPEditor.putLong(this.gameStatus.campaign_start_date_tag, this.gameStatus.getCampaignStartDate().getTime());
+        }
+        if(gameStatus.getTrip().getTrip_counter() > 1){
+            mSPEditor.putInt(this.gameStatus.trip_counter_tag, this.gameStatus.getTrip().getTrip_counter());
+        }
         if(!gameStatus.getProfile().getAvatarName().equals(getText(R.string.avatar_label))) {
             mSPEditor.putString(this.gameStatus.avatar_tag, this.gameStatus.getProfile().getAvatarName());
         }
@@ -686,6 +736,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         String value;
         boolean value_bool;
         int value_int;
+        long value_long;
         SharedPreferences sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
         value = sharedPreferences.getString(getString(R.string.device_tag), notSet);
         if (!value.equals(notSet)){
@@ -700,6 +751,16 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         value = sharedPreferences.getString(gameStatus.language_tag, notSet);
         if (!value.equals(notSet)){
             gameStatus.setLanguage(value);
+            changed = true;
+        }
+        value_long = sharedPreferences.getLong(gameStatus.campaign_start_date_tag, gameStatus.getProfile().id_not_set);
+        if (value_long != gameStatus.getProfile().id_not_set){
+            gameStatus.setCampaignStartDate(new Date(value_long));
+            changed = true;
+        }
+        value_int = sharedPreferences.getInt(gameStatus.trip_counter_tag, 1);
+        if (value_int > 1){
+            gameStatus.getTrip().setTrip_counter(value_int);
             changed = true;
         }
         value = sharedPreferences.getString(gameStatus.avatar_tag, notSet);
@@ -738,6 +799,34 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             changed = true;
         }
         return changed;
+    }
+
+
+    public void saveTripStartDateOnSharedPreferences() {
+        // may be here the trip details should be fixed
+        mSharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        long start_time = mSharedPreferences.getLong(getString(R.string.trip_start_date_tag), 0);
+        if (start_time == 0){
+            mSPEditor = mSharedPreferences.edit();
+            Date now = new Date(Calendar.getInstance().getTimeInMillis());
+            gameStatus.getTrip().setStartTime(now);
+            mSPEditor.putLong(this.gameStatus.trip_start_date_tag, gameStatus.getTrip().getStartTime().getTime());
+            mSPEditor.commit();
+        } else{
+            gameStatus.getTrip().setStartTime(new Date(start_time));
+        }
+    }
+
+    public long getTripStopDateOnSharedPreferences() {
+
+        mSharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        long value_long = mSharedPreferences.getLong(getString(R.string.trip_start_date_tag), 0);
+        if (value_long > 0){
+            mSPEditor = mSharedPreferences.edit();
+            mSPEditor.remove(this.gameStatus.trip_start_date_tag);
+            mSPEditor.commit();
+        }
+        return value_long;
     }
 
     @Override

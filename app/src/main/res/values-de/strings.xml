@@ -11,14 +11,8 @@
     <string name="activity">Deine Aktivitaet</string>
     <string name="altitude">Höhe:</string>
     <string name="avatar_label">Radfahrer</string>
-    <string name="contribution_distance_label">Entfernung</string>
-    <string name="contribution_label">Beitrag:</string>
-    <string name="contribution_location_label">Standort</string>
-    <string name="contribution_nodata">Beizutragende Daten nicht verfügbar</string>
-    <string name="contribution_speed_label">Geschwindigkeit</string>
-    <string name="contribution_units">Einheiten</string>
     <string name="dashboard_day_label">Tag</string>
-    <string name="dashboard_day_of">von</string>
+    <string name="dashboard_trip_label">Ausflüge</string>
     <string name="dashboard_goal_label">Dein Ziel:</string>
     <string name="error_function_not_available">Tut uns Leid, das kannst du noch nicht tun.</string>
     <string name="latitude">Breitengrad:</string>
@@ -47,4 +41,43 @@
     <string name="profile_name">Avatarname</string>
     <string name="settings">Einstellungen</string>
     <string name="speed_label">Geschwindigkeit:</string>
+
+
+
+    <string-array name="tag_array_1">
+        <item>Schnell</item>
+        <item>Mäßig</item>
+        <item>Langsam</item>
+        <item>Inspirierend</item>
+        <item>Entspannt</item>
+        <item>Langweilig</item>
+        <item>Sicher</item>
+        <item>Gewagt</item>
+    </string-array>
+
+    <string-array name="tag_array_2">
+        <item>Flott</item>
+        <item>Normal</item>
+        <item>Zeitaufwendig</item>
+        <item>Sanft</item>
+        <item>Angemessen</item>
+        <item>Überfüllt</item>
+        <item>Gesichert</item>
+        <item>Riskant</item>
+    </string-array>
+
+    <string-array name="tag_array_3">
+        <item>Flink</item>
+        <item>Durchschnittlich</item>
+        <item>Langlaufend</item>
+        <item>Effizient</item>
+        <item>Genug</item>
+        <item>Keine Verbindung</item>
+        <item>Geschützt</item>
+        <item>Gefährlich</item>
+    </string-array>
+    <string name="tag_add">Neues Tag ...</string>
+    <string name="tag_cancel">Stornieren</string>
+    <string name="dashboard_time_label">Zeit</string>
+
 </resources>

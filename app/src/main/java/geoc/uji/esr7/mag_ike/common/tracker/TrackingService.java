@@ -215,7 +215,7 @@ public class TrackingService extends IntentService {
                 //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE) DataType.TYPE_LOCATION_TRACK, DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_WORKOUT_EXERCISE, DataType.AGGREGATE_STEP_COUNT_DELTA,
                 .setDataTypes(DataType.TYPE_LOCATION_SAMPLE,
                         //DataType.TYPE_STEP_COUNT_CUMULATIVE,
-                        DataType.TYPE_CYCLING_PEDALING_CADENCE,
+                        DataType.TYPE_CYCLING_PEDALING_CADENCE, DataType.TYPE_DISTANCE_DELTA,
                         DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_DISTANCE_DELTA,
                         DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY)
                 // Can specify whether data type is raw or derived.
@@ -241,9 +241,12 @@ public class TrackingService extends IntentService {
                             /*} else if (dataSource.getDataType().equals(DataType.TYPE_STEP_COUNT_CUMULATIVE)) {
                                 registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE);*/
                                 // Listener for Distance Data
-                            } else if (dataSource.getDataType().equals(DataType.AGGREGATE_DISTANCE_DELTA)) {
-                                registerFitnessDataListener(dataSource, DataType.AGGREGATE_DISTANCE_DELTA);
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
+                                registerFitnessDataListener(dataSource, DataType.TYPE_DISTANCE_DELTA);
                             } else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_CUMULATIVE)) {
+                                registerFitnessDataListener(dataSource, DataType.TYPE_DISTANCE_CUMULATIVE);
+                            }
+                            else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_CUMULATIVE)) {
                                 registerFitnessDataListener(dataSource, DataType.TYPE_DISTANCE_CUMULATIVE);
                             }
                         }
@@ -324,7 +327,7 @@ public class TrackingService extends IntentService {
                         }
                     });
         } //else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA || dataType == DataType.TYPE_DISTANCE_CUMULATIVE){
-        else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA) {
+        else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA || dataType == DataType.TYPE_DISTANCE_DELTA) {
             distanceListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {

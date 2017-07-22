@@ -24,7 +24,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //Google play services
-    
 
     //Parse
 
