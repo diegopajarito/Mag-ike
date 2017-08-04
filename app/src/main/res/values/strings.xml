@@ -111,5 +111,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="leaderboardFragment_label" translatable="false">leaderboard</string>
+    <string name="leaderboard_trips_label0">rides</string>
+    <string name="leaderboard_trips_label1">With your:</string>
+    <string name="leaderboard_trips_label2">out of</string>
+    <string name="leaderboard_trips_top_label">Top 3 - Rides</string>
 
 </resources>

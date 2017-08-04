@@ -1,6 +1,7 @@
 package geoc.uji.esr7.mag_ike.common.status;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by pajarito on 19/07/2017.
@@ -10,6 +11,7 @@ public class Trip {
     private int tripCounter;
     private Date startTime;
     private Date stopTime;
+
 
     public Trip (){
         tripCounter = 1;
@@ -42,4 +44,5 @@ public class Trip {
     public void setStopTime(Date stopTime) {
         this.stopTime = stopTime;
     }
+
 }

@@ -57,7 +57,7 @@
         </GridLayout>
 
         <GridLayout
-            android:id="@+id/grid_distance"
+            android:id="@+id/grid_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="false"

@@ -121,7 +121,7 @@ public class DashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // After Inflating this view this one should be returned, take care of a new inflate it will erase any change
         view  = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        iv_gauge = (ImageView) view.findViewById(R.id.gauge);
+
         startChronometer(mListener.getChronometerBase());
         return view;
 

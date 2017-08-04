@@ -79,5 +79,9 @@
     <string name="tag_add">Neues Tag ...</string>
     <string name="tag_cancel">Stornieren</string>
     <string name="dashboard_time_label">Zeit</string>
+    <string name="leaderboard_trips_label0">fahrten</string>
+    <string name="leaderboard_trips_label1">Mit deinen:</string>
+    <string name="leaderboard_trips_label2">von</string>
+    <string name="leaderboard_trips_top_label">Top 3 - Fahrten</string>
 
 </resources>

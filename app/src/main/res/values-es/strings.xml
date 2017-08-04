@@ -80,5 +80,9 @@
     <string name="tag_add">"Nueva etiqueta ... "</string>
     <string name="tag_cancel">Cancelar</string>
     <string name="dashboard_time_label">Tiempo</string>
+    <string name="leaderboard_trips_label0">viajes</string>
+    <string name="leaderboard_trips_label1">Con tus:</string>
+    <string name="leaderboard_trips_label2">de</string>
+    <string name="leaderboard_trips_top_label">Top 3 - Viajes</string>
 
 </resources>

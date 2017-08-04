@@ -2,15 +2,11 @@ package geoc.uji.esr7.mag_ike.common.status;
 
 
 import android.content.res.Resources;
-import android.widget.Toast;
 
-import com.google.android.gms.common.server.converter.StringToIntConverter;
-import com.google.android.gms.fitness.data.Field;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import geoc.uji.esr7.mag_ike.R;
@@ -23,6 +19,7 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
 public class GameStatus {
     private ParseObject parseObject;
     private Profile profile;
+    private LeaderBoardStatus leaderboard;
     private Trip trip;
     private String device;
     private String language;
@@ -66,6 +63,7 @@ public class GameStatus {
         //Setting default profile
         this.profile = new Profile();
         this.trip = new Trip();
+        this.leaderboard = new LeaderBoardStatus(res);
 
         //Setting no data for starting date
         this.campaign_start_date = new Date(getProfile().id_not_set);
@@ -120,6 +118,7 @@ public class GameStatus {
 
     public void setDevice(String device) {
         this.device = device;
+
     }
 
     public String getLanguage() { return language; }
@@ -133,6 +132,8 @@ public class GameStatus {
     public Profile getProfile() {
         return profile;
     }
+
+    public LeaderBoardStatus getLeaderboard() { return leaderboard; }
 
     public Trip getTrip() { return trip; }
 

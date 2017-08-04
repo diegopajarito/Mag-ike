@@ -83,5 +83,9 @@
     <string name="tag_add">Nova etiqueta ...</string>
     <string name="tag_cancel">Cancel·lar</string>
     <string name="dashboard_time_label">Temps</string>
+    <string name="leaderboard_trips_label0">viatges</string>
+    <string name="leaderboard_trips_label1">Amb els teus:</string>
+    <string name="leaderboard_trips_label2">de</string>
+    <string name="leaderboard_trips_top_label">Top 3 - Viatges</string>
 
 </resources>

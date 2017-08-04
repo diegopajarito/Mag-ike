@@ -52,7 +52,7 @@ import geoc.uji.esr7.mag_ike.common.tracker.TrackingService;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         DashboardFragment.OnLocationChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate,
-        DashboardTagsFragment.onDashboardUpdate {
+        DashboardTagsFragment.onDashboardUpdate, LeaderBoardFragment.onLeaderBoardUpdate {
 
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -96,7 +96,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private ProfileFragment profileFragment = new ProfileFragment();
     private DashboardFragment dashboardFragment = new DashboardFragment();
     private DashboardTagsFragment dashboardTagsFragment = new DashboardTagsFragment();
-    private LeaderboardFragment leaderboardFragment = new LeaderboardFragment();
+    private LeaderBoardFragment leaderboardFragment = new LeaderBoardFragment();
     private AboutFragment aboutFragment = new AboutFragment();
 
     @Override
@@ -831,6 +831,22 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void updateDashboard(float speed, float distance) {
-        dashboardFragment.updateDashboard(speed, distance);
+        if (dashboardFragment.isVisible() || dashboardTagsFragment.isVisible())
+            dashboardFragment.updateDashboard(speed, distance);
+    }
+
+    @Override
+    public void updateLeaderBoard() {
+        // check numbers
+        if (leaderboardFragment.isVisible() &&
+                gameStatus.getLeaderboard().getOwn_trips()>0 &&
+                gameStatus.getLeaderboard().getTotal_trips()>0 &&
+                gameStatus.getLeaderboard().getPosition_trips()>0)
+            leaderboardFragment.updateLeaderBoard(gameStatus.getLeaderboard());
+    }
+
+    @Override
+    public void loadLeaderBoard() {
+        gameStatus.getLeaderboard().updateLeaderboard(this);
     }
 }
