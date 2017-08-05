@@ -847,6 +847,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void loadLeaderBoard() {
-        gameStatus.getLeaderboard().updateLeaderboard(this);
+        gameStatus.getLeaderboard().updateLeaderBoard(this);
     }
 }

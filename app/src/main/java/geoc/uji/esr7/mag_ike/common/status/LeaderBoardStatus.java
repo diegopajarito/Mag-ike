@@ -117,7 +117,7 @@ public class LeaderBoardStatus {
     }
 */
 
-    public void updateLeaderboard(SessionActivity act){
+    public void updateLeaderBoard(SessionActivity act){
         activity = act;
         device = act.gameStatus.getDevice();
         getLeaderBoardFromServer();

@@ -87,5 +87,6 @@
     <string name="leaderboard_trips_label1">Amb els teus:</string>
     <string name="leaderboard_trips_label2">de</string>
     <string name="leaderboard_trips_top_label">Top 3 - Viatges</string>
+    <string name="leaderboard_tags_top_label">Top 3 - Etiquetes</string>
 
 </resources>

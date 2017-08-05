@@ -83,5 +83,6 @@
     <string name="leaderboard_trips_label1">Mit deinen:</string>
     <string name="leaderboard_trips_label2">von</string>
     <string name="leaderboard_trips_top_label">Top 3 - Fahrten</string>
+    <string name="leaderboard_tags_top_label">Top 3 - Tags</string>
 
 </resources>

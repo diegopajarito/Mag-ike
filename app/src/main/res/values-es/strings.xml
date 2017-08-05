@@ -84,5 +84,6 @@
     <string name="leaderboard_trips_label1">Con tus:</string>
     <string name="leaderboard_trips_label2">de</string>
     <string name="leaderboard_trips_top_label">Top 3 - Viajes</string>
+    <string name="leaderboard_tags_top_label">Top 3 - Etiquetas</string>
 
 </resources>
