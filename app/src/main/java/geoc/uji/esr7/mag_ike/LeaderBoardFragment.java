@@ -38,6 +38,7 @@ public class LeaderBoardFragment extends Fragment {
 
     public interface onLeaderBoardUpdate{
         void updateLeaderBoard();
+        void updateTop();
         void loadLeaderBoard();
     }
 
@@ -74,6 +75,14 @@ public class LeaderBoardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_leaderboard, container, false);
 
+        TextView tv = (TextView) view.findViewById(R.id.tv_trips_position);
+        //tv.setVisibility(View.INVISIBLE);
+        tv = (TextView) view.findViewById(R.id.tv_tags_contribution);
+        //tv.setVisibility(View.INVISIBLE);
+
+        ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.ls_trips_top3);
+        //elv.setVisibility(View.INVISIBLE);
+
         return view;
     }
 
@@ -90,19 +99,22 @@ public class LeaderBoardFragment extends Fragment {
         return headers_list;
     }
 
-    private HashMap<String, List<String>> getTop3HashMap(ArrayList<String> items_trips, ArrayList<String> items_tags){
-        List<String> headers_list = getTopHeaders();
-
+    private HashMap<String, List<String>> getTop3HashMap(List<String> headers_list, ArrayList<String> items_trips, ArrayList<String> items_tags){
         HashMap<String, List<String>> hashMap = new HashMap<String, List<String>>();
         hashMap.put(headers_list.get(0), items_trips);
         hashMap.put(headers_list.get(1), items_tags);
-
         return hashMap;
+    }
 
+    private HashMap<String, List<Integer>> getTop3HashValues(List<String> headers_list, ArrayList<Integer> values_trips, ArrayList<Integer> values_tags ){
+        HashMap<String, List<Integer>> hashMap = new HashMap<String, List<Integer>>();
+        hashMap.put(headers_list.get(0), values_trips);
+        hashMap.put(headers_list.get(1), values_tags);
+        return hashMap;
     }
 
 
-    public void updateLeaderBoard(final LeaderBoardStatus lb){
+    public void updateLeaderBoardTrips(final LeaderBoardStatus lb){
 
         activity = getActivity();
         activity.runOnUiThread(new Runnable() {
@@ -116,16 +128,36 @@ public class LeaderBoardFragment extends Fragment {
                     tv.setText(String.valueOf(lb.getOwn_trips()));
                     tv = (TextView) getView().findViewById(R.id.tv_trips_contribution);
                     String participation = String.format("%.1f", (double) lb.getOwn_trips() / (double) lb.getTotal_trips() * 100.0);
-                    tv.setText(String.valueOf(participation));
+                    tv.setText(participation);
                     tv = (TextView) getView().findViewById(R.id.tv_trips_position);
                     tv.setText(String.valueOf(lb.getPosition_trips()));
-                    ExpandableListView top3_trips = (ExpandableListView) getView().findViewById(R.id.ls_trips_top3);
-                    top3_trips.setAdapter(new TopAdapter(getTopHeaders(),getTop3HashMap(lb.getTop3TripsList(), lb.getTop3TripsList()), getContext() ));
+                } catch (Exception e){
+                    Log.i("Update", "Error on setting value - " + e.getMessage());
+                }
 
 
-                    ArrayList top = lb.getTop3TripsList();
-                    tv = (TextView) getView().findViewById(R.id.tv_tags_count_label2);
-                    tv.setText(top.toString());
+            }
+        });
+
+    }
+
+    public void updateLeaderBoardTags(final LeaderBoardStatus lb){
+
+        activity = getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv;
+                try {
+                    tv = (TextView) getView().findViewById(R.id.tv_tags_total);
+                    tv.setText((String.valueOf(lb.getTotal_tags())));
+                    tv = (TextView) getView().findViewById(R.id.tv_tags_own);
+                    tv.setText((String.valueOf(lb.getOwn_tags())));
+                    tv = (TextView) getView().findViewById(R.id.tv_tags_position);
+                    tv.setText(String.valueOf(lb.getPosition_tags()));
+                    tv = (TextView) getView().findViewById(R.id.tv_tags_contribution);
+                    String participation = String.format("%.1f", (double) lb.getOwn_tags() / (double) lb.getTotal_tags() * 100.0);
+                    tv.setText(participation);
 
                 } catch (Exception e){
                     Log.i("Update", "Error on setting value - " + e.getMessage());
@@ -135,5 +167,25 @@ public class LeaderBoardFragment extends Fragment {
             }
         });
 
+    }
+
+    public void updateTop(final LeaderBoardStatus lb){
+        activity = getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // Top 3
+                    List<String> topHeaders = getTopHeaders();
+                    HashMap<String, List<String>> hashMapAvatars = getTop3HashMap(topHeaders, lb.getTop3TripsList(), lb.getTop3TagsList());
+                    HashMap<String, List<Integer>> hashMapValues = getTop3HashValues(topHeaders, lb.getTop3TripsValuesList(), lb.getTop3TagsValuesList());
+                    ExpandableListView top3_trips = (ExpandableListView) getView().findViewById(R.id.ls_trips_top3);
+                    TopAdapter adapter = new TopAdapter(topHeaders,hashMapAvatars, hashMapValues, getContext() );
+                    top3_trips.setAdapter(adapter);
+                } catch (Exception e){
+                    Log.i(getString(R.string.tag_log), "Error on setting top - " + e.getMessage());
+                }
+            }
+        });
     }
 }

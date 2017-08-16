@@ -1,13 +1,18 @@
 package geoc.uji.esr7.mag_ike.common.status;
 
 
+import android.app.Activity;
 import android.content.res.Resources;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import geoc.uji.esr7.mag_ike.R;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -17,6 +22,7 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
  * Created by diego on 3/09/16.
  */
 public class GameStatus {
+    private Resources resources;
     private ParseObject parseObject;
     private Profile profile;
     private LeaderBoardStatus leaderboard;
@@ -26,6 +32,7 @@ public class GameStatus {
     private String country;
     private Date campaign_start_date;
     private int campaign_length;
+    private int tag_count;
     private boolean trackingServiceStatus;
 
 
@@ -35,13 +42,17 @@ public class GameStatus {
     private String status_class;
     private String profile_class;
     private String trip_class;
+    private String tag_class;
     public final String device_tag;
     public final String language_tag;
     public final String country_tag;
     public final String campaign_start_date_tag;
+    public final String trip_tag;
     public final String trip_start_date_tag;
     public final String trip_stop_date_tag;
     public final String trip_counter_tag;
+    public final String text_tag;
+    public final String tags_count_tag;
     public final String avatar_tag;
     public final String avatar_id_tag;
     public final String gender_tag;
@@ -53,17 +64,17 @@ public class GameStatus {
 
 
     public GameStatus(Resources res) {
-
-
+        this.resources = res;
         //Setting the parse class name from resources
         this.status_class = res.getString(R.string.status_class_parse);
         this.profile_class = res.getString(R.string.profile_class_parse);
         this.trip_class = res.getString(R.string.trip_class_parse);
+        this.tag_class = res.getString(R.string.tags_class_parse);
 
         //Setting default profile
         this.profile = new Profile();
         this.trip = new Trip();
-        this.leaderboard = new LeaderBoardStatus(res);
+        this.leaderboard = new LeaderBoardStatus(resources);
 
         //Setting no data for starting date
         this.campaign_start_date = new Date(getProfile().id_not_set);
@@ -75,9 +86,12 @@ public class GameStatus {
         device_tag = res.getString(R.string.device_tag);
         language_tag = res.getString(R.string.language_tag);
         country_tag = res.getString(R.string.country_tag);
+        trip_tag = res.getString(R.string.trip_counter_tag);
         trip_counter_tag = res.getString(R.string.trip_counter_tag);
         trip_start_date_tag = res.getString(R.string.trip_start_date_tag);
         trip_stop_date_tag = res.getString(R.string.trip_stop_date_tag);
+        text_tag = res.getString(R.string.text_tag);
+        tags_count_tag = res.getString(R.string.tags_counter_tag);
         avatar_tag = res.getString(R.string.avatar_tag);
         avatar_id_tag = res.getString(R.string.avatar_id_tag);
         gender_tag = res.getString(R.string.gender_tag);
@@ -137,6 +151,18 @@ public class GameStatus {
 
     public Trip getTrip() { return trip; }
 
+    public int getTag_count() {
+        return tag_count;
+    }
+
+    public void setTag_count(int tag_count) {
+        this.tag_count = tag_count;
+    }
+
+    public void addTagCount(){
+        this.tag_count++;
+    }
+
     public boolean updateProfile(Profile p){
         Boolean updated = this.profile.updateProfile(p);
         if(updated)
@@ -182,6 +208,31 @@ public class GameStatus {
                 }
             }
         });
+        saveTags_Eventually();
     }
+
+
+    public void saveTags_Eventually(){
+        for (int i = 0; i < getTrip().getTags().size(); i++) {
+            this.addTagCount();
+            parseObject = new ParseObject(this.tag_class);
+            parseObject.put(device_tag, this.getDevice());
+            parseObject.put(trip_tag, this.trip.getTrip_counter());
+            parseObject.put(tags_count_tag, this.getTag_count());
+            parseObject.put(text_tag,this.getTrip().getTags().get(i));
+            parseObject.saveEventually(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d("PARSE - tag SAVED OK", String.valueOf(e));
+                    } else {
+                        Log.d("PARSE - SAVE tag FAILED", String.valueOf(e));
+                    }
+                }
+            });
+        }
+    }
+
+
 
 }

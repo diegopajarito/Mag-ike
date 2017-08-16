@@ -22,7 +22,6 @@
     <string name="menu_play">Spielen</string>
     <string name="menu_profile">Profil</string>
     <string name="menu_settings">Einstellungen</string>
-    <string name="menu_share">Teilen</string>
     <string name="navigation_drawer_close">Navigationsmenu schließen</string>
     <string name="navigation_drawer_open">Navigationsmenu öffnen</string>
     <string name="notification_text">Kennzeichne deine Fahrt wenn du ankommst</string>
@@ -76,13 +75,16 @@
         <item>Geschützt</item>
         <item>Gefährlich</item>
     </string-array>
-    <string name="tag_add">Neues Tag ...</string>
+    <string name="tag_add">Neues Tag</string>
     <string name="tag_cancel">Stornieren</string>
     <string name="dashboard_time_label">Zeit</string>
     <string name="leaderboard_trips_label0">fahrten</string>
-    <string name="leaderboard_trips_label1">Mit deinen:</string>
-    <string name="leaderboard_trips_label2">von</string>
+    <string name="leaderboard_label1">Mit deinen:</string>
+    <string name="leaderboard_label2">von</string>
     <string name="leaderboard_trips_top_label">Top 3 - Fahrten</string>
     <string name="leaderboard_tags_top_label">Top 3 - Tags</string>
+    <string name="tag_choose">Wähle einen tag</string>
+    <string name="menu_survey">Umfrage</string>
+    <string name="leaderboard_tags_label0">tags</string>
 
 </resources>

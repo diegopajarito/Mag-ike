@@ -134,10 +134,9 @@ public class TrackingService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        final String action = "Tracking Service Starting";
+        final String action = "Tracking Service Stopping";
         Log.i(getString(R.string.tag_log), action);
-
-        // Add the unregister Services        unregisterFitnessDataListener();
+        findFitnessDataSourcesUnregister();
     }
 
 
@@ -178,6 +177,7 @@ public class TrackingService extends IntentService {
                                             "Connection to Google Fit lost.  Reason: Service Disconnected");
                                 }
                             }
+
                         }
                 )
                 .addOnConnectionFailedListener(
@@ -246,13 +246,99 @@ public class TrackingService extends IntentService {
                             } else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_CUMULATIVE)) {
                                 registerFitnessDataListener(dataSource, DataType.TYPE_DISTANCE_CUMULATIVE);
                             }
-                            else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_CUMULATIVE)) {
-                                registerFitnessDataListener(dataSource, DataType.TYPE_DISTANCE_CUMULATIVE);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Find available data sources and attempt to unregister all of them for each {@link DataType}.
+     * {@link com.google.android.gms.fitness.SensorsApi
+     * #unregister(GoogleApiClient, SensorRequest, DataSourceListener)},
+     * where the {@link SensorRequest} contains the desired data type.
+     */
+    private void findFitnessDataSourcesUnregister() {
+        // [START find_data_sources]
+        // Note: Fitness.SensorsApi.findDataSources() requires the ACCESS_FINE_LOCATION permission.
+        Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
+                // At least one datatype must be specified.
+                //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE) DataType.TYPE_LOCATION_TRACK, DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_WORKOUT_EXERCISE, DataType.AGGREGATE_STEP_COUNT_DELTA,
+                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE,
+                        //DataType.TYPE_STEP_COUNT_CUMULATIVE,
+                        DataType.TYPE_CYCLING_PEDALING_CADENCE, DataType.TYPE_DISTANCE_DELTA,
+                        DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_DISTANCE_DELTA,
+                        DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY)
+                // Can specify whether data type is raw or derived.
+                .setDataSourceTypes(DataSource.TYPE_RAW, DataSource.TYPE_DERIVED)
+                .build())
+                .setResultCallback(new ResultCallback<DataSourcesResult>() {
+                    @Override
+                    public void onResult(DataSourcesResult dataSourcesResult) {
+                        for (DataSource dataSource : dataSourcesResult.getDataSources()) {
+                            //every type of data will register a listener
+                            // Listener for Location Data
+                            if (dataSource.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
+                                Fitness.SensorsApi.remove(mClient, locationListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(getString(R.string.tag_log), "Location Listener was removed!");
+                                        } else {
+                                            Log.i(getString(R.string.tag_log), "Location Listener was not removed.");
+                                        }
+                                    }
+                                });
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_SPEED)) {
+                                Fitness.SensorsApi.remove(mClient, speedListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(getString(R.string.tag_log), "Speed Listener was removed!");
+                                        } else {
+                                            Log.i(getString(R.string.tag_log), "Speed Listener was not removed.");
+                                        }
+                                    }
+                                });
+                            } else if (dataSource.getDataType().equals(DataType.AGGREGATE_SPEED_SUMMARY)) {
+                                Fitness.SensorsApi.remove(mClient, speedListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(getString(R.string.tag_log), "Speed Listener was removed!");
+                                        } else {
+                                            Log.i(getString(R.string.tag_log), "Speed Listener was not removed.");
+                                        }
+                                    }
+                                });
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
+                                Fitness.SensorsApi.remove(mClient, distanceListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(getString(R.string.tag_log), "Distance Listener was removed!");
+                                        } else {
+                                            Log.i(getString(R.string.tag_log), "Distance Listener was not removed.");
+                                        }
+                                    }
+                                });
+                            } else if (dataSource.getDataType().equals(DataType.TYPE_DISTANCE_CUMULATIVE)) {
+                                Fitness.SensorsApi.remove(mClient, distanceListener).setResultCallback(new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(Status status) {
+                                        if (status.isSuccess()) {
+                                            Log.i(getString(R.string.tag_log), "Distance Listener was removed!");
+                                        } else {
+                                            Log.i(getString(R.string.tag_log), "Distance Listener was not removed.");
+                                        }
+                                    }
+                                });
                             }
                         }
                     }
                 });
     }
+
+
 
     /**
      * Register a listener with the Sensors API for the provided {@link DataSource} and

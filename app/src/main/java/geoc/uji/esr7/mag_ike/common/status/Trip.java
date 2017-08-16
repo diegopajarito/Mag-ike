@@ -11,10 +11,11 @@ public class Trip {
     private int tripCounter;
     private Date startTime;
     private Date stopTime;
-
+    private List<String> tags;
+;
 
     public Trip (){
-        tripCounter = 1;
+        tripCounter = 0;
     }
 
     public void addTripToCounter() {
@@ -45,4 +46,11 @@ public class Trip {
         this.stopTime = stopTime;
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 }

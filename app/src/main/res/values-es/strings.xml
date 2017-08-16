@@ -17,7 +17,6 @@
     <string name="menu_about">Acerca de</string>
     <string name="menu_play">Jugar</string>
     <string name="menu_board">Tablero</string>
-    <string name="menu_share">Compartir</string>
     <string name="error_function_not_available">Oh, aún no puedes hacer esto</string>
     <string name="action_fitness_text">Estamos usando tus datos de actividad física</string>
     <string name="action_location_text">Estamos usando tu ubicación</string>
@@ -77,13 +76,16 @@
         <item>Protegido</item>
         <item>Escabroso</item>
     </string-array>
-    <string name="tag_add">"Nueva etiqueta ... "</string>
+    <string name="tag_add">Nueva etiqueta</string>
     <string name="tag_cancel">Cancelar</string>
     <string name="dashboard_time_label">Tiempo</string>
     <string name="leaderboard_trips_label0">viajes</string>
-    <string name="leaderboard_trips_label1">Con tus:</string>
-    <string name="leaderboard_trips_label2">de</string>
+    <string name="leaderboard_label1">Con tus:</string>
+    <string name="leaderboard_label2">de</string>
     <string name="leaderboard_trips_top_label">Top 3 - Viajes</string>
     <string name="leaderboard_tags_top_label">Top 3 - Etiquetas</string>
+    <string name="tag_choose">Elige una etiqueta</string>
+    <string name="menu_survey">Encuesta</string>
+    <string name="leaderboard_tags_label0">tags</string>
 
 </resources>

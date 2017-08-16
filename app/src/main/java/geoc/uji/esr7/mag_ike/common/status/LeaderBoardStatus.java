@@ -31,9 +31,14 @@ public class LeaderBoardStatus {
     private Resources resources;
     private SessionActivity activity;
     private String trip_parse_class;
+    private String tags_parse_class;
     private String device_tag;
+    private String profile_parse_class;
+    private String avatar_tag;
+    private String createdAt_tag;
     private String device;
     private String trip_tag;
+    private String tags_counter_tag;
     private boolean retrive_status;
     private int own_trips;
     private int total_trips;
@@ -47,8 +52,13 @@ public class LeaderBoardStatus {
     public LeaderBoardStatus(Resources res){
         resources = res;
         trip_parse_class = res.getString(R.string.trip_class_parse);
+        tags_parse_class = res.getString(R.string.tags_class_parse);
         device_tag = res.getString(R.string.device_tag);
+        profile_parse_class = res.getString(R.string.profile_class_parse);
+        avatar_tag = res.getString(R.string.avatar_tag);
+        createdAt_tag = res.getString(R.string.createdAt_tag);
         trip_tag = res.getString(R.string.trip_counter_tag);
+        tags_counter_tag = res.getString(R.string.tags_counter_tag);
         retrive_status = false;
     }
 
@@ -100,6 +110,20 @@ public class LeaderBoardStatus {
         this.position_tags = position_tags;
     }
 
+
+
+    public void updateLeaderBoard(SessionActivity act){
+        activity = act;
+        device = act.gameStatus.getDevice();
+        getLeaderBoardFromServer();
+    }
+
+    /**
+     * Settings for leader board based on trips
+     *
+     *
+     */
+
     public ArrayList getTop3TripsList(){
 
         ArrayList top = new ArrayList();
@@ -111,20 +135,44 @@ public class LeaderBoardStatus {
         return top;
 
     }
- /*
-    public ExpandableListAdapter getTop3TripsListAdapter(){
-        ExpandableListAdapter listAdapter = new List
-    }
-*/
 
-    public void updateLeaderBoard(SessionActivity act){
-        activity = act;
-        device = act.gameStatus.getDevice();
-        getLeaderBoardFromServer();
+    public ArrayList getTop3TagsList(){
+
+        ArrayList top = new ArrayList();
+        for (int i = 0; i < 3; i++) {
+            if (top3Tags[i] != null){
+                top.add(top3Tags[i].getAvatar());
+            }
+        }
+        return top;
+
+    }
+
+    public ArrayList getTop3TagsValuesList(){
+
+        ArrayList top = new ArrayList();
+        for (int i = 0; i < 3; i++) {
+            if (top3Tags[i] != null){
+                top.add(top3Tags[i].getValue());
+            }
+        }
+        return top;
+
+    }
+
+    public ArrayList getTop3TripsValuesList(){
+
+        ArrayList top = new ArrayList();
+        for (int i = 0; i < 3; i++) {
+            if (top3Trips[i] != null){
+                top.add(top3Trips[i].getValue());
+            }
+        }
+        return top;
+
     }
 
     private void getPositionOnLeaderBoardTrips(final int ownTrips){
-        String[] ownTripsArray = { Integer.toString(ownTrips + 1) };
         ParseQuery<ParseObject> query = ParseQuery.getQuery(trip_parse_class);
         query.whereEqualTo(trip_tag, ownTrips+1);
         query.countInBackground(new CountCallback() {
@@ -132,6 +180,20 @@ public class LeaderBoardStatus {
             public void done(int count, ParseException e) {
                 if (e == null) {
                     setPosition_trips(count + 1);
+                    activity.updateLeaderBoard();
+                }
+            }
+        });
+    }
+
+    private void getPositionOnLeaderBoardTags(final int ownTags){
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(tags_parse_class);
+        query.whereEqualTo(tags_counter_tag, ownTags+1);
+        query.countInBackground(new CountCallback() {
+            @Override
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    setPosition_tags(count + 1);
                     activity.updateLeaderBoard();
                 }
             }
@@ -154,9 +216,10 @@ public class LeaderBoardStatus {
         query.orderByDescending(trip_tag);
         query.setLimit(1);
         query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> scoreList, ParseException e) {
+            public void done(List<ParseObject> results, ParseException e) {
                 if (e == null) {
-                    setOwn_trips( scoreList.get(0).getInt(trip_tag));
+                    if (results.size()>0)
+                        setOwn_trips( results.get(0).getInt(trip_tag));
                     getPositionOnLeaderBoardTrips(getOwn_trips());
                 } else {
                     Log.d("Cyclist", "Error: " + e.getMessage());
@@ -180,16 +243,44 @@ public class LeaderBoardStatus {
 
 
         // Top 3 Trips
-        final ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
+        ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
         queryTop.addDescendingOrder(trip_tag);
         queryTop.setLimit(1);
         queryTop.findInBackground(new FindCallback<ParseObject>(){
             public void done(List<ParseObject> results, ParseException e){
-                if (e == null && results.size() > 0) {
-                    String avatar =  (String) results.get(0).get(device_tag);
-                    int val = results.get(0).getInt(trip_tag) ;
-                    top3Trips[0] = new TopPlayer(avatar, val);
-                    String[] top1 = {top3Trips[0].getAvatar()};
+                if (e == null ) {
+                    String device;
+                    int val;
+                    if(results.size()>0){
+                        device = (String) results.get(0).get(device_tag);
+                        val = results.get(0).getInt(trip_tag) ;
+                    } else {
+                        device = "";
+                        val = 0;
+                    }
+                    top3Trips[0] = new TopPlayer(device, val);
+                    final String[] top1 = {top3Trips[0].getDevice()};
+                    ParseQuery<ParseObject> queryAvatar = ParseQuery.getQuery(profile_parse_class);
+                    queryAvatar.whereContainedIn(device_tag, Arrays.asList(top1));
+                    queryAvatar.orderByDescending(createdAt_tag);
+                    queryAvatar.setLimit(1);
+                    queryAvatar.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> results, ParseException e) {
+                            if (e == null ){
+                                String avatar;
+                                if (results.size()>0) {
+                                    avatar = (String) results.get(0).get(avatar_tag);
+                                    if (avatar.equals(""))
+                                        avatar = resources.getString(R.string.avatar_label);
+                                } else
+                                    avatar = "";
+                                top3Trips[0].setAvatar(avatar);
+                            } else {
+                                Log.d("Cyclist", "Error: " + e.getMessage());
+                            }
+                        }
+                    });
                     ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
                     queryTop.whereNotContainedIn(device_tag, Arrays.asList(top1));
                     queryTop.addDescendingOrder(trip_tag);
@@ -197,29 +288,267 @@ public class LeaderBoardStatus {
                     queryTop.findInBackground(new FindCallback<ParseObject>() {
                         @Override
                         public void done(List<ParseObject> results, ParseException e) {
-                            if (e == null && results.size() > 0) {
-                                String avatar =  (String) results.get(0).get(device_tag);
-                                int val = (int) results.get(0).get(trip_tag) ;
-                                top3Trips[1] = new TopPlayer(avatar, val);
-                                String[] top2 = {top3Trips[0].getAvatar(), top3Trips[1].getAvatar()};
-                                ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
-                                queryTop.whereNotContainedIn(device_tag, Arrays.asList(top2));
-                                queryTop.addDescendingOrder(trip_tag);
-                                queryTop.setLimit(1);
-                                queryTop.findInBackground(new FindCallback<ParseObject>() {
+                            if (e == null) {
+                                String device;
+                                int val;
+                                if ( results.size() > 0 ) {
+                                    device = (String) results.get(0).get(device_tag);
+                                    val = (int) results.get(0).get(trip_tag);
+                                } else {
+                                    device = "";
+                                    val = 0;
+                                }
+                                top3Trips[1] = new TopPlayer(device, val);
+                                String[] top = {top3Trips[0].getDevice(), top3Trips[1].getDevice()};
+                                String[] top2 = {top3Trips[1].getDevice()};
+                                ParseQuery<ParseObject> queryAvatar = ParseQuery.getQuery(profile_parse_class);
+                                queryAvatar.whereContainedIn(device_tag, Arrays.asList(top2));
+                                queryAvatar.orderByDescending(createdAt_tag);
+                                queryAvatar.setLimit(1);
+                                queryAvatar.findInBackground(new FindCallback<ParseObject>() {
                                     @Override
                                     public void done(List<ParseObject> results, ParseException e) {
-                                        if (e == null && results.size()>0 ){
-                                            String avatar =  (String) results.get(0).get(device_tag);
-                                            int val = (int) results.get(0).get(trip_tag) ;
-                                            top3Trips[2] = new TopPlayer(avatar, val);
-                                            activity.updateLeaderBoard();
+                                        if (e == null){
+                                            String avatar;
+                                            if (results.size()>0) {
+                                                avatar = (String) results.get(0).get(avatar_tag);
+                                                if (avatar.equals(""))
+                                                    avatar = resources.getString(R.string.avatar_label);
+                                            } else
+                                                avatar = "";
+                                            top3Trips[1].setAvatar(avatar);
                                         } else {
                                             Log.d("Cyclist", "Error: " + e.getMessage());
                                         }
                                     }
                                 });
-                                activity.updateLeaderBoard();
+                                ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
+                                queryTop.whereNotContainedIn(device_tag, Arrays.asList(top));
+                                queryTop.addDescendingOrder(trip_tag);
+                                queryTop.setLimit(1);
+                                queryTop.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> results, ParseException e) {
+                                        if (e == null ){
+                                            String device;
+                                            int val;
+                                            if ( results.size()>0){
+                                                device = (String) results.get(0).get(device_tag);
+                                                val = (int) results.get(0).get(trip_tag);
+                                            } else {
+                                                device = "";
+                                                val = 0;
+                                            }
+                                            top3Trips[2] = new TopPlayer(device, val);
+                                            String[] top3 = {top3Trips[2].getDevice()};
+                                            ParseQuery<ParseObject> queryAvatar = ParseQuery.getQuery(profile_parse_class);
+                                            queryAvatar.whereContainedIn(device_tag, Arrays.asList(top3));
+                                            queryAvatar.orderByDescending(createdAt_tag);
+                                            queryAvatar.setLimit(1);
+                                            queryAvatar.findInBackground(new FindCallback<ParseObject>() {
+                                                @Override
+                                                public void done(List<ParseObject> results, ParseException e) {
+                                                    if (e == null){
+                                                        String avatar;
+                                                        if ( results.size()>0) {
+                                                            avatar = (String) results.get(0).get(avatar_tag);
+                                                            if (avatar.equals(""))
+                                                                avatar = resources.getString(R.string.avatar_label);
+                                                        } else
+                                                            avatar = "";
+                                                        top3Trips[2].setAvatar(avatar);
+                                                        activity.updateTop();
+                                                    } else {
+                                                        Log.d("Cyclist", "Error: " + e.getMessage());
+                                                    }
+                                                }
+                                            });
+                                            activity.updateTop();
+                                        } else {
+                                            Log.d("Cyclist", "Error: " + e.getMessage());
+                                        }
+                                    }
+                                });
+                                activity.updateTop();
+                            } else {
+                                Log.d("Cyclist", "Error: " + e.getMessage());
+                            }
+                        }
+                    });
+                    activity.updateLeaderBoard();
+                } else {
+                    Log.d("Cyclist", "Error: " + e.getMessage());
+                }
+
+            }
+
+        });
+
+        /**
+         * Leader board for tags
+         */
+
+        // Own Tags
+        query = ParseQuery.getQuery(tags_parse_class);
+        query.whereContainedIn(device_tag, Arrays.asList(deviceArray));
+        query.orderByDescending(tags_counter_tag);
+        query.setLimit(1);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> results, ParseException e) {
+                if (e == null ) {
+                    if ( results.size()>0){
+                        setOwn_tags( results.get(0).getInt(tags_counter_tag));
+                    }
+                    getPositionOnLeaderBoardTags(getOwn_tags());
+                } else {
+                    Log.d("Cyclist", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+        // Total Tags
+        query = ParseQuery.getQuery(tags_parse_class);
+        query.countInBackground(new CountCallback() {
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    setTotal_tags(count);
+                    activity.updateLeaderBoard();
+                } else {
+                    Log.d("Cyclist", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+
+        // Top 3 Tags
+        queryTop = ParseQuery.getQuery(tags_parse_class);
+        queryTop.addDescendingOrder(tags_counter_tag);
+        queryTop.setLimit(1);
+        queryTop.findInBackground(new FindCallback<ParseObject>(){
+            public void done(List<ParseObject> results, ParseException e){
+                if (e == null ) {
+                    String device;
+                    int val;
+                    if (results.size() > 0) {
+                        device = (String) results.get(0).get(device_tag);
+                        val = results.get(0).getInt(tags_counter_tag);
+                    } else {
+                        device = "";
+                        val = 0;
+                    }
+                    top3Tags[0] = new TopPlayer(device, val);
+                    final String[] top1 = {top3Tags[0].getDevice()};
+                    ParseQuery<ParseObject> queryAvatar = ParseQuery.getQuery(profile_parse_class);
+                    queryAvatar.whereContainedIn(device_tag, Arrays.asList(top1));
+                    queryAvatar.orderByDescending(createdAt_tag);
+                    queryAvatar.setLimit(1);
+                    queryAvatar.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> results, ParseException e) {
+                            String avatar;
+                            if (e == null){
+                                if (results.size()>0) {
+                                    avatar = (String) results.get(0).get(avatar_tag);
+                                    if (avatar.equals(""))
+                                        avatar = resources.getString(R.string.avatar_label);
+                                } else {
+                                    avatar = resources.getString(R.string.avatar_label);
+                                }
+                                top3Tags[0].setAvatar(avatar);
+                            } else {
+                                Log.d("Cyclist", "Error: " + e.getMessage());
+                            }
+                        }
+                    });
+                    ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(tags_parse_class);
+                    queryTop.whereNotContainedIn(device_tag, Arrays.asList(top1));
+                    queryTop.addDescendingOrder(tags_counter_tag);
+                    queryTop.setLimit(1);
+                    queryTop.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> results, ParseException e) {
+                            if (e == null) {
+                                String device;
+                                int val;
+                                if (results.size() > 0){
+                                    device =  (String) results.get(0).get(device_tag);
+                                    val = (int) results.get(0).get(tags_counter_tag);
+                                } else {
+                                    device = "";
+                                    val = 0;
+                                }
+                                top3Tags[1] = new TopPlayer(device, val);
+                                String[] top = {top3Tags[0].getDevice(), top3Tags[1].getDevice()};
+                                String[] top2 = {top3Tags[1].getDevice()};
+                                ParseQuery<ParseObject> queryAvatar = ParseQuery.getQuery(profile_parse_class);
+                                queryAvatar.whereContainedIn(device_tag, Arrays.asList(top2));
+                                queryAvatar.orderByDescending(createdAt_tag);
+                                queryAvatar.setLimit(1);
+                                queryAvatar.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> results, ParseException e) {
+                                        if (e == null){
+                                            String avatar;
+                                            if ( results.size()>0) {
+                                                avatar = (String) results.get(0).get(avatar_tag);
+                                                if (avatar.equals(""))
+                                                    avatar = resources.getString(R.string.avatar_label);
+                                            } else
+                                                avatar = resources.getString(R.string.avatar_label);
+                                            top3Tags[1].setAvatar(avatar);
+                                        } else {
+                                            Log.d("Cyclist", "Error: " + e.getMessage());
+                                        }
+                                    }
+                                });
+                                ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(tags_parse_class);
+                                queryTop.whereNotContainedIn(device_tag, Arrays.asList(top));
+                                queryTop.addDescendingOrder(tags_counter_tag);
+                                queryTop.setLimit(1);
+                                queryTop.findInBackground(new FindCallback<ParseObject>() {
+                                    @Override
+                                    public void done(List<ParseObject> results, ParseException e) {
+                                        if (e == null ){
+                                            String device;
+                                            int val;
+                                            if (results.size()>0){
+                                                device =  (String) results.get(0).get(device_tag);
+                                                val = (int) results.get(0).get(trip_tag);
+                                            } else {
+                                                device = "";
+                                                val = 0;
+                                            }
+                                            top3Tags[2] = new TopPlayer(device, val);
+                                            String[] top3 = {top3Tags[2].getDevice()};
+                                            ParseQuery<ParseObject> queryAvatar = ParseQuery.getQuery(profile_parse_class);
+                                            queryAvatar.whereContainedIn(device_tag, Arrays.asList(top3));
+                                            queryAvatar.orderByDescending(createdAt_tag);
+                                            queryAvatar.setLimit(1);
+                                            queryAvatar.findInBackground(new FindCallback<ParseObject>() {
+                                                @Override
+                                                public void done(List<ParseObject> results, ParseException e) {
+                                                    if (e == null){
+                                                        String avatar;
+                                                        if (results.size()>0){
+                                                            avatar = (String) results.get(0).get(avatar_tag);
+                                                            if (avatar.equals(""))
+                                                                avatar = resources.getString(R.string.avatar_label);
+                                                        } else
+                                                            avatar = resources.getString(R.string.avatar_label);
+                                                        top3Tags[2].setAvatar(avatar);
+                                                        activity.updateTop();
+                                                    } else {
+                                                        Log.d("Cyclist", "Error: " + e.getMessage());
+                                                    }
+                                                }
+                                            });
+                                            activity.updateTop();
+                                        } else {
+                                            Log.d("Cyclist", "Error: " + e.getMessage());
+                                        }
+                                    }
+                                });
+                                activity.updateTop();
                             } else {
                                 Log.d("Cyclist", "Error: " + e.getMessage());
                             }

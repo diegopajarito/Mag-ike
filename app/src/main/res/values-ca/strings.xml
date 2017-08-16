@@ -17,7 +17,6 @@
     <string name="menu_about">Sobre</string>
     <string name="menu_play">Jugar</string>
     <string name="menu_board">Tauler</string>
-    <string name="menu_share">Compartir</string>
     <string name="error_function_not_available">Oh, encara no pots fer aixó</string>
     <string name="action_fitness_text">Estem usando les teves dades d\'activitat física</string>
     <string name="action_location_text">Estem usando la teva ubicació</string>
@@ -80,13 +79,16 @@
         <item>Desprotegit</item>
         <item>Escabrós</item>
     </string-array>
-    <string name="tag_add">Nova etiqueta ...</string>
+    <string name="tag_add">Nova etiqueta</string>
     <string name="tag_cancel">Cancel·lar</string>
     <string name="dashboard_time_label">Temps</string>
     <string name="leaderboard_trips_label0">viatges</string>
-    <string name="leaderboard_trips_label1">Amb els teus:</string>
-    <string name="leaderboard_trips_label2">de</string>
+    <string name="leaderboard_label1">Amb els teus:</string>
+    <string name="leaderboard_label2">de</string>
     <string name="leaderboard_trips_top_label">Top 3 - Viatges</string>
     <string name="leaderboard_tags_top_label">Top 3 - Etiquetes</string>
+    <string name="tag_choose">Escull una etiqueta</string>
+    <string name="menu_survey">Enquesta</string>
+    <string name="leaderboard_tags_label0">tags</string>
 
 </resources>

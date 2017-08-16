@@ -82,20 +82,20 @@
         <item name="android:typeface">monospace</item>
     </style>
 
-    <style name="seekBarDistanceStyle">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_column">0</item>
-        <item name="android:layout_row">2</item>
-        <item name="android:thumbTint">@color/colorPrimaryDark</item>
-        <item name="android:progressTint">@color/colorPrimaryDark</item>
-        <item name="android:layout_columnSpan">3</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:max">20</item>
-        <item name="android:paddingLeft">30dp</item>
-        <item name="android:paddingRight">50dp</item>
-        <item name="android:progressTintMode">src_atop</item>
+    <style name="SecondaryTitle" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:typeface">monospace</item>
     </style>
 
+
+    <style name="spinnerItemStyle" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="android:color">@color/colorPrimaryDark</item>
+        <item name="android:background">@color/colorBackground</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:color">@color/colorPrimary</item>
+    </style>
 
 </resources>

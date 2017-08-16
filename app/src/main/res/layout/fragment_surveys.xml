@@ -1,0 +1,17 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="geoc.uji.esr7.mag_ike.DashboardFragment"
+    android:id="@+id/start_activity_view">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </RelativeLayout>
+
+</FrameLayout>
