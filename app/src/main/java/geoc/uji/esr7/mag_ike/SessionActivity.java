@@ -29,12 +29,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Chronometer;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
@@ -43,23 +44,24 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
-import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
+import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.tracker.TrackingService;
 
 public class SessionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         DashboardFragment.OnLocationChangeListener, ProfileFragment.OnProfileChangeListener, DashboardFragment.onDashboardUpdate,
-        LeaderBoardFragment.onLeaderBoardUpdate {
+        LeaderBoardFragment.onLeaderBoardUpdate, ScoreFragment.onLeaderBoardUpdate {
 
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private static final int REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE = 123;
-    private static final String AUTH_PENDING = "auth_state_pending";
     private boolean authInProgress = false;
     private boolean LOCATION_PERMISSION_GRANTED = false;
     private boolean CONTACTS_PERMISSION_GRANTED = false;
@@ -88,7 +90,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     FloatingActionButton btn_pause;
 
 
-
+    // Navigation View to Control interface for Experiment
+    private NavigationView navigationView;
 
     // A status object used for storing game status through data fragments
     public GameStatus gameStatus;
@@ -98,7 +101,10 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private DashboardFragment dashboardFragment = new DashboardFragment();
     private SurveyFragment dashboardSurvey = new SurveyFragment();
     private LeaderBoardFragment leaderboardFragment = new LeaderBoardFragment();
+    private ScoreFragment scoreFragment = new ScoreFragment();
     private AboutFragment aboutFragment = new AboutFragment();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +147,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
 
         // Setting the navigation view with avatar and personal identification
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -187,9 +193,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         gameStatus = new GameStatus(getResources());
         Date now = Calendar.getInstance().getTime();
 
+        // Game setup
         if(!isSharedPreferencesEmpty()){
             updateStatusFromSharedPreferences();
-
         } else {
             gameStatus.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
             gameStatus.setLanguage(getResources().getConfiguration().locale.getDisplayLanguage());
@@ -199,12 +205,19 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             saveStatusOnSharedPreferences(gameStatus);
         }
 
+        if(gameStatus.getExperimentProfile() == null)
+            gameStatus.getExperimentProfileFromServer(this);
+
+        //
         long start = getTripStartDateOnSharedPreferences();
         if (start>0){
             gameStatus.getTrip().setStartTime(new Date(start));
         } else{
             gameStatus.getTrip().setStartTime(now);
         }
+
+        // Update
+        gameStatus.getLeaderboard().updateTrips(this);
 
         // Set Fragment
         android.support.v4.app.FragmentManager mSupportFM = getSupportFragmentManager();
@@ -228,6 +241,21 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     }
 
+
+    public void setUpExperimentInterface(String status) {
+
+        if(gameStatus.getCampaignDay()>gameStatus.getCampaignLength()){
+            gameStatus.setExperimentStatus(false);
+        } else {
+            gameStatus.setExperimentStatus(true);
+            if (status.equals(getResources().getString(R.string.experiment_profile_collaboration)))
+                navigationView.getMenu().findItem(R.id.nav_leader_board).setEnabled(false);
+        }
+
+
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -244,7 +272,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_start, menu);
         return true;
     }
@@ -284,7 +311,16 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 transaction.add(profileFragment, getString(R.string.leaderboardFragment_label));
                 //transaction.addToBackStack(null);
             }
-        } /*else if (item.getItemId() == R.id.nav_survey) {
+        } else if (item.getItemId() == R.id.nav_score) {
+            if (!scoreFragment.isVisible()){
+                transaction.replace(R.id.fragment_container, scoreFragment);
+                //transaction.addToBackStack();
+            } else if (getSupportFragmentManager().findFragmentByTag(getString(R.string.dashboardScoreFragment_label)) == null){
+                transaction.add(scoreFragment, getString(R.string.dashboardScoreFragment_label));
+                //transaction.addToBackStack(null);
+            }
+        }
+        /*else if (item.getItemId() == R.id.nav_survey) {
             if (!dashboardTagsFragment.isVisible()){
                 transaction.replace(R.id.fragment_container, dashboardTagsFragment);
                 //transaction.addToBackStack();
@@ -590,6 +626,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
 
     @Override
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+    @Override
     public long getChronometerBase() {
         return gameStatus.getTrip().getStartTime().getTime();
     }
@@ -719,11 +760,17 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if(gameStatus.getCampaignStartDate().getTime() > 0){
             mSPEditor.putLong(this.gameStatus.campaign_start_date_tag, this.gameStatus.getCampaignStartDate().getTime());
         }
-        if(gameStatus.getTrip().getTrip_counter() > 1){
+        if(gameStatus.getTrip().getTrip_counter() > 0){
             mSPEditor.putInt(this.gameStatus.trip_counter_tag, this.gameStatus.getTrip().getTrip_counter());
         }
         if(gameStatus.getTag_count() > 1){
             mSPEditor.putInt(this.gameStatus.tags_count_tag, this.gameStatus.getTag_count());
+        }
+        if(gameStatus.isExperiment() != null){
+            mSPEditor.putBoolean(this.gameStatus.experiment_status_tag, this.gameStatus.isExperiment());
+        }
+        if(gameStatus.getExperimentProfile() !=null ){
+            mSPEditor.putString(this.gameStatus.experiment_profile_tag, this.gameStatus.getExperimentProfile());
         }
         if(!gameStatus.getProfile().getAvatarName().equals(getText(R.string.avatar_label))) {
             mSPEditor.putString(this.gameStatus.avatar_tag, this.gameStatus.getProfile().getAvatarName());
@@ -777,6 +824,15 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if (value_long != gameStatus.getProfile().id_not_set){
             gameStatus.setCampaignStartDate(new Date(value_long));
             changed = true;
+        }
+        value_bool = sharedPreferences.getBoolean(gameStatus.experiment_status_tag, true);
+        gameStatus.setExperimentStatus(value_bool);
+        value = sharedPreferences.getString(gameStatus.experiment_profile_tag, notSet);
+        if (!value.equals(notSet)){
+            if (value.equals(getResources().getString(R.string.experiment_profile_collaboration)))
+                gameStatus.setExperimentProfile(getResources().getString(R.string.experiment_profile_collaboration));
+            else
+                gameStatus.setExperimentProfile(getResources().getString(R.string.experiment_profile_competition));
         }
         value_int = sharedPreferences.getInt(gameStatus.trip_counter_tag, 1);
         if (value_int > 1){
@@ -856,33 +912,46 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     public void updateDashboard(float speed, float distance) {
-        if (dashboardFragment.isVisible())
+        if (dashboardFragment.isVisible()) {
             dashboardFragment.updateDashboard(speed, distance);
+        }
     }
 
     @Override
-    public void updateLeaderBoard() {
-        // check numbers
-        if (leaderboardFragment.isVisible() &&
+    public void onTripsUpdated(int counter){
+        gameStatus.getTrip().setTrip_counter(counter);
+        if (dashboardFragment.isVisible()) {
+            dashboardFragment.updateTripCounter();
+        }
+    }
+
+    @Override
+    public void updateScore() {
+
+        if (scoreFragment.isVisible() &&
                 gameStatus.getLeaderboard().getOwn_trips()>0 &&
                 gameStatus.getLeaderboard().getTotal_trips()>0 &&
                 gameStatus.getLeaderboard().getPosition_trips()>0 )
-            leaderboardFragment.updateLeaderBoardTrips(gameStatus.getLeaderboard());
+            scoreFragment.updateLeaderBoardTrips(gameStatus.getLeaderboard());
 
-        if (leaderboardFragment.isVisible() &&
+        if (scoreFragment.isVisible() &&
                 gameStatus.getLeaderboard().getOwn_tags()>0 &&
                 gameStatus.getLeaderboard().getTotal_tags()>0)
-            leaderboardFragment.updateLeaderBoardTags(gameStatus.getLeaderboard());
+            scoreFragment.updateLeaderBoardTags(gameStatus.getLeaderboard());
     }
 
     @Override
-    public void updateTop(){
-        // Check top
+    public void updateLeaderBoard(){
         leaderboardFragment.updateTop(gameStatus.getLeaderboard());
     }
 
     @Override
     public void loadLeaderBoard() {
         gameStatus.getLeaderboard().updateLeaderBoard(this);
+    }
+
+    @Override
+    public void loadScore() {
+        gameStatus.getLeaderboard().updateScore(this);
     }
 }

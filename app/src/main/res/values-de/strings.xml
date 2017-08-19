@@ -81,10 +81,11 @@
     <string name="leaderboard_trips_label0">fahrten</string>
     <string name="leaderboard_label1">Mit deinen:</string>
     <string name="leaderboard_label2">von</string>
-    <string name="leaderboard_trips_top_label">Top 3 - Fahrten</string>
-    <string name="leaderboard_tags_top_label">Top 3 - Tags</string>
+    <string name="leaderboard_trips_top_label">Top: Fahrten</string>
+    <string name="leaderboard_tags_top_label">Top: Tags</string>
     <string name="tag_choose">Wähle einen tag</string>
     <string name="menu_survey">Umfrage</string>
     <string name="leaderboard_tags_label0">tags</string>
+    <string name="menu_score">Puntuació</string>
 
 </resources>

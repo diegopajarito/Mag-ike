@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp"
-    android:background="@color/colorPrimary">
+    android:layout_gravity="center_horizontal"
+    android:layout_marginBottom="10dp"
+    android:orientation="horizontal"
+    android:padding="8dp">
 
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/sh_leaderboard_individual_frame"
+        android:padding="15dp"
+        app:srcCompat="@drawable/ic_leaderboard_top" />
 
     <TextView
         android:id="@+id/lblListHeader"
-        style="@style/SmallNumber"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textColor="@android:color/white" />
+        style="@style/HighlightedNumber"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginLeft="10dp" />
 
 </LinearLayout>

@@ -63,7 +63,7 @@ public class LeaderBoardStatus {
     }
 
     public int getOwn_trips() {
-        return own_trips;
+        return this.own_trips;
     }
 
     public void setOwn_trips(int own_trips) {
@@ -116,6 +116,22 @@ public class LeaderBoardStatus {
         activity = act;
         device = act.gameStatus.getDevice();
         getLeaderBoardFromServer();
+    }
+
+    public void updateScore(SessionActivity act){
+        activity = act;
+        device = act.gameStatus.getDevice();
+        getScoreFromServer();
+    }
+
+    public void updateTrips(SessionActivity act){
+        if (own_trips>1){
+            return;
+        } else {
+            activity = act;
+            device = act.gameStatus.getDevice();
+            getOwnTripsFromServer();
+        }
     }
 
     /**
@@ -180,7 +196,7 @@ public class LeaderBoardStatus {
             public void done(int count, ParseException e) {
                 if (e == null) {
                     setPosition_trips(count + 1);
-                    activity.updateLeaderBoard();
+                    activity.updateScore();
                 }
             }
         });
@@ -194,55 +210,43 @@ public class LeaderBoardStatus {
             public void done(int count, ParseException e) {
                 if (e == null) {
                     setPosition_tags(count + 1);
-                    activity.updateLeaderBoard();
+                    activity.updateScore();
                 }
             }
         });
     }
 
-    private void getLeaderBoardFromServer(){
-
-        ParseQuery<ParseObject> query;
-        String[] deviceArray = {device};
-
-
-        /**
-         * Leader board for trips
-         */
-
+    private void getOwnTripsFromServer(){
         // Own Trips
-        query = ParseQuery.getQuery(trip_parse_class);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(trip_parse_class);
+        String[] deviceArray = {device};
         query.whereContainedIn(device_tag, Arrays.asList(deviceArray));
         query.orderByDescending(trip_tag);
         query.setLimit(1);
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> results, ParseException e) {
                 if (e == null) {
-                    if (results.size()>0)
-                        setOwn_trips( results.get(0).getInt(trip_tag));
-                    getPositionOnLeaderBoardTrips(getOwn_trips());
+                    if (results.size()>0) {
+                        setOwn_trips(results.get(0).getInt(trip_tag));
+                    }
+                    activity.onTripsUpdated(getOwn_trips());
                 } else {
                     Log.d("Cyclist", "Error: " + e.getMessage());
                 }
             }
         });
-
-        // Total Trips
-        query = ParseQuery.getQuery(trip_parse_class);
-        query.countInBackground(new CountCallback() {
-            public void done(int count, ParseException e) {
-                if (e == null) {
-                    setTotal_trips(count);
-                    activity.updateLeaderBoard();
-                } else {
-                    Log.d("Cyclist", "Error: " + e.getMessage());
-                }
-            }
-        });
+    }
 
 
+    private void getLeaderBoardFromServer(){
+        ParseQuery<ParseObject> query;
+        String[] deviceArray = {device};
 
-        // Top 3 Trips
+
+        /**
+         *         Top 3 Trips
+          */
+
         ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
         queryTop.addDescendingOrder(trip_tag);
         queryTop.setLimit(1);
@@ -357,19 +361,19 @@ public class LeaderBoardStatus {
                                                         } else
                                                             avatar = "";
                                                         top3Trips[2].setAvatar(avatar);
-                                                        activity.updateTop();
+                                                        activity.updateLeaderBoard();
                                                     } else {
                                                         Log.d("Cyclist", "Error: " + e.getMessage());
                                                     }
                                                 }
                                             });
-                                            activity.updateTop();
+                                            activity.updateLeaderBoard();
                                         } else {
                                             Log.d("Cyclist", "Error: " + e.getMessage());
                                         }
                                     }
                                 });
-                                activity.updateTop();
+                                activity.updateLeaderBoard();
                             } else {
                                 Log.d("Cyclist", "Error: " + e.getMessage());
                             }
@@ -384,43 +388,11 @@ public class LeaderBoardStatus {
 
         });
 
+
         /**
-         * Leader board for tags
-         */
+         * Top 3 Tags
+          */
 
-        // Own Tags
-        query = ParseQuery.getQuery(tags_parse_class);
-        query.whereContainedIn(device_tag, Arrays.asList(deviceArray));
-        query.orderByDescending(tags_counter_tag);
-        query.setLimit(1);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> results, ParseException e) {
-                if (e == null ) {
-                    if ( results.size()>0){
-                        setOwn_tags( results.get(0).getInt(tags_counter_tag));
-                    }
-                    getPositionOnLeaderBoardTags(getOwn_tags());
-                } else {
-                    Log.d("Cyclist", "Error: " + e.getMessage());
-                }
-            }
-        });
-
-        // Total Tags
-        query = ParseQuery.getQuery(tags_parse_class);
-        query.countInBackground(new CountCallback() {
-            public void done(int count, ParseException e) {
-                if (e == null) {
-                    setTotal_tags(count);
-                    activity.updateLeaderBoard();
-                } else {
-                    Log.d("Cyclist", "Error: " + e.getMessage());
-                }
-            }
-        });
-
-
-        // Top 3 Tags
         queryTop = ParseQuery.getQuery(tags_parse_class);
         queryTop.addDescendingOrder(tags_counter_tag);
         queryTop.setLimit(1);
@@ -536,19 +508,19 @@ public class LeaderBoardStatus {
                                                         } else
                                                             avatar = resources.getString(R.string.avatar_label);
                                                         top3Tags[2].setAvatar(avatar);
-                                                        activity.updateTop();
+                                                        activity.updateLeaderBoard();
                                                     } else {
                                                         Log.d("Cyclist", "Error: " + e.getMessage());
                                                     }
                                                 }
                                             });
-                                            activity.updateTop();
+                                            activity.updateLeaderBoard();
                                         } else {
                                             Log.d("Cyclist", "Error: " + e.getMessage());
                                         }
                                     }
                                 });
-                                activity.updateTop();
+                                activity.updateLeaderBoard();
                             } else {
                                 Log.d("Cyclist", "Error: " + e.getMessage());
                             }
@@ -562,6 +534,75 @@ public class LeaderBoardStatus {
             }
 
         });
+
+    }
+
+    private void getScoreFromServer(){
+
+        ParseQuery<ParseObject> query;
+        String[] deviceArray = {device};
+
+
+        /**
+         * Score for trips
+         */
+
+        if (own_trips < 1){
+            getOwnTripsFromServer();
+        }
+
+        getPositionOnLeaderBoardTrips(getOwn_trips());
+
+        // Total Trips
+        query = ParseQuery.getQuery(trip_parse_class);
+        query.countInBackground(new CountCallback() {
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    setTotal_trips(count);
+                    activity.updateScore();
+                } else {
+                    Log.d("Cyclist", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+
+
+        /**
+         * Score for tags
+         */
+
+        // Own Tags
+        query = ParseQuery.getQuery(tags_parse_class);
+        query.whereContainedIn(device_tag, Arrays.asList(deviceArray));
+        query.orderByDescending(tags_counter_tag);
+        query.setLimit(1);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> results, ParseException e) {
+                if (e == null ) {
+                    if ( results.size()>0){
+                        setOwn_tags( results.get(0).getInt(tags_counter_tag));
+                    }
+                    getPositionOnLeaderBoardTags(getOwn_tags());
+                } else {
+                    Log.d("Cyclist", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+        // Total Tags
+        query = ParseQuery.getQuery(tags_parse_class);
+        query.countInBackground(new CountCallback() {
+            public void done(int count, ParseException e) {
+                if (e == null) {
+                    setTotal_tags(count);
+                    activity.updateScore();
+                } else {
+                    Log.d("Cyclist", "Error: " + e.getMessage());
+                }
+            }
+        });
+
 
     }
 

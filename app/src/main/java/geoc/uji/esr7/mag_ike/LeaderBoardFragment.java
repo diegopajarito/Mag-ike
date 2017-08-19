@@ -38,7 +38,6 @@ public class LeaderBoardFragment extends Fragment {
 
     public interface onLeaderBoardUpdate{
         void updateLeaderBoard();
-        void updateTop();
         void loadLeaderBoard();
     }
 
@@ -55,18 +54,11 @@ public class LeaderBoardFragment extends Fragment {
 
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mListener.loadLeaderBoard();
-
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        mListener.updateLeaderBoard();
-
+        mListener.loadLeaderBoard();
 
     }
 
@@ -74,15 +66,7 @@ public class LeaderBoardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_leaderboard, container, false);
-
-        TextView tv = (TextView) view.findViewById(R.id.tv_trips_position);
-        //tv.setVisibility(View.INVISIBLE);
-        tv = (TextView) view.findViewById(R.id.tv_tags_contribution);
-        //tv.setVisibility(View.INVISIBLE);
-
-        ExpandableListView elv = (ExpandableListView) view.findViewById(R.id.ls_trips_top3);
-        //elv.setVisibility(View.INVISIBLE);
-
+        // Inflate the layout for this fragment
         return view;
     }
 
@@ -91,6 +75,8 @@ public class LeaderBoardFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     private List<String> getTopHeaders(){
         List<String> headers_list = new ArrayList<String>();
@@ -113,62 +99,6 @@ public class LeaderBoardFragment extends Fragment {
         return hashMap;
     }
 
-
-    public void updateLeaderBoardTrips(final LeaderBoardStatus lb){
-
-        activity = getActivity();
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView tv;
-                try {
-                    tv = (TextView) getView().findViewById(R.id.tv_trips_total);
-                    tv.setText(String.valueOf(lb.getTotal_trips()));
-                    tv = (TextView) getView().findViewById(R.id.tv_trips_own);
-                    tv.setText(String.valueOf(lb.getOwn_trips()));
-                    tv = (TextView) getView().findViewById(R.id.tv_trips_contribution);
-                    String participation = String.format("%.1f", (double) lb.getOwn_trips() / (double) lb.getTotal_trips() * 100.0);
-                    tv.setText(participation);
-                    tv = (TextView) getView().findViewById(R.id.tv_trips_position);
-                    tv.setText(String.valueOf(lb.getPosition_trips()));
-                } catch (Exception e){
-                    Log.i("Update", "Error on setting value - " + e.getMessage());
-                }
-
-
-            }
-        });
-
-    }
-
-    public void updateLeaderBoardTags(final LeaderBoardStatus lb){
-
-        activity = getActivity();
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView tv;
-                try {
-                    tv = (TextView) getView().findViewById(R.id.tv_tags_total);
-                    tv.setText((String.valueOf(lb.getTotal_tags())));
-                    tv = (TextView) getView().findViewById(R.id.tv_tags_own);
-                    tv.setText((String.valueOf(lb.getOwn_tags())));
-                    tv = (TextView) getView().findViewById(R.id.tv_tags_position);
-                    tv.setText(String.valueOf(lb.getPosition_tags()));
-                    tv = (TextView) getView().findViewById(R.id.tv_tags_contribution);
-                    String participation = String.format("%.1f", (double) lb.getOwn_tags() / (double) lb.getTotal_tags() * 100.0);
-                    tv.setText(participation);
-
-                } catch (Exception e){
-                    Log.i("Update", "Error on setting value - " + e.getMessage());
-                }
-
-
-            }
-        });
-
-    }
-
     public void updateTop(final LeaderBoardStatus lb){
         activity = getActivity();
         activity.runOnUiThread(new Runnable() {
@@ -182,10 +112,14 @@ public class LeaderBoardFragment extends Fragment {
                     ExpandableListView top3_trips = (ExpandableListView) getView().findViewById(R.id.ls_trips_top3);
                     TopAdapter adapter = new TopAdapter(topHeaders,hashMapAvatars, hashMapValues, getContext() );
                     top3_trips.setAdapter(adapter);
+                    top3_trips.expandGroup(0);
+                    top3_trips.expandGroup(1);
+
                 } catch (Exception e){
                     Log.i(getString(R.string.tag_log), "Error on setting top - " + e.getMessage());
                 }
             }
         });
     }
+
 }

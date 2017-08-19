@@ -85,10 +85,11 @@
     <string name="leaderboard_trips_label0">viatges</string>
     <string name="leaderboard_label1">Amb els teus:</string>
     <string name="leaderboard_label2">de</string>
-    <string name="leaderboard_trips_top_label">Top 3 - Viatges</string>
-    <string name="leaderboard_tags_top_label">Top 3 - Etiquetes</string>
+    <string name="leaderboard_trips_top_label">Top: Viatges</string>
+    <string name="leaderboard_tags_top_label">Top: Etiquetes</string>
     <string name="tag_choose">Escull una etiqueta</string>
     <string name="menu_survey">Enquesta</string>
     <string name="leaderboard_tags_label0">tags</string>
+    <string name="menu_score">Puntuación</string>
 
 </resources>

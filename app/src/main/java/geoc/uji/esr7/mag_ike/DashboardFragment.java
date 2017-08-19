@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
-
+import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 
 
 public class DashboardFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -59,6 +59,7 @@ public class DashboardFragment extends Fragment implements AdapterView.OnItemSel
         void onTrackingServiceStop();
         int getDayOfCampaign();
         int getTripCounter();
+        void onTripsUpdated(int counter);
         void onTagsUpdated(List<String> tags);
     }
 
@@ -78,12 +79,13 @@ public class DashboardFragment extends Fragment implements AdapterView.OnItemSel
                 try {
                     tv = (TextView) getView().findViewById(R.id.value_distance);
                     if (distance>0){
-                        tv.setText(String.format("%.0f", distance  ));
+                        tv.setText(String.format("%,.0f", distance  ));
                     } else{
                         tv.setText(getText(R.string.dashboard_default_cero));
                     }
 
                     tv = (TextView) getView().findViewById(R.id.value_speed);
+                    tv.setText(String.format("%.0f", speed));
                     if (speed < 0){
                         tv.setText(getText(R.string.dashboard_default_nodata));
                         iv_gauge.setImageResource(R.drawable.ic_speed_bywalking);
@@ -124,6 +126,17 @@ public class DashboardFragment extends Fragment implements AdapterView.OnItemSel
                 tv.setText(String.valueOf(trip));
                 }
             });
+    }
+
+    public void updateTripCounter(){
+        activity = getActivity();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView tv = (TextView) getView().findViewById(R.id.tv_trips);
+                tv.setText(String.valueOf(mListener.getTripCounter()));
+            }
+        });
     }
 
     private void startChronometer(long base){

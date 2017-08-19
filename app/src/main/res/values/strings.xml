@@ -50,7 +50,7 @@
 
     <string name="dashboard_trip_label">Trips</string>
     <string name="dashboard_day_label">Day</string>
-    <integer name="dashboard_campaign_length" translatable="false">10</integer>
+    <integer name="dashboard_campaign_length" translatable="false">2</integer>
     <string name="dashboard_goal_label">Your goal:</string>
     <string name="dashboard_goal_default" translatable="false">1</string>
     <string name="dashboard_goal_units" translatable="false">Km.</string>
@@ -60,7 +60,7 @@
     <string name="notification_text">Tag your trip when arrived</string>
     <string name="text_no_set" translatable="false">Not Set</string>
     <string name="menu_survey">Survey</string>
-    <string name="dashboardTagsFragment_label" translatable="false">Tags</string>
+    <string name="dashboardScoreFragment_label" translatable="false">Score</string>
 
     <string name="speed_label">Speed:</string>
 
@@ -113,13 +113,22 @@
     <string name="leaderboard_trips_label0">rides</string>
     <string name="leaderboard_label1">With your:</string>
     <string name="leaderboard_label2">out of</string>
-    <string name="leaderboard_trips_top_label">Top 3 - Rides</string>
-    <string name="leaderboard_tags_top_label">Top 3 - Tags</string>
+    <string name="leaderboard_trips_top_label">Top: Rides</string>
+    <string name="leaderboard_tags_top_label">Top: Tags</string>
     <string name="createdAt_tag" translatable="false">createdAt</string>
     <string name="tag_choose">Choose one tag</string>
     <string name="tags_class_parse" translatable="false">Cyclist_Tag</string>
     <string name="text_tag" translatable="false">text</string>
     <string name="tags_counter_tag" translatable="false">tag_coung</string>
     <string name="leaderboard_tags_label0">tags</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="menu_score">Score</string>
+    <string name="experiment_status_tag" translatable="false">experimentStatus</string>
+    <string name="experiment_profile_tag" translatable="false">experimentProfile</string>
+    <string name="experiment_profile_competition" translatable="false">competition</string>
+    <string name="experiment_profile_collaboration" translatable="false">collaboration</string>
+    <string name="experiment_class_parse" translatable="false">Cyclist_Experiment</string>
+    <string name="profile_tag" translatable="false">profile</string>
 
 </resources>
