@@ -50,7 +50,7 @@
 
     <string name="dashboard_trip_label">Trips</string>
     <string name="dashboard_day_label">Day</string>
-    <integer name="dashboard_campaign_length" translatable="false">2</integer>
+    <integer name="dashboard_campaign_length" translatable="false">7</integer>
     <string name="dashboard_goal_label">Your goal:</string>
     <string name="dashboard_goal_default" translatable="false">1</string>
     <string name="dashboard_goal_units" translatable="false">Km.</string>
