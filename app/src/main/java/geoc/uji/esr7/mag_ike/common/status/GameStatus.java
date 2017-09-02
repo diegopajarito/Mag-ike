@@ -125,10 +125,6 @@ public class GameStatus {
     public int getCampaignDay(){
         Date today = new Date();
         int days = (int) Math.ceil( ( today.getTime() - getCampaignStartDate().getTime() ) / 1000.0 / 60.0 / 60.0 / 24.0 );
-        if (days > this.getCampaignLength()) {
-            setCampaignStartDate(today);
-            days = (int) Math.ceil((today.getTime() - getCampaignStartDate().getTime()) / 1000.0 / 60.0 / 60.0 / 24.0);
-        }
         return days;
     }
 

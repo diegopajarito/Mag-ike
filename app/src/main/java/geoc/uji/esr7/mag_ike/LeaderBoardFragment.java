@@ -33,7 +33,6 @@ public class LeaderBoardFragment extends Fragment {
 
     public LeaderBoardFragment() {
         // Required empty public constructor
-
     }
 
     public interface onLeaderBoardUpdate{
@@ -51,15 +50,18 @@ public class LeaderBoardFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement onLeaderBoardUpdate");
         }
-
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         mListener.loadLeaderBoard();
-
     }
 
     @Nullable

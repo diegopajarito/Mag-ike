@@ -60,7 +60,7 @@ public class ScoreFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mListener.loadScore();
-
+        setRetainInstance(true);
     }
     @Override
     public void onResume() {
@@ -72,10 +72,9 @@ public class ScoreFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        mListener.updateScore();
         view = inflater.inflate(R.layout.fragment_score, container, false);
-
-        TextView tv;
+       TextView tv;
         ImageView iv;
         if (mListener.getGameStatus().isExperiment()) {
             if (mListener.getGameStatus().getExperimentProfile().equals(getResources().getString(R.string.experiment_profile_competition))) {

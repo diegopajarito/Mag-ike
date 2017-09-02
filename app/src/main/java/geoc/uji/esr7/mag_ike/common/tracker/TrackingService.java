@@ -454,53 +454,6 @@ public class TrackingService extends IntentService {
     }
 
 
-    /**
-     * Unregister the listener with the Sensors API.
-     */
-    private void unregisterFitnessDataListener(final DataType dataType) {
-
-        // [START unregister_data_listener]
-        // Waiting isn't actually necessary as the unregister call will complete regardless,
-        // even if called from within onStop, but a callback can still be added in order to
-        // inspect the results.
-        if (dataType == DataType.TYPE_LOCATION_SAMPLE && locationListener != null) {
-            Fitness.SensorsApi.remove(mClient, locationListener).setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        Log.i(getString(R.string.tag_log), "Location Listener was removed!");
-                    } else {
-                        Log.i(getString(R.string.tag_log), "Location Listener was not removed.");
-                    }
-                }
-            });
-        } else if ((dataType == DataType.TYPE_SPEED || dataType == DataType.AGGREGATE_SPEED_SUMMARY) && speedListener != null) {
-            Fitness.SensorsApi.remove(mClient, speedListener).setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        Log.i(getString(R.string.tag_log), "Speed Listener was removed!");
-                    } else {
-                        Log.i(getString(R.string.tag_log), "Speed Listener was not removed.");
-                    }
-                }
-            });
-        } else if (dataType == DataType.AGGREGATE_DISTANCE_DELTA && distanceListener != null) {
-            Fitness.SensorsApi.remove(mClient, distanceListener).setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        Log.i(getString(R.string.tag_log), "Distance Listener was removed!");
-                    } else {
-                        Log.i(getString(R.string.tag_log), "Distance Listener was not removed.");
-                    }
-                }
-            });
-        }
-
-        // [END unregister_data_listener]
-    }
-
 
     private void notifyUiFitConnected() {
         Intent intent = new Intent(FIT_NOTIFY_INTENT);
