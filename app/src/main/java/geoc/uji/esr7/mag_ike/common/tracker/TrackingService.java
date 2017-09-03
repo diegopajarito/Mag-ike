@@ -103,6 +103,7 @@ public class TrackingService extends IntentService {
 
             //Wait until the service either connects or fails to connect
             while (mTryingToConnect) {
+            //while (mClient.isConnected()) {
                 try {
                     Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++);
                     Thread.sleep(100, 0);
@@ -161,6 +162,7 @@ public class TrackingService extends IntentService {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(getString(R.string.tag_log), "Connected to Google Fit!!!");
+                                mTryingToConnect = false;
                                 // Now you can make calls to the Fitness APIs.
                                 findFitnessDataSources();
                             }
