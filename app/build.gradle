@@ -9,7 +9,7 @@ android {
         applicationId "geoc.uji.esr7.mag_ike"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 6
+        versionCode 7
         versionName "2.0.0"
     }
     buildTypes {
