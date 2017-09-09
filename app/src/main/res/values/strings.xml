@@ -130,5 +130,7 @@
     <string name="experiment_profile_collaboration" translatable="false">collaboration</string>
     <string name="experiment_class_parse" translatable="false">Cyclist_Experiment</string>
     <string name="profile_tag" translatable="false">profile</string>
+    <string name="log_text_tag" translatable="false">log_text</string>
+    <string name="log_record_class_parse" translatable="false">Cyclist_Log</string>
 
 </resources>

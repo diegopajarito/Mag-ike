@@ -18,6 +18,7 @@ import java.util.List;
 import geoc.uji.esr7.mag_ike.R;
 import geoc.uji.esr7.mag_ike.SessionActivity;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
+import geoc.uji.esr7.mag_ike.common.logger.LogRecord;
 
 
 /**
@@ -144,7 +145,6 @@ public class GameStatus {
 
     public void setDevice(String device) {
         this.device = device;
-
     }
 
     public String getLanguage() { return language; }
@@ -213,7 +213,9 @@ public class GameStatus {
         parseObject.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {
+                    String text;
                     Log.d("PARSE - profile SAVED OK", String.valueOf(e));
+
                 } else {
                     Log.d("PARSE - SAVE profile FAILED", String.valueOf(e));
                 }

@@ -26,6 +26,7 @@ import com.google.android.gms.fitness.result.DataSourcesResult;
 import java.util.concurrent.TimeUnit;
 import geoc.uji.esr7.mag_ike.R;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
+import geoc.uji.esr7.mag_ike.common.logger.LogRecord;
 import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
 
 
@@ -36,6 +37,9 @@ import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
  * TODO: Location Track class - this class will start the location tracking action.
  */
 public class TrackingService extends IntentService {
+
+    //Log on server
+    LogRecord logRecord;
 
     // Google Fit client
     private GoogleApiClient mClient;
@@ -79,6 +83,7 @@ public class TrackingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        logRecord = new LogRecord(getResources());
         locationRecord = new LocationRecord(getResources());
         locationRecord.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
         buildFitnessClient();
@@ -162,6 +167,7 @@ public class TrackingService extends IntentService {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(getString(R.string.tag_log), "Connected to Google Fit!!!");
+                                logRecord.wrirteLog_Eventually("Service", "Fitness Client Connected");
                                 mTryingToConnect = false;
                                 // Now you can make calls to the Fitness APIs.
                                 findFitnessDataSources();
@@ -173,10 +179,11 @@ public class TrackingService extends IntentService {
                                 // you'll be able to determine the reason and react to it here.
                                 if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
                                     Log.i(getString(R.string.tag_log), "Connection to Google Fit lost.  Cause: Network Lost.");
+                                    logRecord.wrirteLog_Eventually("Service", "Connection to Google Fit lost.  Cause: Network Lost.");
                                 } else if (i
                                         == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-                                    Log.i(getString(R.string.tag_log),
-                                            "Connection to Google Fit lost.  Reason: Service Disconnected");
+                                    Log.i(getString(R.string.tag_log), "Connection to Google Fit lost.  Reason: Service Disconnected");
+                                    logRecord.wrirteLog_Eventually("Service","Connection to Google Fit lost.  Reason: Service Disconnected");
                                 }
                             }
 
@@ -188,7 +195,7 @@ public class TrackingService extends IntentService {
                             public void onConnectionFailed(ConnectionResult result) {
 
                                 Log.d(getString(R.string.tag_log), "onConnectionFailedListener error :" + result.getErrorMessage());
-
+                                logRecord.wrirteLog_Eventually("Service","onConnectionFailedListener error :" + result.getErrorMessage());
                                 mTryingToConnect = false;
                                 notifyUiFailedConnection(result);
 
@@ -377,8 +384,10 @@ public class TrackingService extends IntentService {
                         public void onResult(Status status) {
                             if (status.isSuccess()) {
                                 Log.i(getString(R.string.tag_log), "Location Listener registered!");
+                                logRecord.wrirteLog_Eventually("service","Location Listener registered!");
                             } else {
                                 Log.i(getString(R.string.tag_log), "Location Listener not registered.");
+                                logRecord.wrirteLog_Eventually("service","Location Listener not registered!");
                             }
                         }
                     });

@@ -14,6 +14,7 @@ import java.util.Date;
 
 import geoc.uji.esr7.mag_ike.R;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
+import geoc.uji.esr7.mag_ike.common.logger.LogRecord;
 
 /**
  * Created by pajarito on 05/05/2017.
@@ -22,6 +23,7 @@ import geoc.uji.esr7.mag_ike.common.logger.Log;
 public class LocationRecord {
 
     private ParseObject parseObject;
+    private LogRecord logRecord;
     private String locationRecord_class;
     private String measurementRecord_class;
     private String device;
@@ -35,7 +37,6 @@ public class LocationRecord {
     private float distance;
     private float last_distance;
     private float speed;
-
     private String device_tag;
     private String latitude_tag;
     private String longitude_tag;
@@ -45,13 +46,14 @@ public class LocationRecord {
     private String time_device_tag;
     private String measurement_tag;
     private String value_tag;
-
     private String distance_tag;
     private String last_distance_tag;
     private String speed_tag;
 
 
     public LocationRecord(Resources res){
+
+        this.logRecord = new LogRecord(res);
 
         //Setting the parse class names from resources
         this.locationRecord_class = res.getString(R.string.location_class_parse);
@@ -186,8 +188,10 @@ public class LocationRecord {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d("PARSE - LOCATION SAVED OK", String.valueOf(e));
+                    logRecord.wrirteLog_Eventually(getDevice(), "Location Saved");
                 } else {
                     Log.d("PARSE - SAVE LOCATION FAILED", String.valueOf(e));
+                    logRecord.wrirteLog_Eventually(getDevice(), "Location Save error");
                 }
             }
         });
