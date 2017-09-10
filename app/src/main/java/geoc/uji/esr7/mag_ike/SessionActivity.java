@@ -41,6 +41,7 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.FitnessStatusCodes;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import geoc.uji.esr7.mag_ike.common.logger.Log;
+import geoc.uji.esr7.mag_ike.common.logger.LogRecord;
 import geoc.uji.esr7.mag_ike.common.status.GameStatus;
 import geoc.uji.esr7.mag_ike.common.status.Profile;
 import geoc.uji.esr7.mag_ike.common.tracker.TrackingService;
@@ -62,10 +64,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private static final int REQUEST_PERMISSIONS_EMAIL_CODE = 1;
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     private static final int REQUEST_MULTIPLE_PERMISSIONS_EMAILCONTACTS_CODE = 123;
-    private boolean authInProgress = false;
     private boolean LOCATION_PERMISSION_GRANTED = false;
     private boolean CONTACTS_PERMISSION_GRANTED = false;
     private static final int REQUEST_OAUTH = 1431;
+    private static final int REQUEST_SIGN_IN = 4;
+
+    LogRecord logRecord;
 
     private static final String TAG = "Cycling";
     // [START auth_variable_references]
@@ -204,6 +208,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             } else {
                 updateStatusFromSharedPreferences();
 
+                logRecord = LogRecord.getInstance();
+                logRecord.setUpLogRecord(getResources(),gameStatus.getDevice());
 
                 if (gameStatus.getExperimentProfile() == null)
                     gameStatus.getExperimentProfileFromServer(this);
@@ -700,6 +706,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             }
             if (intent.hasExtra(TrackingService.FIT_EXTRA_CONNECTION_MESSAGE)) {
                 Log.d(getString(R.string.tag_log), "Fit connection successful - closing connect screen if it's open.");
+
                 fitHandleConnection();
             }
         }
@@ -725,12 +732,36 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     private void fitHandleFailedConnection(ConnectionResult result) {
         Log.i(TAG, "Activity Thread Google Fit Connection failed. Cause: " + result.toString());
+        logRecord.writeLog_Eventually("Activity Thread Google Fit Connection failed. Cause: " + result.toString());
         if (!result.hasResolution()) {
             // Show the localized error dialog
             GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), SessionActivity.this, 0).show();
             return;
+        } else if (result.getErrorCode() == FitnessStatusCodes.NEEDS_OAUTH_PERMISSIONS) {
+            try {
+                Log.d(TAG, "Google Fit connection failed with OAuth failure.  Trying to ask for consent (again)");
+                logRecord.writeLog_Eventually("Google Fit connection failed with OAuth failure.  Trying to ask for consent (again)");
+                result.startResolutionForResult(SessionActivity.this, REQUEST_OAUTH);
+            } catch (IntentSender.SendIntentException e) {
+                Log.e(TAG, "Activity Thread Google Fit Exception while starting resolution activity", e);
+                logRecord.writeLog_Eventually("Activity Thread Google Fit Exception while starting resolution activity - " + e.getMessage());
+            }
+        } else if (result.getErrorCode() == FitnessStatusCodes.SIGN_IN_REQUIRED) {
+        try {
+            Log.d(TAG, "Google Fit connection required to sign in failure.  Trying to ask for consent (again)");
+            logRecord.writeLog_Eventually("Google Fit connection failed with OAuth failure.  Trying to ask for consent (again)");
+            result.startResolutionForResult(SessionActivity.this, ConnectionResult.SIGN_IN_REQUIRED);
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Activity Thread Google Fit Exception while starting resolution activity", e);
+            logRecord.writeLog_Eventually("Activity Thread Google Fit Exception while starting resolution activity - " + e.getMessage());
+        }
+        }else {
+            Log.i(TAG, "Activity Thread Google Fit Attempting to resolve failed connection");
+            logRecord.writeLog_Eventually("Activity Thread Google Fit Attempting to resolve failed connection");
+            mFitResultResolution = result;
         }
 
+/*
         // The failure has a resolution. Resolve it.
         // Called typically when the app is not yet authorized, and an authorization dialog is displayed to the user.
         if (!authInProgress) {
@@ -744,11 +775,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             //} else {
 
                 Log.i(TAG, "Activity Thread Google Fit Attempting to resolve failed connection");
-
+                    logRecord.writeLog_Eventually("Activity Thread Google Fit Attempting to resolve failed connection");
                 mFitResultResolution = result;
 
             }
-        }
+
+        }*/
     }
 
 

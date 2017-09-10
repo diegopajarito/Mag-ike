@@ -13,20 +13,33 @@ import com.parse.SaveCallback;
 
 public class LogRecord {
 
+    private static LogRecord instance = null;
+
     private ParseObject parseObject;
     private String log_record_class;
+    private String device;
     private String device_tag;
     private String log_text_tag;
-    private Resources resources;
 
-    public LogRecord(Resources res){
-        resources = res;
-        log_record_class = resources.getString(R.string.log_record_class_parse);
-        device_tag = resources.getString(R.string.device_tag);
-        log_text_tag = resources.getString(R.string.log_text_tag);
+    protected LogRecord(){
+        // Just to protect
     }
 
-    public void wrirteLog_Eventually(String device, String log_text){
+    public static LogRecord getInstance(){
+        if (instance == null){
+            instance = new LogRecord();
+        }
+        return instance;
+    }
+
+    public void setUpLogRecord(Resources res, String dev){
+        log_record_class = res.getString(R.string.log_record_class_parse);
+        device_tag = res.getString(R.string.device_tag);
+        device = dev;
+        log_text_tag = res.getString(R.string.log_text_tag);
+    }
+
+    public void writeLog_Eventually(String log_text){
         parseObject = new ParseObject(this.log_record_class);
         parseObject.put(device_tag, device);
         parseObject.put(log_text_tag, log_text);

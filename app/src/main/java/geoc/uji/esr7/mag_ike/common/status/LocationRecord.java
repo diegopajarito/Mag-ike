@@ -22,7 +22,6 @@ import geoc.uji.esr7.mag_ike.common.logger.LogRecord;
 
 public class LocationRecord {
 
-    private ParseObject parseObject;
     private LogRecord logRecord;
     private String locationRecord_class;
     private String measurementRecord_class;
@@ -53,7 +52,7 @@ public class LocationRecord {
 
     public LocationRecord(Resources res){
 
-        this.logRecord = new LogRecord(res);
+        this.logRecord = LogRecord.getInstance();
 
         //Setting the parse class names from resources
         this.locationRecord_class = res.getString(R.string.location_class_parse);
@@ -171,27 +170,28 @@ public class LocationRecord {
 
     public void saveLocation_Eventually(float lat, float lon, float alt, float pre){
 
-        parseObject = new ParseObject(this.locationRecord_class);
-        parseObject.put(device_tag,this.getDevice());
-        this.setLatitude(lat);
-        parseObject.put(latitude_tag,this.getLatitude());
-        this.setLongitude(lon);
-        parseObject.put(longitude_tag,this.getLongitude());
-        this.setAltitude(alt);
-        parseObject.put(altitude_tag,this.getAltitude());
-        this.setPrecision((int) pre);
-        parseObject.put(precision_tag,this.getPrecision());
-        this.setTime_gps(new Date());
-        parseObject.put(time_gps_tag,this.getTime_gps());
 
-        parseObject.saveEventually(new SaveCallback() {
+        ParseObject parseObjectLocation = new ParseObject(this.locationRecord_class);
+        parseObjectLocation.put(device_tag,this.getDevice());
+        this.setLatitude(lat);
+        parseObjectLocation.put(latitude_tag,this.getLatitude());
+        this.setLongitude(lon);
+        parseObjectLocation.put(longitude_tag,this.getLongitude());
+        this.setAltitude(alt);
+        parseObjectLocation.put(altitude_tag,this.getAltitude());
+        this.setPrecision((int) pre);
+        parseObjectLocation.put(precision_tag,this.getPrecision());
+        this.setTime_gps(new Date());
+        parseObjectLocation.put(time_gps_tag,this.getTime_gps());
+
+        parseObjectLocation.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d("PARSE - LOCATION SAVED OK", String.valueOf(e));
-                    logRecord.wrirteLog_Eventually(getDevice(), "Location Saved");
+                    logRecord.writeLog_Eventually("Location Saved");
                 } else {
                     Log.d("PARSE - SAVE LOCATION FAILED", String.valueOf(e));
-                    logRecord.wrirteLog_Eventually(getDevice(), "Location Save error");
+                    logRecord.writeLog_Eventually("Location Save error - " + String.valueOf(e));
                 }
             }
         });
@@ -199,35 +199,37 @@ public class LocationRecord {
     }
 
     public void saveMeasurement_Eventually(final String label, float value){
-        parseObject = new ParseObject(this.measurementRecord_class);
-        parseObject.put(device_tag,this.getDevice());
+
+        ParseObject parseObjectMeasurement = new ParseObject(this.measurementRecord_class);
+        parseObjectMeasurement.put(device_tag,this.getDevice());
         this.setTime_device(new Date());
-        parseObject.put(time_device_tag,this.getTime_device());
+        parseObjectMeasurement.put(time_device_tag,this.getTime_device());
         if (label.equals(speed_tag)) {
-            parseObject.put(measurement_tag,speed_tag);
+            parseObjectMeasurement.put(measurement_tag,speed_tag);
             this.setSpeed(value);
-            parseObject.put(value_tag, this.getSpeed());
+            parseObjectMeasurement.put(value_tag, this.getSpeed());
         } else if (label.equals(distance_tag)){
-            parseObject.put(measurement_tag,distance_tag);
+            parseObjectMeasurement.put(measurement_tag,distance_tag);
             this.setDistance(value);
-            parseObject.put(value_tag, this.getDistance());
+            parseObjectMeasurement.put(value_tag, this.getDistance());
         } else if (label.equals(last_distance_tag)){
-            parseObject.put(measurement_tag,last_distance_tag);
+            parseObjectMeasurement.put(measurement_tag,last_distance_tag);
             this.setLast_distance(value);
-            parseObject.put(value_tag, this.getLast_distance());
+            parseObjectMeasurement.put(value_tag, this.getLast_distance());
         } else {
             return;
         }
-        parseObject.saveEventually(new SaveCallback() {
+        parseObjectMeasurement.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d("PARSE - " + label + " SAVED OK", String.valueOf(e));
                 } else {
                     Log.d("PARSE - SAVE " + label + " FAILED", String.valueOf(e));
-
+                    logRecord.writeLog_Eventually("Measurement Save error - " + String.valueOf(e));
                 }
             }
         });
+
     }
 
 

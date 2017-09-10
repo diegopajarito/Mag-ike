@@ -83,9 +83,11 @@ public class TrackingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        logRecord = new LogRecord(getResources());
+        logRecord = LogRecord.getInstance();
+        String device = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        logRecord.setUpLogRecord(getResources(), device);
         locationRecord = new LocationRecord(getResources());
-        locationRecord.setDevice(Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+        locationRecord.setDevice(device);
         buildFitnessClient();
         final String action = "Tracking Service Starting";
         Log.i(getString(R.string.tag_log), action);
@@ -167,7 +169,7 @@ public class TrackingService extends IntentService {
                             @Override
                             public void onConnected(Bundle bundle) {
                                 Log.i(getString(R.string.tag_log), "Connected to Google Fit!!!");
-                                logRecord.wrirteLog_Eventually("Service", "Fitness Client Connected");
+                                logRecord.writeLog_Eventually("Fitness Client Connected");
                                 mTryingToConnect = false;
                                 // Now you can make calls to the Fitness APIs.
                                 findFitnessDataSources();
@@ -179,11 +181,11 @@ public class TrackingService extends IntentService {
                                 // you'll be able to determine the reason and react to it here.
                                 if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
                                     Log.i(getString(R.string.tag_log), "Connection to Google Fit lost.  Cause: Network Lost.");
-                                    logRecord.wrirteLog_Eventually("Service", "Connection to Google Fit lost.  Cause: Network Lost.");
+                                    logRecord.writeLog_Eventually("Connection to Google Fit lost.  Cause: Network Lost.");
                                 } else if (i
                                         == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
                                     Log.i(getString(R.string.tag_log), "Connection to Google Fit lost.  Reason: Service Disconnected");
-                                    logRecord.wrirteLog_Eventually("Service","Connection to Google Fit lost.  Reason: Service Disconnected");
+                                    logRecord.writeLog_Eventually("Connection to Google Fit lost.  Reason: Service Disconnected");
                                 }
                             }
 
@@ -195,7 +197,7 @@ public class TrackingService extends IntentService {
                             public void onConnectionFailed(ConnectionResult result) {
 
                                 Log.d(getString(R.string.tag_log), "onConnectionFailedListener error :" + result.getErrorMessage());
-                                logRecord.wrirteLog_Eventually("Service","onConnectionFailedListener error :" + result.getErrorMessage());
+                                logRecord.writeLog_Eventually("onConnectionFailedListener error :" + result.getErrorMessage());
                                 mTryingToConnect = false;
                                 notifyUiFailedConnection(result);
 
@@ -203,6 +205,7 @@ public class TrackingService extends IntentService {
                         })
                 .build();
         Log.i(getString(R.string.tag_log), "Fitness Client built");
+        logRecord.writeLog_Eventually("Fitness Client built");
 
     }
     // [END auth_build_google api client_beginning]
@@ -354,8 +357,9 @@ public class TrackingService extends IntentService {
      * {@link DataType} combo.
      */
     private void registerFitnessDataListener(DataSource dataSource, final DataType dataType) {
+        logRecord.writeLog_Eventually("DataSource received: " + dataType.getName());
         // [START register_data_listener]
-        if (dataType == DataType.TYPE_LOCATION_SAMPLE) {
+        if (dataType == DataType.TYPE_LOCATION_TRACK) {
             locationListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
@@ -384,10 +388,10 @@ public class TrackingService extends IntentService {
                         public void onResult(Status status) {
                             if (status.isSuccess()) {
                                 Log.i(getString(R.string.tag_log), "Location Listener registered!");
-                                logRecord.wrirteLog_Eventually("service","Location Listener registered!");
+                                logRecord.writeLog_Eventually("Location Listener registered!");
                             } else {
                                 Log.i(getString(R.string.tag_log), "Location Listener not registered.");
-                                logRecord.wrirteLog_Eventually("service","Location Listener not registered!");
+                                logRecord.writeLog_Eventually("Location Listener not registered!");
                             }
                         }
                     });
