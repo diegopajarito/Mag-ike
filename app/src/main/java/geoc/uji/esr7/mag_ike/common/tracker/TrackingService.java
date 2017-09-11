@@ -11,7 +11,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSource;
@@ -112,8 +111,9 @@ public class TrackingService extends IntentService {
             while (mTryingToConnect) {
             //while (mClient.isConnected()) {
                 try {
+                    mClient.connect();
                     Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++);
-                    Thread.sleep(100, 0);
+                    Thread.sleep(1000, 0);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -122,16 +122,6 @@ public class TrackingService extends IntentService {
 
         if (mClient.isConnected()) {
 
-
-            /*
-            if (type == TYPE_GET_STEP_TODAY_DATA) {
-                Log.d(TAG, "Requesting steps from Google Fit");
-                getStepsToday();
-                Log.d(TAG, "Fit update complete.  Allowing Android to destroy the service.");
-            } else if (type == TYPE_REQUEST_CONNECTION) {
-                //Don't need to do anything because the connection is already requested above
-            }
-            */
         } else {
             //Not connected
             Log.w(getString(R.string.tag_log), "Fit wasn't able to connect, so the request failed.");
@@ -205,7 +195,6 @@ public class TrackingService extends IntentService {
                         })
                 .build();
         Log.i(getString(R.string.tag_log), "Fitness Client built");
-        logRecord.writeLog_Eventually("Fitness Client built");
 
     }
     // [END auth_build_google api client_beginning]

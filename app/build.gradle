@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "geoc.uji.esr7.mag_ike"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 13
         versionName "2.0.3"
     }
@@ -34,14 +34,13 @@ dependencies {
     //Android Design
 
     //compile 'com.android.support:support-v4:23.4.0'
-
     compile 'com.google.android.gms:play-services-auth:9.0.0'
     compile 'com.parse:parse-android:1.13.0'
-    compile 'com.parse.bolts:bolts-android:1.+'
+    compile 'com.parse.bolts:bolts-android:1.4.0'
     compile 'com.google.android.gms:play-services-fitness:9.0.0'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
     testCompile 'junit:junit:4.12'
 }
 

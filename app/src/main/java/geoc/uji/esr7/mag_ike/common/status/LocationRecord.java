@@ -188,7 +188,6 @@ public class LocationRecord {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d("PARSE - LOCATION SAVED OK", String.valueOf(e));
-                    logRecord.writeLog_Eventually("Location Saved");
                 } else {
                     Log.d("PARSE - SAVE LOCATION FAILED", String.valueOf(e));
                     logRecord.writeLog_Eventually("Location Save error - " + String.valueOf(e));
