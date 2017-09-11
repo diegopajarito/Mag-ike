@@ -216,7 +216,7 @@ public class TrackingService extends IntentService {
         Fitness.SensorsApi.findDataSources(mClient, new DataSourcesRequest.Builder()
                 // At least one datatype must be specified.
                 //.setDataTypes(DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_CYCLING_PEDALING_CADENCE,DataType.TYPE_DISTANCE_CUMULATIVE) DataType.TYPE_LOCATION_TRACK, DataType.TYPE_STEP_COUNT_CADENCE, DataType.TYPE_WORKOUT_EXERCISE, DataType.AGGREGATE_STEP_COUNT_DELTA,
-                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE,
+                .setDataTypes(DataType.TYPE_LOCATION_SAMPLE, DataType.TYPE_LOCATION_TRACK,
                         //DataType.TYPE_STEP_COUNT_CUMULATIVE,
                         DataType.TYPE_CYCLING_PEDALING_CADENCE, DataType.TYPE_DISTANCE_DELTA,
                         DataType.TYPE_DISTANCE_CUMULATIVE, DataType.AGGREGATE_DISTANCE_DELTA,
@@ -348,9 +348,9 @@ public class TrackingService extends IntentService {
      * {@link DataType} combo.
      */
     private void registerFitnessDataListener(DataSource dataSource, final DataType dataType) {
-        logRecord.writeLog_Eventually("DataSource received: " + dataType.getName());
+        //logRecord.writeLog_Eventually("DataSource received: " + dataType.getName());
         // [START register_data_listener]
-        if (dataType == DataType.TYPE_LOCATION_TRACK) {
+        if (dataType == DataType.TYPE_LOCATION_SAMPLE) {
             locationListener = new OnDataPointListener() {
                 @Override
                 public void onDataPoint(DataPoint dataPoint) {
@@ -371,6 +371,7 @@ public class TrackingService extends IntentService {
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
                             .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setMaxDeliveryLatency(30, TimeUnit.SECONDS)
                             .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     locationListener)
@@ -456,6 +457,7 @@ public class TrackingService extends IntentService {
                         }
                     });
         }
+
 
     }
 

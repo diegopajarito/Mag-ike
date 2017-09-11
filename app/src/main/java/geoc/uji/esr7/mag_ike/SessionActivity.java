@@ -67,7 +67,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     private boolean LOCATION_PERMISSION_GRANTED = false;
     private boolean CONTACTS_PERMISSION_GRANTED = false;
     private static final int REQUEST_OAUTH = 1431;
-    private static final int REQUEST_SIGN_IN = 4;
+
 
     LogRecord logRecord;
 
