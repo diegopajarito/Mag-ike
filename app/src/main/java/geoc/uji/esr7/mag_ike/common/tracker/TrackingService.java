@@ -40,6 +40,8 @@ public class TrackingService extends IntentService {
     //Log on server
     LogRecord logRecord;
 
+
+
     // Google Fit client
     private GoogleApiClient mClient;
     private boolean mTryingToConnect = false;
