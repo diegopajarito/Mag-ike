@@ -1,13 +1,22 @@
 package geoc.uji.esr7.mag_ike.common.tracker;
 
+import android.Manifest;
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
@@ -20,8 +29,21 @@ import com.google.android.gms.fitness.request.DataSourcesRequest;
 import com.google.android.gms.fitness.request.OnDataPointListener;
 import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import geoc.uji.esr7.mag_ike.R;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
@@ -40,6 +62,10 @@ public class TrackingService extends IntentService {
     //Log on server
     LogRecord logRecord;
 
+    // Google Location API
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
+    private FusedLocationProviderClient mFusedLocationClient;
 
 
     // Google Fit client
@@ -94,6 +120,9 @@ public class TrackingService extends IntentService {
         Log.i(getString(R.string.tag_log), action);
         //Setting the broadcaster for updating user interface
         broadcaster = LocalBroadcastManager.getInstance(this);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        setUpLocationUpdateSettings();
     }
 
 
@@ -137,7 +166,102 @@ public class TrackingService extends IntentService {
         final String action = "Tracking Service Stopping";
         Log.i(getString(R.string.tag_log), action);
         findFitnessDataSourcesUnregister();
+        stopLocationUpdates();
     }
+
+
+
+    /**
+     * This method defines the location request with time intervals
+     * and priority
+     */
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(2000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    /**
+     * This method adds a task to the current location settings of the device
+     * then it checks if location settings are satisfied to either start or not
+     * the client
+     */
+
+    protected void setUpLocationUpdateSettings(){
+
+        createLocationRequest();
+        startLocationUpdates();
+
+/*
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        final SettingsClient client = LocationServices.getSettingsClient(this);
+
+
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+
+         task.addOnSuccessListener(getBaseContext(), new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                // If settings are ok then Start the local updates
+                startLocationUpdates();
+            }
+        });
+        task.addOnFailureListener((Executor) this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                int statusCode = ((ApiException) e).getStatusCode();
+                switch (statusCode) {
+                    case CommonStatusCodes.RESOLUTION_REQUIRED:
+                        logRecord.writeLog_Eventually("Error on Location API, Resolution Required - Status: " + String.valueOf(statusCode));
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way
+                        // to fix the settings so we won't show the dialog.
+                        logRecord.writeLog_Eventually("Error on Location API, Settings Change Unavailable - Status: " + String.valueOf(statusCode));
+                        break;
+                }
+            }
+        });*/
+    }
+
+    /**
+     * This method sets the call back function to be executed
+     * after receiving each of the location updates
+     */
+
+    private void startLocationUpdates() {
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    float lat, lon, pres, alt;
+                    lat = (float) location.getLatitude();
+                    lon = (float) location.getLongitude();
+                    pres = location.getAccuracy();
+                    alt = (float) location.getAltitude();
+                    // Store Data into server and update interface with new values
+                    locationRecord.saveLocation_Eventually(lat, lon, alt, pres);
+                }
+            }
+        };
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_DENIED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+        } else {
+            logRecord.writeLog_Eventually("Error on setting location client, Location permission denied: ");
+        }
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+
+
 
 
     // [START auth_build_googleapiclient_beginning]
@@ -370,7 +494,7 @@ public class TrackingService extends IntentService {
                     new SensorRequest.Builder()
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
-                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setSamplingRate(3, TimeUnit.SECONDS)
                             .setMaxDeliveryLatency(30, TimeUnit.SECONDS)
                             .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
