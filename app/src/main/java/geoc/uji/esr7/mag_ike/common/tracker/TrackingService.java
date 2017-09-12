@@ -529,7 +529,8 @@ public class TrackingService extends IntentService {
                     new SensorRequest.Builder()
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
-                            .setSamplingRate(1, TimeUnit.SECONDS)
+                            .setSamplingRate(30, TimeUnit.SECONDS)
+                            .setMaxDeliveryLatency(1, TimeUnit.MINUTES)
                             .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     speedListener)
@@ -566,7 +567,8 @@ public class TrackingService extends IntentService {
                     new SensorRequest.Builder()
                             .setDataSource(dataSource) // Optional but recommended for custom data sets.
                             .setDataType(dataType) // Can't be omitted.
-                            .setSamplingRate(1, TimeUnit.MINUTES)
+                            .setSamplingRate(30, TimeUnit.SECONDS)
+                            .setMaxDeliveryLatency(1, TimeUnit.MINUTES)
                             .setAccuracyMode(SensorRequest.ACCURACY_MODE_HIGH)
                             .build(),
                     distanceListener)
