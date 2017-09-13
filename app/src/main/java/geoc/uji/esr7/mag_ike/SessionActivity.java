@@ -263,8 +263,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
                 navigationView.getMenu().findItem(R.id.nav_leader_board).setEnabled(false);
         }
 
-
-
     }
 
     @Override
