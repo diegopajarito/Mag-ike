@@ -2,15 +2,23 @@ package geoc.uji.esr7.mag_ike.common.tracker;
 
 import android.Manifest;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
+
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.ApiException;
@@ -45,10 +53,14 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+
 import geoc.uji.esr7.mag_ike.R;
+import geoc.uji.esr7.mag_ike.SessionActivity;
 import geoc.uji.esr7.mag_ike.common.logger.Log;
 import geoc.uji.esr7.mag_ike.common.logger.LogRecord;
 import geoc.uji.esr7.mag_ike.common.status.LocationRecord;
+
+import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
 
 
 /**
@@ -71,11 +83,9 @@ public class TrackingService extends IntentService {
     // Google Fit client
     private GoogleApiClient mClient;
     private boolean mTryingToConnect = false;
-    private static final int trackingServiceID = 1;
+    private static final int TRACKING_NOTIFICATION_ID = 23;
     private LocalBroadcastManager broadcaster;
 
-    public static final String SERVICE_REQUEST_TYPE = "requestType";
-    public static final int TYPE_REQUEST_CONNECTION = 2;
 
     public static final String LOCATION_UPDATE_INTENT = "locationUpdateIntent";
     public static final String FIT_NOTIFY_INTENT = "fitStatusUpdateIntent";
@@ -115,47 +125,53 @@ public class TrackingService extends IntentService {
         logRecord.setUpLogRecord(getResources(), device);
         locationRecord = new LocationRecord(getResources());
         locationRecord.setDevice(device);
-        buildFitnessClient();
-        final String action = "Tracking Service Starting";
-        Log.i(getString(R.string.tag_log), action);
         //Setting the broadcaster for updating user interface
         broadcaster = LocalBroadcastManager.getInstance(this);
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        setUpLocationUpdateSettings();
+        //setUpLocationUpdateSettings();
+        buildFitnessClient();
+
     }
 
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+
+        if (!mClient.isConnected() && !mTryingToConnect) {
+            connectGoogleClient();
+        }
+
+        // Setup for foreground Service
+        Intent notificationIntent = new Intent(this, SessionActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(getText(R.string.notification_title))
+                .setContentText(getText(R.string.notification_text))
+                .setSmallIcon(R.drawable.ic_bike_ride)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        startForeground(TRACKING_NOTIFICATION_ID, notification);
+
+        return START_STICKY;
+
+    }
 
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        //Get the request type
-        int type = intent.getIntExtra(SERVICE_REQUEST_TYPE, -1);
 
         //block until google fit connects.  Give up after 10 seconds.
         if (!mClient.isConnected()) {
-            mTryingToConnect = true;
-            mClient.connect();
-            int n = 1;
-
-            //Wait until the service either connects or fails to connect
-            while (mTryingToConnect) {
-            //while (mClient.isConnected()) {
-                try {
-                    mClient.connect();
-                    Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++);
-                    Thread.sleep(1000, 0);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            connectGoogleClient();
         }
-
         if (mClient.isConnected()) {
-
+            logRecord.writeLog_Eventually("Connected to Fit Client");
         } else {
             //Not connected
-            Log.w(getString(R.string.tag_log), "Fit wasn't able to connect, so the request failed.");
+            stopSelf();
+            logRecord.writeLog_Eventually("Fit wasn't able to connect, so the request failed.");
         }
     }
 
@@ -166,10 +182,28 @@ public class TrackingService extends IntentService {
         final String action = "Tracking Service Stopping";
         Log.i(getString(R.string.tag_log), action);
         findFitnessDataSourcesUnregister();
-        stopLocationUpdates();
+        stopForeground(true);
+        /*stopLocationUpdates();*/
     }
 
 
+    private void connectGoogleClient() {
+        mTryingToConnect = true;
+        mClient.connect();
+        int n = 1;
+        //Wait until the service either connects or fails to connect
+        while (mTryingToConnect && n < 5) {
+            //while (mClient.isConnected()) {
+            try {
+                mClient.connect();
+                Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++);
+                Thread.sleep(1000, 0);
+            } catch (InterruptedException e) {
+                logRecord.writeLog_Eventually("Error while trying to connect to Fic Client  after " + String.valueOf(n) + " attempts - " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * This method defines the location request with time intervals
@@ -189,7 +223,7 @@ public class TrackingService extends IntentService {
      * the client
      */
 
-    protected void setUpLocationUpdateSettings(){
+    protected void setUpLocationUpdateSettings() {
 
         createLocationRequest();
         startLocationUpdates();
@@ -238,6 +272,8 @@ public class TrackingService extends IntentService {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
+
+                    //Check if those are different thant the previous ones
                     float lat, lon, pres, alt;
                     lat = (float) location.getLatitude();
                     lon = (float) location.getLongitude();
@@ -259,9 +295,6 @@ public class TrackingService extends IntentService {
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
-
-
-
 
 
     // [START auth_build_googleapiclient_beginning]
@@ -466,7 +499,6 @@ public class TrackingService extends IntentService {
     }
 
 
-
     /**
      * Register a listener with the Sensors API for the provided {@link DataSource} and
      * {@link DataType} combo.
@@ -586,7 +618,6 @@ public class TrackingService extends IntentService {
 
 
     }
-
 
 
     private void notifyUiFitConnected() {

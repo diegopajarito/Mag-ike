@@ -84,7 +84,7 @@ public class DashboardFragment extends Fragment implements AdapterView.OnItemSel
                     } else{
                         tv.setText(getText(R.string.dashboard_default_cero));
                     }
-
+                    iv_gauge = (ImageView) getView().findViewById(R.id.gauge);
                     tv = (TextView) getView().findViewById(R.id.value_speed);
                     tv.setText(String.format("%.0f", speed));
                     if (speed < 0){

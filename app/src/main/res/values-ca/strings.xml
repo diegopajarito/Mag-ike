@@ -91,5 +91,6 @@
     <string name="menu_survey">Enquesta</string>
     <string name="leaderboard_tags_label0">tags</string>
     <string name="menu_score">Puntuación</string>
+    <string name="app_service_description">Ciclista, aquest servei permet actualitzar la ubicació, la velocitat i la distància en l\'aplicació</string>
 
 </resources>

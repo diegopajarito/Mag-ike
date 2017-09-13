@@ -81,11 +81,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     // The activity Service Intent
     private Intent mTrackingIntent;
-    // The tracking activity ID
-    private final int trackingServiceID = 1;
-    // The notification builder for tracking service
-    private NotificationCompat.Builder mNotificationBuilder;
-    private NotificationManager mNotificationManager;
+
     // The Shared preferences objects
     private SharedPreferences mSharedPreferences;
     SharedPreferences.Editor mSPEditor;
@@ -392,18 +388,13 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     private boolean startTrackingService(){
 
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mTrackingIntent = new Intent(this, TrackingService.class);
-        mTrackingIntent.putExtra(TrackingService.SERVICE_REQUEST_TYPE, TrackingService.TYPE_REQUEST_CONNECTION);
         this.startService(mTrackingIntent);
+
         onTrackingServiceStart(gameStatus.getTrip().getStartTime().getTime());
         saveTripStartDateOnSharedPreferences();
 
-        mNotificationBuilder = new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_bike_ride)
-                            .setContentTitle(getString(R.string.notification_title))
-                            .setContentText(getString(R.string.notification_text));
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -414,9 +405,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT );
 
-        mNotificationBuilder.setContentIntent(resultPendingIntent);
-        // trackingServiceID allows you to update the notification later on.
-        mNotificationManager.notify(trackingServiceID, mNotificationBuilder.build());
         btn_pause.setImageResource(R.drawable.ic_button_pause);
         Log.i(getString(R.string.tag_log), "Tracking service Started");
         return true;
@@ -424,11 +412,9 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     private boolean stopTrackingService(){
         this.stopService(mTrackingIntent);
-        mNotificationManager.cancel(trackingServiceID);
         btn_pause.setImageResource(R.drawable.ic_button_play);
         onTrackingServiceStop();
         mTrackingIntent = null;
-        mNotificationManager = null;
         Log.i(getString(R.string.tag_log), "Tracking service Stopped");
         return false;
     }

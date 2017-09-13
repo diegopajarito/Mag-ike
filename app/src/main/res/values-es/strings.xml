@@ -88,5 +88,6 @@
     <string name="menu_survey">Encuesta</string>
     <string name="leaderboard_tags_label0">tags</string>
     <string name="menu_score">Ergebnis</string>
+    <string name="app_service_description">Ciclista, este servicio permite la actualizar la ubicación, velocidad y distancia en la aplicación</string>
 
 </resources>

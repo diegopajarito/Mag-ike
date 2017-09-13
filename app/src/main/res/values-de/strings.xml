@@ -87,5 +87,6 @@
     <string name="menu_survey">Umfrage</string>
     <string name="leaderboard_tags_label0">tags</string>
     <string name="menu_score">Puntuació</string>
+    <string name="app_service_description">Radfahrer, dieser Service ermöglicht Standort-, Geschwindigkeits- und Distanz-Updates auf der App</string>
 
 </resources>
