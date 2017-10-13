@@ -143,6 +143,8 @@ public class DashboardFragment extends Fragment implements AdapterView.OnItemSel
     private void startChronometer(long base){
         if(view !=null) {
             chronometer = (Chronometer) view.findViewById(R.id.chronometer_session);
+
+            //Deal with times before now
             long elapsedRealtimeOffset = System.currentTimeMillis() - SystemClock.elapsedRealtime();
 
             chronometer.setBase(base - elapsedRealtimeOffset);

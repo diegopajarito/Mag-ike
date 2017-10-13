@@ -2,6 +2,7 @@ package geoc.uji.esr7.mag_ike;
 
 import android.Manifest;
 import android.accounts.AccountManager;
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -72,9 +73,6 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     LogRecord logRecord;
 
     private static final String TAG = "Cycling";
-    // [START auth_variable_references]
-    private GoogleApiClient mClient = null;
-    // [END auth_variable_references]
 
     // Connection result activity for dealing with google fit
     private ConnectionResult mFitResultResolution;
@@ -178,10 +176,19 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
     @Override
     protected void onStop() {
+        super.onStop();
+
+        // Check if the trip is paused
+        if(!isTrackingServiceRunning()){
+            gameStatus.getTrip().addTripToCounter();
+            gameStatus.saveTrip_Eventually();
+            deleteTripStartDateFromSharedPreferences();
+        }
+
         saveStatusOnSharedPreferences(gameStatus);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
-        super.onStop();
+
 
     }
 
@@ -268,13 +275,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Long start_time =  getTripStartDateOnSharedPreferences();
-        if (start_time > 0 ) {
-            Date stop_time = new Date(Calendar.getInstance().getTimeInMillis());
-            gameStatus.getTrip().setStopTime(stop_time);
-            gameStatus.getTrip().addTripToCounter();
-            gameStatus.saveTrip_Eventually();
-        }
+
+
 
         saveStatusOnSharedPreferences(gameStatus);
     }
@@ -388,10 +390,19 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
 
         mTrackingIntent = new Intent(this, TrackingService.class);
-        this.startService(mTrackingIntent);
+        if( !isTrackingServiceRunning() ) {
+            this.startService(mTrackingIntent);
+            Date now = Calendar.getInstance().getTime();
+            saveTripStartDateOnSharedPreferences(now);
+            onTrackingServiceStart(gameStatus.getTrip().getStartTime().getTime());
+        }
 
+        /*
+        // Delete next line
         onTrackingServiceStart(gameStatus.getTrip().getStartTime().getTime());
+        // On the service
         saveTripStartDateOnSharedPreferences();
+        */
 
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
@@ -409,6 +420,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
     private boolean stopTrackingService(){
+        Date stop_time = new Date(Calendar.getInstance().getTimeInMillis());
+        gameStatus.getTrip().setStopTime(stop_time);
         this.stopService(mTrackingIntent);
         btn_pause.setImageResource(R.drawable.ic_button_play);
         onTrackingServiceStop();
@@ -417,6 +430,17 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         return false;
     }
 
+    private boolean isTrackingServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager
+                .getRunningServices(Integer.MAX_VALUE)) {
+            if (TrackingService.class.getName().equals(service.service.getClassName())) {
+                Log.e(TAG, "Tracking Service is Running");
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     /**
@@ -641,7 +665,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if (gameStatus != null) {
             value = gameStatus.getTrip().getStartTime().getTime();
         } else {
-            value = Calendar.getInstance().getTime().getTime();
+            value = 0;
         }
         return value;
     }
@@ -920,19 +944,25 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     }
 
 
-    public void saveTripStartDateOnSharedPreferences() {
+    public void saveTripStartDateOnSharedPreferences(Date now) {
         // may be here the trip details should be fixed
         mSharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
-        long start_time = mSharedPreferences.getLong(getString(R.string.trip_start_date_tag), 0);
-        if (start_time == 0){
+        long start_time_sp = mSharedPreferences.getLong(getString(R.string.trip_start_date_tag), 0);
+        if (start_time_sp == 0){
             mSPEditor = mSharedPreferences.edit();
-            Date now = new Date(Calendar.getInstance().getTimeInMillis());
             gameStatus.getTrip().setStartTime(now);
             mSPEditor.putLong(this.gameStatus.trip_start_date_tag, gameStatus.getTrip().getStartTime().getTime());
             mSPEditor.commit();
         } else{
-            gameStatus.getTrip().setStartTime(new Date(start_time));
+            gameStatus.getTrip().setStartTime(new Date(start_time_sp));
         }
+    }
+
+    public void deleteTripStartDateFromSharedPreferences() {
+        mSharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        mSPEditor = mSharedPreferences.edit();
+        mSPEditor.remove(this.gameStatus.trip_start_date_tag);
+        mSPEditor.commit();
     }
 
     public long getTripStartDateOnSharedPreferences() {
@@ -941,7 +971,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         long value_long = mSharedPreferences.getLong(getString(R.string.trip_start_date_tag), 0);
         if (value_long > 0){
             mSPEditor = mSharedPreferences.edit();
-            mSPEditor.remove(this.gameStatus.trip_start_date_tag);
+            //mSPEditor.remove(this.gameStatus.trip_start_date_tag);
             mSPEditor.commit();
         }
         return value_long;

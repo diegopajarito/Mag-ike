@@ -161,7 +161,7 @@ public class TrackingService extends IntentService {
             try {
                 mClient.connect();
                 Log.i(getString(R.string.tag_log), "Trying to connect the Fit Client .... " + n++);
-                Thread.sleep(1000, 0);
+                Thread.sleep(500, 0);
             } catch (InterruptedException e) {
                 logRecord.writeLog_Eventually("Error while trying to connect to Fic Client  after " + String.valueOf(n) + " attempts - " + e.getMessage());
                 e.printStackTrace();
