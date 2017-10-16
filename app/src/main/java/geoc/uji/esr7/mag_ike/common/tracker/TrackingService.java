@@ -58,6 +58,7 @@ public class TrackingService extends IntentService {
     public static final String FIT_EXTRA_CONNECTION_MESSAGE = "fitFirstConnection";
     public static final String FIT_EXTRA_NOTIFY_FAILED_STATUS_CODE = "fitExtraFailedStatusCode";
     public static final String FIT_EXTRA_NOTIFY_FAILED_INTENT = "fitExtraFailedIntent";
+    public static final String TRIP_LOCATION_END_SET = "tripLocationEndSet";
 
     // [START mListener_variable_reference]
     // Need to hold a reference to this listener, as it's passed into the "unregister"
@@ -76,6 +77,8 @@ public class TrackingService extends IntentService {
 
     // sets zero as initial value for distance
     float accumulated_distance = 0;
+
+    
 
 
     public TrackingService() {
@@ -147,7 +150,9 @@ public class TrackingService extends IntentService {
         final String action = "Tracking Service Stopping";
         Log.i(getString(R.string.tag_log), action);
         findFitnessDataSourcesUnregister();
+        notifyServiceStop();
         stopForeground(true);
+
     }
 
 
@@ -510,4 +515,10 @@ public class TrackingService extends IntentService {
         broadcaster.sendBroadcast(intent);
     }
 
+    public void notifyServiceStop() {
+        Intent intent = new Intent(TRIP_LOCATION_END_SET);
+        intent.putExtra(getString(R.string.longitude_tag), locationRecord.getLongitude());
+        intent.putExtra(getString(R.string.latitude_tag), locationRecord.getLatitude());
+        broadcaster.sendBroadcast(intent);
+    }
 }

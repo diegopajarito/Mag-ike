@@ -134,5 +134,6 @@
     <string name="log_record_class_parse" translatable="false">Cyclist_Log</string>
     <string name="app_service_description">Cyclist, this service enables location, speed, and distance updates on the app</string>
     <string name="notification_channel_id" translatable="false">Cyclist_channel</string>
+    <string name="trip_end_point_tag" translatable="false">end_point</string>
 
 </resources>

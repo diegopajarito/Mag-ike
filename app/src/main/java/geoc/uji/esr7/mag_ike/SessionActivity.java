@@ -167,6 +167,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mFitStatusReceiver, new IntentFilter(TrackingService.FIT_NOTIFY_INTENT));
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocationReceiver, new IntentFilter(TrackingService.LOCATION_UPDATE_INTENT));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mTripStartStopReceiver, new IntentFilter(TrackingService.TRIP_LOCATION_END_SET));
 
         // Setting Parse Server with username and password
         checkParseLogIn();
@@ -187,7 +188,8 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         saveStatusOnSharedPreferences(gameStatus);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocationReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mTripStartStopReceiver);
 
 
     }
@@ -731,6 +733,22 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
             float speed = intent.getFloatExtra(getString(R.string.speed_tag),0);
             float distance = intent.getFloatExtra(getString(R.string.last_distance_tag),0);
             updateDashboard(speed, distance);
+        }
+    };
+
+    /**
+     * Using a Broadcast Receiver to set start/end point from Service to Activity
+     * Action, update interface
+     */
+
+    private BroadcastReceiver mTripStartStopReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+                float lat = intent.getFloatExtra(getString(R.string.latitude_tag),R.integer.value_nodata);
+                float lon = intent.getFloatExtra(getString(R.string.longitude_tag),R.integer.value_nodata);
+                gameStatus.getTrip().setEndPoint(lat, lon);
+
         }
     };
 

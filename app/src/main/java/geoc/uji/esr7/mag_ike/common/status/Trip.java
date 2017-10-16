@@ -12,6 +12,8 @@ public class Trip {
     private Date startTime;
     private Date stopTime;
     private List<String> tags;
+    private float latitudeEndPoint;
+    private float longitudeEndPoint;
 ;
 
     public Trip (){
@@ -53,4 +55,18 @@ public class Trip {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+    public void setEndPoint(float lat, float lon){
+        latitudeEndPoint= lat;
+        longitudeEndPoint = lon;
+    }
+
+    public float getLatitudeEndPoint(){
+        return latitudeEndPoint;
+    }
+
+    public float getLongitudeEndPoint(){
+        return longitudeEndPoint;
+    }
+
 }
