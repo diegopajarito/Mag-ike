@@ -61,6 +61,7 @@ public class LeaderBoardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        activity = getActivity();
         mListener.loadLeaderBoard();
     }
 

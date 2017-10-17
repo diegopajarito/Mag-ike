@@ -167,7 +167,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mFitStatusReceiver, new IntentFilter(TrackingService.FIT_NOTIFY_INTENT));
         LocalBroadcastManager.getInstance(this).registerReceiver(mLocationReceiver, new IntentFilter(TrackingService.LOCATION_UPDATE_INTENT));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mTripStartStopReceiver, new IntentFilter(TrackingService.TRIP_LOCATION_END_SET));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mTripLocationReceiver, new IntentFilter(TrackingService.CYCLIST_TRIP_LOCATION_INTENT));
 
         // Setting Parse Server with username and password
         checkParseLogIn();
@@ -189,7 +189,7 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         saveStatusOnSharedPreferences(gameStatus);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mLocationReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mTripStartStopReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mTripLocationReceiver);
 
 
     }
@@ -737,18 +737,24 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
     };
 
     /**
-     * Using a Broadcast Receiver to set start/end point from Service to Activity
+     * Using a Broadcast Receiver to update location of the trip from Service to Activity
      * Action, update interface
      */
 
-    private BroadcastReceiver mTripStartStopReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mTripLocationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-                float lat = intent.getFloatExtra(getString(R.string.latitude_tag),R.integer.value_nodata);
-                float lon = intent.getFloatExtra(getString(R.string.longitude_tag),R.integer.value_nodata);
+            String tag = intent.getStringExtra(getString(R.string.trip_point_type_tag));
+            float lat = intent.getFloatExtra(getString(R.string.latitude_tag),R.integer.value_nodata);
+            float lon = intent.getFloatExtra(getString(R.string.longitude_tag),R.integer.value_nodata);
+            if (tag.equals(TrackingService.START_POINT_TAG)){
+                gameStatus.getTrip().setStartPoint(lat,lon);
+                gameStatus.getTrip().updateCurrentLocation(lat, lon);
+            } else if (tag.equals(TrackingService.END_POINT_TAG)) {
                 gameStatus.getTrip().setEndPoint(lat, lon);
-
+            } else {
+                gameStatus.getTrip().updateCurrentLocation(lat, lon);
+            }
         }
     };
 
@@ -842,6 +848,12 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if(gameStatus.getTrip().getTrip_counter() > 0){
             mSPEditor.putInt(this.gameStatus.trip_counter_tag, this.gameStatus.getTrip().getTrip_counter());
         }
+        if(gameStatus.getTrip().getLatitudeStartPoint() != 0){
+            mSPEditor.putFloat(this.gameStatus.trip_start_latitude_tag, this.gameStatus.getTrip().getLatitudeStartPoint());
+        }
+        if(gameStatus.getTrip().getLongitudeStartPoint() != 0){
+            mSPEditor.putFloat(this.gameStatus.trip_start_longitude_tag, this.gameStatus.getTrip().getLongitudeStartPoint());
+        }
         if(gameStatus.getTag_count() > 1){
             mSPEditor.putInt(this.gameStatus.tags_count_tag, this.gameStatus.getTag_count());
         }
@@ -917,6 +929,11 @@ public class SessionActivity extends AppCompatActivity implements NavigationView
         if (value_int > 1){
             gameStatus.getTrip().setTrip_counter(value_int);
             changed = true;
+        }
+        float value_lat = sharedPreferences.getFloat(gameStatus.trip_start_latitude_tag, 0);
+        float value_lon = sharedPreferences.getFloat(gameStatus.trip_start_longitude_tag, 0);
+        if (value_lat !=0 && value_lon !=0) {
+            gameStatus.getTrip().setStartPoint(value_lat,value_lon);
         }
         value_int = sharedPreferences.getInt(gameStatus.tags_count_tag, 0);
         if (value_int > 0){

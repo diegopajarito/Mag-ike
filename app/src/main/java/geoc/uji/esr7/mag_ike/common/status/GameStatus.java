@@ -56,7 +56,11 @@ public class GameStatus {
     public final String trip_start_date_tag;
     public final String trip_stop_date_tag;
     public final String trip_counter_tag;
-    public final String trip_end_point_tag;
+    public final String trip_start_point_tag;
+    public final String trip_start_latitude_tag;
+    public final String trip_start_longitude_tag;
+    public final String trip_end_latitude_tag;
+    public final String trip_end_longitude_tag;
     public final String text_tag;
     public final String createdAt_tag;
     public final String profile_tag;
@@ -105,7 +109,11 @@ public class GameStatus {
         trip_counter_tag = res.getString(R.string.trip_counter_tag);
         trip_start_date_tag = res.getString(R.string.trip_start_date_tag);
         trip_stop_date_tag = res.getString(R.string.trip_stop_date_tag);
-        trip_end_point_tag = res.getString(R.string.trip_end_point_tag);
+        trip_start_point_tag = res.getString(R.string.trip_start_point_tag);
+        trip_start_latitude_tag = res.getString(R.string.trip_start_latitude_tag);
+        trip_start_longitude_tag = res.getString(R.string.trip_start_longitude_tag);
+        trip_end_latitude_tag = res.getString(R.string.trip_end_latitude_tag);
+        trip_end_longitude_tag = res.getString(R.string.trip_end_longitude_tag);
         text_tag = res.getString(R.string.text_tag);
         createdAt_tag = res.getString(R.string.createdAt_tag);
         profile_tag = res.getString(R.string.profile_tag);
@@ -232,7 +240,9 @@ public class GameStatus {
         parseObject.put(trip_counter_tag, this.trip.getTrip_counter());
         parseObject.put(trip_start_date_tag, this.trip.getStartTime());
         parseObject.put(trip_stop_date_tag, this.trip.getStopTime());
-        parseObject.put(trip_end_point_tag, new ParseGeoPoint(this.getTrip().getLatitudeEndPoint(), this.getTrip().getLongitudeEndPoint()));
+        parseObject.put(trip_start_point_tag, new ParseGeoPoint(this.getTrip().getLatitudeStartPoint(), this.getTrip().getLongitudeStartPoint()));
+        parseObject.put(trip_end_latitude_tag, this.trip.getLatitudeEndPoint());
+        parseObject.put(trip_end_longitude_tag, this.trip.getLongitudeEndPoint());
         parseObject.saveEventually(new SaveCallback() {
             public void done(ParseException e) {
                 if (e == null) {

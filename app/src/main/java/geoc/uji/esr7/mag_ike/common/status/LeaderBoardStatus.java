@@ -9,6 +9,7 @@ import android.widget.ExpandableListAdapter;
 import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -39,6 +40,7 @@ public class LeaderBoardStatus {
     private String device;
     private String trip_tag;
     private String tags_counter_tag;
+    private String trip_start_point_tag;
     private boolean retrive_status;
     private int own_trips;
     private int total_trips;
@@ -46,8 +48,10 @@ public class LeaderBoardStatus {
     private int own_tags;
     private int total_tags;
     private int position_tags;
+    private int leaderboardBufferDistanceKm;
     private TopPlayer[] top3Trips = new TopPlayer[3];
     private TopPlayer[] top3Tags = new  TopPlayer[3];
+    private ParseGeoPoint currentLocation;
 
     public LeaderBoardStatus(Resources res){
         resources = res;
@@ -59,6 +63,8 @@ public class LeaderBoardStatus {
         createdAt_tag = res.getString(R.string.createdAt_tag);
         trip_tag = res.getString(R.string.trip_counter_tag);
         tags_counter_tag = res.getString(R.string.tags_counter_tag);
+        trip_start_point_tag = res.getString(R.string.trip_start_point_tag);
+        leaderboardBufferDistanceKm = res.getInteger(R.integer.leader_board_buffer_distance_km);
         retrive_status = false;
     }
 
@@ -115,12 +121,14 @@ public class LeaderBoardStatus {
     public void updateLeaderBoard(SessionActivity act){
         activity = act;
         device = act.gameStatus.getDevice();
+        currentLocation = new ParseGeoPoint(act.gameStatus.getTrip().getLatitudeCurrentLocation(),act.gameStatus.getTrip().getLongitudeCurrentLocation());
         getLeaderBoardFromServer();
     }
 
     public void updateScore(SessionActivity act){
         activity = act;
         device = act.gameStatus.getDevice();
+        currentLocation = new ParseGeoPoint(act.gameStatus.getTrip().getLatitudeCurrentLocation(),act.gameStatus.getTrip().getLongitudeCurrentLocation());
         getScoreFromServer();
     }
 
@@ -191,6 +199,7 @@ public class LeaderBoardStatus {
     private void getPositionOnLeaderBoardTrips(final int ownTrips){
         ParseQuery<ParseObject> query = ParseQuery.getQuery(trip_parse_class);
         query.whereEqualTo(trip_tag, ownTrips+1);
+        query.whereWithinKilometers(trip_start_point_tag,currentLocation,leaderboardBufferDistanceKm);
         query.countInBackground(new CountCallback() {
             @Override
             public void done(int count, ParseException e) {
@@ -218,6 +227,8 @@ public class LeaderBoardStatus {
 
     private void getOwnTripsFromServer(){
         // Own Trips
+        // these own trips are not limited to the distance because the center of the game
+        // and the game board is the user current location
         ParseQuery<ParseObject> query = ParseQuery.getQuery(trip_parse_class);
         String[] deviceArray = {device};
         query.whereContainedIn(device_tag, Arrays.asList(deviceArray));
@@ -249,6 +260,7 @@ public class LeaderBoardStatus {
 
         ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
         queryTop.addDescendingOrder(trip_tag);
+        queryTop.whereWithinKilometers(trip_start_point_tag,currentLocation,leaderboardBufferDistanceKm);
         queryTop.setLimit(1);
         queryTop.findInBackground(new FindCallback<ParseObject>(){
             public void done(List<ParseObject> results, ParseException e){
@@ -287,6 +299,7 @@ public class LeaderBoardStatus {
                     });
                     ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
                     queryTop.whereNotContainedIn(device_tag, Arrays.asList(top1));
+                    queryTop.whereWithinKilometers(trip_start_point_tag,currentLocation,leaderboardBufferDistanceKm);
                     queryTop.addDescendingOrder(trip_tag);
                     queryTop.setLimit(1);
                     queryTop.findInBackground(new FindCallback<ParseObject>() {
@@ -328,6 +341,7 @@ public class LeaderBoardStatus {
                                 });
                                 ParseQuery<ParseObject> queryTop = ParseQuery.getQuery(trip_parse_class);
                                 queryTop.whereNotContainedIn(device_tag, Arrays.asList(top));
+                                queryTop.whereWithinKilometers(trip_start_point_tag,currentLocation,leaderboardBufferDistanceKm);
                                 queryTop.addDescendingOrder(trip_tag);
                                 queryTop.setLimit(1);
                                 queryTop.findInBackground(new FindCallback<ParseObject>() {
@@ -555,6 +569,7 @@ public class LeaderBoardStatus {
 
         // Total Trips
         query = ParseQuery.getQuery(trip_parse_class);
+        query.whereWithinKilometers(trip_start_point_tag,currentLocation,leaderboardBufferDistanceKm);
         query.countInBackground(new CountCallback() {
             public void done(int count, ParseException e) {
                 if (e == null) {
@@ -573,6 +588,7 @@ public class LeaderBoardStatus {
          */
 
         // Own Tags
+        // same as own trips, these are counted every time no matter where the player is
         query = ParseQuery.getQuery(tags_parse_class);
         query.whereContainedIn(device_tag, Arrays.asList(deviceArray));
         query.orderByDescending(tags_counter_tag);

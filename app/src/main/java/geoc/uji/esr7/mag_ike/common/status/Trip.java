@@ -12,9 +12,13 @@ public class Trip {
     private Date startTime;
     private Date stopTime;
     private List<String> tags;
+    private float latitudeStartPoint;
+    private float longitudeStartPoint;
+    private float latitudeCurrentLocation;
+    private float longitudeCurrentLocation;
     private float latitudeEndPoint;
     private float longitudeEndPoint;
-;
+
 
     public Trip (){
         tripCounter = 0;
@@ -56,9 +60,36 @@ public class Trip {
         this.tags = tags;
     }
 
+    public void setStartPoint(float lat, float lon){
+        latitudeStartPoint= lat;
+        longitudeStartPoint = lon;
+        updateCurrentLocation(latitudeStartPoint,longitudeStartPoint);
+    }
+
+    public void updateCurrentLocation(float lat, float lon){
+        latitudeCurrentLocation= lat;
+        longitudeCurrentLocation = lon;
+    }
+
     public void setEndPoint(float lat, float lon){
         latitudeEndPoint= lat;
         longitudeEndPoint = lon;
+    }
+
+    public float getLatitudeStartPoint() {
+        return latitudeStartPoint;
+    }
+
+    public float getLongitudeStartPoint() {
+        return longitudeStartPoint;
+    }
+
+    public float getLatitudeCurrentLocation() {
+        return latitudeCurrentLocation;
+    }
+
+    public float getLongitudeCurrentLocation() {
+        return longitudeCurrentLocation;
     }
 
     public float getLatitudeEndPoint(){
@@ -68,5 +99,6 @@ public class Trip {
     public float getLongitudeEndPoint(){
         return longitudeEndPoint;
     }
+
 
 }

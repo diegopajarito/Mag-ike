@@ -135,5 +135,12 @@
     <string name="app_service_description">Cyclist, this service enables location, speed, and distance updates on the app</string>
     <string name="notification_channel_id" translatable="false">Cyclist_channel</string>
     <string name="trip_end_point_tag" translatable="false">end_point</string>
+    <string name="trip_point_type_tag" translatable="false">trip_point_type</string>
+    <string name="trip_start_point_tag" translatable="false">start_point</string>
+    <string name="trip_start_latitude_tag" translatable="false">start_latitude</string>
+    <string name="trip_start_longitude_tag" translatable="false">start_longitude</string>
+    <string name="trip_end_latitude_tag" translatable="false">end_latitude</string>
+    <string name="trip_end_longitude_tag" translatable="false">end_longitude</string>
+    <integer name="leader_board_buffer_distance_km" translatable="false">50</integer>
 
 </resources>

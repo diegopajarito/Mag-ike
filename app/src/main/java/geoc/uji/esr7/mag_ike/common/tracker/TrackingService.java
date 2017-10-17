@@ -58,7 +58,10 @@ public class TrackingService extends IntentService {
     public static final String FIT_EXTRA_CONNECTION_MESSAGE = "fitFirstConnection";
     public static final String FIT_EXTRA_NOTIFY_FAILED_STATUS_CODE = "fitExtraFailedStatusCode";
     public static final String FIT_EXTRA_NOTIFY_FAILED_INTENT = "fitExtraFailedIntent";
-    public static final String TRIP_LOCATION_END_SET = "tripLocationEndSet";
+    public static final String CYCLIST_TRIP_LOCATION_INTENT = "cyclistTripLocationIntent";
+    public static String START_POINT_TAG = "start";
+    public static String END_POINT_TAG = "end";
+
 
     // [START mListener_variable_reference]
     // Need to hold a reference to this listener, as it's passed into the "unregister"
@@ -78,7 +81,11 @@ public class TrackingService extends IntentService {
     // sets zero as initial value for distance
     float accumulated_distance = 0;
 
-    
+    // sets true for identifying the starting point of the trip
+    boolean startPoint = true;
+
+
+
 
 
     public TrackingService() {
@@ -150,7 +157,7 @@ public class TrackingService extends IntentService {
         final String action = "Tracking Service Stopping";
         Log.i(getString(R.string.tag_log), action);
         findFitnessDataSourcesUnregister();
-        notifyServiceStop();
+        notifyTripLocation(END_POINT_TAG);
         stopForeground(true);
 
     }
@@ -397,6 +404,12 @@ public class TrackingService extends IntentService {
                     alt = dataPoint.getValue(Field.FIELD_ALTITUDE).asFloat();
                     // Store Data into server and update interface with new values
                     locationRecord.saveLocation_Eventually(lat, lon, alt, pres);
+                    if(startPoint){
+                        notifyTripLocation(START_POINT_TAG);
+                        startPoint = false;
+                    } else {
+                        notifyTripLocation("");
+                    }
                 }
             };
             // Register listener with the sensor API
@@ -515,8 +528,9 @@ public class TrackingService extends IntentService {
         broadcaster.sendBroadcast(intent);
     }
 
-    public void notifyServiceStop() {
-        Intent intent = new Intent(TRIP_LOCATION_END_SET);
+    public void notifyTripLocation(String typePoint) {
+        Intent intent = new Intent(CYCLIST_TRIP_LOCATION_INTENT);
+        intent.putExtra(getString(R.string.trip_point_type_tag), typePoint);
         intent.putExtra(getString(R.string.longitude_tag), locationRecord.getLongitude());
         intent.putExtra(getString(R.string.latitude_tag), locationRecord.getLatitude());
         broadcaster.sendBroadcast(intent);
