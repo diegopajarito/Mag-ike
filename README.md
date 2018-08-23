@@ -10,9 +10,6 @@ This geo-game allows users to track their bicycle trips and describe them with u
 
 **Cyclist Geo-C** randomly assigns one of the two interfaces to a new participant. It provides different modules to control trips’ records, choose up to three tags upon arrival, set up a user profile, check the dashboard, and the leaderboard (visible only for the competition-based interface). The application supports four languages: English, European Spanish, German and Catalan.
 
-
-Mobile application interfaces for participants
-
 # Experiment Deployment
 
 This experimental geo-game has supported experimental deployments in the cities of **Castelló** in Spain, **Münster** in Germany, and **Valletta** in Malta. Participants were required to be Android phone users as well as to meet the researchers to install the application, receive the instructions for the experiment, and provide feedback after one week of use. Participants were told to install the **Cyclist Geo-C** mobile application, record each bicycle trip and describe it with up to three tags upon arrival following their normal daily routine (Pajarito, Degbelo & Gould, 2018).
